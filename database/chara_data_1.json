@@ -1,0 +1,173 @@
+{
+	"chara_name": "TEST_CHARA",
+	"max_health": "10000",
+	"params": {
+		"walk": [20, 20],
+		"dash": [20, 20]
+	},
+	"moves": {
+		"supers": [ "236s", "214s" ],
+		"specials": [
+			"623l", "214l"
+		],
+		"normals": [ "4h" ],
+		"targets": [ "5m.5m", "214l.6l", "214l.6l.6l" ],
+		"jump_normals": [ ]
+	},
+	"frames": {
+		"idle": { "ty": "HURT", "rect": [-200, 0, 400, 1000] },
+		"crouch": { "ty": "HURT", "rect": [-200, 0, 400, 500] },
+		"66": {
+			"n_frames": 20,
+			"offsets_use_keyframes": false,
+			"offsets": [ [ 20, 0 ] ]
+		},
+		"5l": {
+			"n_frames": 14,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 2,"frame_end": 14,"ty": "HURT","rect": [200, 500, 450, 350]},
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [150, 550, 450, 250]}
+			],
+			"hit_info": [
+				{
+					"stun": [ 8, 13 ],
+					"cancel": {
+						"all_specials": true,
+						"normals": [ "5l" ]
+					},
+					"push": 150,
+					"minspace": 300
+				}
+			]
+		},
+		"5m": {
+			"n_frames": 19,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [100, 350, 150, 100]}
+			],
+			"hit_info": [{
+				"stun": [ 8, 13 ],
+				"cancel": {
+						"targets": [ "5m.5m" ]
+					}
+			}]
+		},
+		"5m.5m": {
+			"n_frames": 25,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [100, 350, 150, 100]}
+			],
+			"hit_info": [{
+				"stun": [ 8, 13 ]
+			}]
+		},
+		"5h": {
+			"n_frames": 24,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [100, 350, 150, 100]}
+			],
+			"hit_info": [{"stun": [ 8, 13 ]}]
+		},
+		"2l": {
+			"n_frames": 16,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [100, 350, 150, 100]}
+			],
+			"hit_info": [{"stun": [ 8, 13 ]}]
+		},
+		"2m": {
+			"n_frames": 20,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [100, 350, 150, 100]}
+			],
+			"hit_info": [{"stun": [ 8, 13 ]}]
+		},
+		"2h": {
+			"n_frames": 30,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [100, 350, 150, 100]}
+			],
+			"hit_info": [{"stun": [ 8, 13 ]}]
+		},
+		"4h": {
+			"n_frames": 24,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [100, 350, 150, 100]}
+			],
+			"hit_info": [{"stun": [ 8, 13 ]}]
+		},
+		"623l": {
+			"n_frames": 40,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [100, 350, 150, 100]}
+			],
+			"hit_info": [{"stun": [ 10, 50 ]}]
+		},
+		"214l": {
+			"n_frames": 40,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 40,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 13,"frame_end": 16,"ty": "HIT","hit_info": 0,"rect": [150, 550, 450, 250]}
+			],
+			"hit_info": [
+				{
+					"stun": [ 12, 30 ],
+					"cancel": {
+						"targets": [ "214l.6l" ]
+					}
+				}
+			]
+		},
+		"214l.6l": {
+			"command": "6l",
+			"n_frames": 40,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 40,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 13,"frame_end": 16,"ty": "HIT","hit_info": 0,"rect": [150, 550, 450, 250]}
+			],
+			"hit_info": [
+				{
+					"stun": [ 12, 30 ],
+					"cancel": {
+						"targets": [ "214l.6l.6l" ]
+					}
+				}
+			]
+		},
+		"214l.6l.6l": {
+			"command": "6l",
+			"n_frames": 50,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 50,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 13,"frame_end": 16,"ty": "HIT","hit_info": 0,"rect": [150, 550, 450, 250]}
+			],
+			"hit_info": [
+				{
+					"stun": [ 12, 50 ]
+				}
+			]
+		},
+		"8.5l": {
+			"n_frames": 40,
+			"land_recovery": 3,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 50,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 4,"frame_end": 12,"ty": "HIT","hit_info": 0,"rect": [-150, -50, 400, 200]}
+			],
+			"hit_info": [
+				{
+					"stun": [ 11, 16 ]
+				}
+			]
+		}
+	}
+}

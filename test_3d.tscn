@@ -1,0 +1,464 @@
+[gd_scene load_steps=21 format=3 uid="uid://biy7ct076k6ly"]
+
+[ext_resource type="PackedScene" uid="uid://dq6r535trldjs" path="res://models/chara/1/1_suisei.blend" id="1_3jq5k"]
+[ext_resource type="Script" path="res://scripts/rend/chara_rend.gd" id="2_4y256"]
+[ext_resource type="Script" path="res://scripts/rend/anim_player.gd" id="2_7sf6i"]
+[ext_resource type="Script" path="res://scripts/util/anim_flipper.gd" id="2_brvgs"]
+[ext_resource type="Script" path="res://scripts/debug_chara.gd" id="3_8mmn3"]
+[ext_resource type="Script" path="res://scripts/frame_meter.gd" id="4_hxw85"]
+[ext_resource type="PackedScene" uid="uid://gnvcusqgfjh" path="res://models/chara/2/2_towa.blend" id="5_a4f2v"]
+[ext_resource type="Script" path="res://scripts/rend/game_ui.gd" id="7_1d45a"]
+[ext_resource type="Script" path="res://scripts/rend/cam_follow.gd" id="9_t20ph"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_whvl6"]
+size = Vector2(30, 5)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_e2wec"]
+size = Vector2(50, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lvxpt"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ux4ky"]
+size = Vector2(0.05, 10)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_5nysy"]
+size = Vector2(0.02, 2)
+
+[sub_resource type="Environment" id="Environment_o2aou"]
+background_mode = 1
+background_color = Color(0.482353, 0.482353, 0.482353, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oi1b7"]
+bg_color = Color(0.396078, 0.396078, 0.396078, 0.168627)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5f16b"]
+bg_color = Color(0.231373, 0.658824, 0.772549, 1)
+
+[sub_resource type="FontVariation" id="FontVariation_shavc"]
+variation_embolden = 1.07
+
+[sub_resource type="LabelSettings" id="LabelSettings_g1p6a"]
+font = SubResource("FontVariation_shavc")
+font_size = 40
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_otrjq"]
+bg_color = Color(0.960784, 0.627451, 0, 1)
+
+[node name="main" type="Node3D"]
+
+[node name="debug_chara" type="Node" parent="." groups=["network_sync"]]
+script = ExtResource("3_8mmn3")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 3.647)
+
+[node name="Node" type="Node" parent="Camera3D"]
+script = ExtResource("9_t20ph")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_whvl6")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00775468, 0)
+mesh = SubResource("PlaneMesh_e2wec")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00775468, 0)
+mesh = SubResource("PlaneMesh_ux4ky")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.008, 0)
+mesh = SubResource("PlaneMesh_5nysy")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.008, 0)
+mesh = SubResource("PlaneMesh_5nysy")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.008, 0)
+mesh = SubResource("PlaneMesh_5nysy")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.008, 0)
+mesh = SubResource("PlaneMesh_5nysy")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
+
+[node name="1_suisei" parent="." instance=ExtResource("1_3jq5k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0)
+
+[node name="Skeleton3D" parent="1_suisei/Armature" index="0"]
+bones/0/rotation = Quaternion(0.707107, -1.37679e-07, -1.37679e-07, 0.707107)
+bones/1/rotation = Quaternion(6.76149e-28, 1, 0, -1.94707e-07)
+bones/2/rotation = Quaternion(-5.33851e-08, 0.707107, -0.707107, 5.33851e-08)
+bones/3/rotation = Quaternion(-1.72044e-08, 0.999999, -0.00124074, 7.54979e-08)
+bones/3/scale = Vector3(1, 1, 1)
+bones/4/rotation = Quaternion(-0.00248175, 4.12553e-08, -1.66512e-08, 0.999997)
+bones/4/scale = Vector3(1, 1, 1)
+bones/5/rotation = Quaternion(1.7017e-08, 0.999999, -0.00124076, 7.54979e-08)
+bones/5/scale = Vector3(1, 1, 1)
+bones/6/rotation = Quaternion(-0.00248174, -9.46835e-09, 1.76965e-08, 0.999997)
+bones/6/scale = Vector3(1, 1, 1)
+bones/7/rotation = Quaternion(-5.33851e-08, 0.707107, 0.707107, -5.33851e-08)
+bones/9/rotation = Quaternion(1.42926e-08, 1.6616e-08, -0.707107, 0.707107)
+bones/12/rotation = Quaternion(0.707107, -0.707107, 1.62479e-07, -5.33851e-08)
+bones/14/rotation = Quaternion(-5.45468e-08, 0.707107, -5.45468e-08, 0.707107)
+bones/15/rotation = Quaternion(0.707107, -8.13419e-28, 0.707106, 1.49289e-27)
+bones/16/rotation = Quaternion(0.707107, -8.13419e-28, 0.707106, 1.49289e-27)
+bones/17/rotation = Quaternion(2.62177e-28, 1, -1.00974e-28, -7.54979e-08)
+bones/19/rotation = Quaternion(0.707107, -8.13419e-28, 0.707106, 1.49289e-27)
+bones/20/rotation = Quaternion(0.707107, -8.13419e-28, 0.707106, 1.49289e-27)
+bones/21/rotation = Quaternion(2.62177e-28, 1, -1.00974e-28, -7.54979e-08)
+bones/23/rotation = Quaternion(2.70205e-07, 8.46209e-14, 1, -3.2211e-14)
+bones/24/rotation = Quaternion(-0.707107, -6.18172e-08, 1.26441e-07, 0.707107)
+bones/26/rotation = Quaternion(-0.707107, 8.42937e-08, -1.46111e-07, 0.707107)
+bones/27/rotation = Quaternion(1, 7.78229e-09, 7.54979e-08, -8.52651e-14)
+bones/28/rotation = Quaternion(-3.86577e-14, 1.19244e-08, 7.78229e-09, 1)
+
+[node name="flip" type="Node" parent="1_suisei/AnimationPlayer" index="0"]
+script = ExtResource("2_brvgs")
+
+[node name="ctrl" type="Node" parent="1_suisei/AnimationPlayer" index="1"]
+script = ExtResource("2_7sf6i")
+
+[node name="chara_ctrl" type="Node" parent="1_suisei"]
+script = ExtResource("2_4y256")
+is_p1 = false
+
+[node name="2_towa" parent="." instance=ExtResource("5_a4f2v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.51158, 0, 0)
+
+[node name="Skeleton3D" parent="2_towa/Armature" index="0"]
+bones/0/rotation = Quaternion(0.707107, -1.37679e-07, -1.37679e-07, 0.707107)
+bones/1/position = Vector3(-4.31448e-07, 0.0208936, -1.10794)
+bones/1/rotation = Quaternion(-0.597193, 0.802084, 1.16403e-07, -0.00466573)
+bones/2/rotation = Quaternion(0.0277245, 0.698291, -0.714756, 0.0272948)
+bones/3/rotation = Quaternion(0.17799, 0.982493, -0.0540136, -0.0104954)
+bones/3/scale = Vector3(1, 1, 1)
+bones/4/rotation = Quaternion(-0.00055062, -0.000638048, -0.00289204, 0.999996)
+bones/4/scale = Vector3(1, 1, 1)
+bones/5/rotation = Quaternion(0.103541, 0.99362, -0.0446722, -0.00155592)
+bones/5/scale = Vector3(1, 1, 1)
+bones/6/rotation = Quaternion(-0.0751546, -0.00103124, -0.195066, 0.977906)
+bones/6/scale = Vector3(1, 1, 1)
+bones/7/rotation = Quaternion(0.707107, 5.84888e-08, -5.87358e-08, 0.707107)
+bones/12/rotation = Quaternion(0.0255765, 0.698881, 0.714309, -0.0259794)
+bones/13/rotation = Quaternion(0.0797756, 0.0181138, -0.0385651, 0.995902)
+bones/14/rotation = Quaternion(0.119458, -0.00474243, -0.986994, 0.107472)
+bones/15/rotation = Quaternion(0.117361, 0.140127, 0.0428825, 0.982218)
+bones/17/rotation = Quaternion(0.976969, -0.172566, 0.113227, -0.0541579)
+bones/18/rotation = Quaternion(-0.000620221, 0.0237563, -0.0793872, 0.996561)
+bones/20/rotation = Quaternion(0.707107, -8.13419e-28, 0.707106, 1.78561e-27)
+bones/20/scale = Vector3(1, 1, 1)
+bones/21/rotation = Quaternion(0.707107, -8.13419e-28, 0.707106, 1.78561e-27)
+bones/21/scale = Vector3(1, 1, 1)
+bones/22/rotation = Quaternion(2.62177e-28, 1, -1.00974e-28, -7.54979e-08)
+bones/23/position = Vector3(0.0437363, 0.38975, -0.00109217)
+bones/24/rotation = Quaternion(0.707107, -8.13419e-28, 0.707106, 1.78561e-27)
+bones/24/scale = Vector3(1, 1, 1)
+bones/25/rotation = Quaternion(0.707107, -8.13419e-28, 0.707106, 1.78561e-27)
+bones/25/scale = Vector3(1, 1, 1)
+bones/26/rotation = Quaternion(2.62177e-28, 1, -1.00974e-28, -7.54979e-08)
+bones/27/position = Vector3(-0.0406418, -0.186209, -0.00439111)
+
+[node name="flip" type="Node" parent="2_towa/AnimationPlayer" index="0"]
+script = ExtResource("2_brvgs")
+
+[node name="ctrl" type="Node" parent="2_towa/AnimationPlayer" index="1"]
+script = ExtResource("2_7sf6i")
+
+[node name="chara_ctrl" type="Node" parent="2_towa"]
+script = ExtResource("2_4y256")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.291387, 0.956605, 0, -0.956605, 0.291387, 0, 4.97138, 1.51125)
+shadow_enabled = true
+shadow_opacity = 0.5
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_o2aou")
+
+[node name="frame_meter" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_hxw85")
+
+[node name="p1" type="CenterContainer" parent="frame_meter"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_top = 100.0
+offset_right = 20.0
+offset_bottom = 140.0
+grow_horizontal = 2
+
+[node name="gc" type="GridContainer" parent="frame_meter/p1"]
+layout_mode = 2
+theme_override_constants/h_separation = 2
+columns = 60
+
+[node name="p2" type="CenterContainer" parent="frame_meter"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_top = 120.0
+offset_right = 20.0
+offset_bottom = 160.0
+grow_horizontal = 2
+
+[node name="gc" type="GridContainer" parent="frame_meter/p2"]
+layout_mode = 2
+theme_override_constants/h_separation = 2
+columns = 60
+
+[node name="input_history" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="gc" type="GridContainer" parent="input_history"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 60.0
+offset_bottom = 60.0
+theme_override_constants/h_separation = 5
+columns = 3
+
+[node name="box_view" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ui" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("7_1d45a")
+
+[node name="top_cc" type="CenterContainer" parent="ui"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+
+[node name="vb" type="VBoxContainer" parent="ui/top_cc"]
+layout_mode = 2
+theme_override_constants/separation = -5
+
+[node name="hb1" type="HBoxContainer" parent="ui/top_cc/vb"]
+layout_mode = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="game_ui_hp_p1" type="ProgressBar" parent="ui/top_cc/vb/hb1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(400, 30)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_5f16b")
+step = 1.0
+value = 50.0
+fill_mode = 1
+show_percentage = false
+
+[node name="game_ui_time" type="Label" parent="ui/top_cc/vb/hb1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "99"
+label_settings = SubResource("LabelSettings_g1p6a")
+horizontal_alignment = 1
+
+[node name="game_ui_hp_p2" type="ProgressBar" parent="ui/top_cc/vb/hb1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(400, 30)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_5f16b")
+step = 1.0
+value = 50.0
+show_percentage = false
+
+[node name="hb2" type="HBoxContainer" parent="ui/top_cc/vb"]
+layout_mode = 2
+theme_override_constants/separation = 80
+alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ui/top_cc/vb/hb2"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="game_ui_sp3_p1" type="ProgressBar" parent="ui/top_cc/vb/hb2/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 15)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+step = 1.0
+value = 50.0
+fill_mode = 1
+show_percentage = false
+
+[node name="game_ui_sp2_p1" type="ProgressBar" parent="ui/top_cc/vb/hb2/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 15)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+step = 1.0
+value = 50.0
+fill_mode = 1
+show_percentage = false
+
+[node name="game_ui_sp1_p1" type="ProgressBar" parent="ui/top_cc/vb/hb2/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 15)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+step = 1.0
+value = 50.0
+fill_mode = 1
+show_percentage = false
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="ui/top_cc/vb/hb2"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="game_ui_sp1_p2" type="ProgressBar" parent="ui/top_cc/vb/hb2/HBoxContainer2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 15)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+step = 1.0
+value = 50.0
+show_percentage = false
+
+[node name="game_ui_sp2_p2" type="ProgressBar" parent="ui/top_cc/vb/hb2/HBoxContainer2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 15)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+step = 1.0
+value = 50.0
+show_percentage = false
+
+[node name="game_ui_sp3_p2" type="ProgressBar" parent="ui/top_cc/vb/hb2/HBoxContainer2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 15)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+step = 1.0
+value = 50.0
+show_percentage = false
+
+[node name="game_ui_debug_info" type="Label" parent="ui"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -23.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "game_speed: 1.0"
+horizontal_alignment = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="ui"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 100.0
+offset_bottom = 123.0
+grow_horizontal = 2
+
+[node name="GridContainer" type="GridContainer" parent="ui/CenterContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+columns = 3
+
+[node name="Label" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "0(0)"
+horizontal_alignment = 2
+
+[node name="Label2" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "Damage (Combo)"
+horizontal_alignment = 1
+
+[node name="Label3" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "0(0)"
+
+[node name="Label4" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+
+[node name="Label5" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "Scaling"
+horizontal_alignment = 1
+
+[node name="Label6" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "100%"
+
+[node name="Label7" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "-"
+horizontal_alignment = 2
+
+[node name="Label8" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "Attack Type"
+horizontal_alignment = 1
+
+[node name="Label9" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "-"
+
+[editable path="1_suisei"]
+[editable path="2_towa"]

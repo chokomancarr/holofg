@@ -18,7 +18,7 @@ func step(pst : PlayerState, delta):
 	if frame >= 0:
 		anim.seek(frame * FRAME2TIME, true)
 	else:
-		anim.advance(delta)
+		anim.advance(delta * Engine.physics_ticks_per_second / 60.0)
 	#match pst.state:
 		#ST.STATE_TY.ACTION:
 			#var dt = 0.0 if GameMaster.game_state.is_frozen() else GameMaster.get_state_diff_frame()
@@ -35,15 +35,3 @@ func step(pst : PlayerState, delta):
 			#play_anim(pst.move_name, 1.0, pst.action_is_p2, t + dt * GameMaster.get_state_diff_frame())
 		#_:
 			#play_anim(pst.move_name, delta * Engine.physics_ticks_per_second / 60.0, pst.action_is_p2)
-
-func play_anim(anim_name, dt, is_p2, frame = -1):
-	if is_p2:
-		anim_name = "flipped/" + anim_name
-	if not anim.has_animation(anim_name):
-		#print_debug("missing animation: ", anim_name + "!")
-		return
-	anim.play(anim_name)
-	if frame >= 0:
-		anim.seek(frame * dt, true)
-	else:
-		anim.advance(dt)

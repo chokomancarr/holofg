@@ -27,3 +27,9 @@ func step(state : PlayerState):
 
 func get_anim_frame():
 	return state_t
+
+func query_hit():
+	assert(false, "state does not implement query_hit!")
+
+func query_stun():
+	return ST.STUN_TY.NORMAL

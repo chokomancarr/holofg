@@ -2,13 +2,11 @@ class_name PlayerState
 
 var _info: DT.CharaInfo
 
-#var input_history: Array[IN.InputState] = []
 var input_history : IN.InputHistory
 
 var bar_health: int
 var bar_super: int
 var pos: Vector2i
-var next_offset: Vector2i
 var pos_is_p2: bool
 var action_is_p2: bool
 

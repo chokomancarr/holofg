@@ -3,6 +3,7 @@ class_name CsNormal extends _CsBase
 const _STATE_NAME = "normal"
 
 var move : DT.MoveInfo
+var current_att : int
 
 static func try_next(state : PlayerState, allow : ST.CancelInfo):
 	var last_input = state.input_history.history[0]
@@ -40,9 +41,24 @@ func deinit():
 	pass
 
 func step(state : PlayerState):
-	
-	
-	state.boxes = [state._info.idle_box] as Array[ST.BoxInfo]
+	state.boxes = []
+	var found_att = false
+	for b in move.boxes:
+		var is_att = b.ty == ST.BOX_TY.HIT || b.ty == ST.BOX_TY.GRAB
+		if b.frame_start <= state_t && b.frame_end >= state_t:
+			state.boxes.push_back(b as ST.BoxInfo)
+			if is_att and not found_att:
+				found_att = true
+				#state.att_part = ST.ATTACK_PART.ACTIVE
+				current_att = b.hit_i
+		#elif is_att and not found_att:
+			#if b.frame_start > state.state_t:
+				#state.att_part = ST.ATTACK_PART.STARTUP
+			#else:
+				#state.att_part = ST.ATTACK_PART.RECOVERY
 
 func get_anim_frame():
 	return state_t
+
+func query_hit():
+	return move.hit_info[current_att]

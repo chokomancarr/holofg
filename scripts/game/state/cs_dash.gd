@@ -23,17 +23,19 @@ static var move_rev : DT.MoveInfo = (func ():
 	dash.cmd = IN.InputCommand.from_string("66")
 	dash.cmd.t_dirs = 10
 	dash.n_frames = 20
-	dash.offsets = DT.OffsetInfo.from_keys([ [0, Vector2i(50, 0)], [10, Vector2i(30, 0)] ], 20)
+	dash.offsets = DT.OffsetInfo.from_keys([ [0, Vector2i(-50, 0)], [10, Vector2i(-30, 0)] ], 20)
 	return dash
 ).call()
 
 static func try_next(state : PlayerState):
-	var dhis = state.input_history.dir_history
-	var lbt = state.input_history.last_bts()
-	var lnm = state.input_history.history[0].name(false)
-	if move_fwd.cmd.check(dhis, lbt, lnm):
+	var dhis = state.input_history.dirs
+	var lbt = state.input_history.bts[0]
+	if dhis[0].nf > 1:
+		return null
+	
+	if move_fwd.cmd.check(dhis, lbt):
 		return new(true)
-	elif move_rev.cmd.check(dhis, lbt, lnm):
+	elif move_rev.cmd.check(dhis, lbt):
 		return new(false)
 
 func _init(fwd):
@@ -52,6 +54,6 @@ func deinit():
 	pass
 
 func step(state : PlayerState):
-    _step()
+	_step()
 	state.boxes = [state._info.idle_box] as Array[ST.BoxInfo]
-
+	next_offset = move.offsets.eval(state_t)

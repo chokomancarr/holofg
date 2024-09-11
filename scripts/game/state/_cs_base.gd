@@ -14,11 +14,11 @@ func deinit():
 	pass
 
 func step(state : PlayerState):
-	_step()
-	#assert(false, "function must be implemented!")
+	assert(false, "function must be implemented!")
 
 func _step():
 	state_t += 1
+	next_offset = Vector2i.ZERO
 
 func get_anim_frame():
 	return state_t

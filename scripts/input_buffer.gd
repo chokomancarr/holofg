@@ -1,39 +1,34 @@
 class_name IN
 
 class InputHistory:
-	var history : Array[InputState]
-	var dir_history : Array[InputState]
-
+	var bts : Array
+	var dirs : Array
+	var sx : String
+	var s5 : String
+	
 	func _init():
-		history = [ InputState.new() ] as Array[InputState]
-		dir_history = [ InputState.new() ] as Array[InputState]
+		bts.push_front({ v: 0, nf: 1 })
+		dirs.push_front({ v: 5, nf: 1 })
 	
 	func push(v : InputState):
-		if v.val == history[0].val:
-			history[0].nf += 1
-		else:
-			history.push_front(v)
-			if history.size() > 30:
-				history.pop_back()
-		
+		sx = v.name(false)
+		s5 = v.name(true)
+		var b = v.bts()
 		var d = v.dir_flipped()
-		if d == dir_history[0].val:
-			dir_history[0].nf += 1
+		
+		if b == bts[0].v:
+			bts[0].nf += 1
 		else:
-			dir_history.push_front(InputState.new(d))
-			if dir_history.size() > 30:
-				dir_history.pop_back()
-	
-	func clone():
-		var res = new()
-		res.history = history.slice(0, 100, 1, true) as Array[InputState]
-		res.dir_history = dir_history.slice(0, 100, 1, true) as Array[int]
-		return res
-
-	func last_bts():
-		return history[0].bts()
-	func last_dir():
-		return history[0].dir()
+			bts.push_front({ v: b, nf: 1 })
+			if bts.size() > 30:
+				bts.pop_back()
+		
+		if d == dirs[0].v:
+			dirs[0].nf += 1
+		else:
+			dirs.push_front({ v: d, nf: 1 })
+			if dirs.size() > 30:
+				dirs.pop_back()
 
 class InputState:
 	var val : int = 5
@@ -143,22 +138,22 @@ class InputCommand:
 		else:
 			return _DIR_ALLOWED[cmd].has(dir)
 
-	func check(history: Array[IN.InputState], current_bt : int, current_str : String = ""):
-		if current_bt != bt: return false
+	func check(history : InputHistory):
+		if history.bts[0] != bt: return false
 		var ff = 0
 		var ci = 0
 		var cn = command.size()
 		if cn == 0:
-			return command_str == current_str
+			return command_str == history.sx or command_str == history.s5
 		var cmd = command[0]
 		var is_opt = false
-		for h in history:
-			var dir = h.dir()
+		for h in history.dirs:
+			var dir = h[0]
 			if ff == 0 and dir == 5:
-				if h.nf > t_dir2bt:
+				if h[1] > t_dir2bt:
 					break
 				else:
-					ff += h.nf
+					ff += h[1]
 					if ff > t_dirs:
 						break
 					continue
@@ -184,11 +179,11 @@ class InputCommand:
 				is_opt = cmd > 1000
 				cmd &= ~1024
 			
-			ff += h.nf
+			ff += h[1]
 			if ff > t_dirs:
 				break
 		return false
-
+	
 	static func from_string(s : String):
 		s = s.rsplit(".")[-1]
 		

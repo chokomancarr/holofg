@@ -37,22 +37,23 @@ const _dir_unicode = [
 ]
 
 func _update_input_history_ui(game_state : GameState):
-	for c in _his_gc.get_children():
-		c.queue_free()
-	
-	for i in game_state.p1.input_history.history:
-		var d = Label.new()
-		d.text = str(mini(i.nf, 99)) + "  "
-		_his_gc.add_child(d)
-		d = Label.new()
-		d.text = _dir_unicode[i.dir()]
-		_his_gc.add_child(d)
-		d = Label.new()
-		if i.l(): d.text += "L "
-		if i.m(): d.text += "M "
-		if i.h(): d.text += "H "
-		if i.s(): d.text += "S "
-		_his_gc.add_child(d)
+	pass
+#	for c in _his_gc.get_children():
+#		c.queue_free()
+#	
+#	for i in game_state.p1.input_history.history:
+#		var d = Label.new()
+#		d.text = str(mini(i.nf, 99)) + "  "
+#		_his_gc.add_child(d)
+#		d = Label.new()
+#		d.text = _dir_unicode[i.dir()]
+#		_his_gc.add_child(d)
+#		d = Label.new()
+#		if i.l(): d.text += "L "
+#		if i.m(): d.text += "M "
+#		if i.h(): d.text += "H "
+#		if i.s(): d.text += "S "
+#		_his_gc.add_child(d)
 
 var _boxview_elems = [
 	[], []

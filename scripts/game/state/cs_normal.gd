@@ -1,22 +1,13 @@
-class_name CsNormal extends _CsBase
+class_name CsNormal extends _CsAttBase
 
 const _STATE_NAME = "normal"
 
 const move_prio = 2
 
-var move : DT.MoveInfo
-var current_att : int
-
-static func try_next(state : PlayerState, allow : ST.CancelInfo):
-	var last_input = state.input_history.history[0]
-	var last_bts = last_input.bts()
-	var l_nmx = last_input.name(false)
-	var l_nm5 = last_input.name(true)
-	
-	var first_f = last_input.nf == 1
-	
-	if first_f:
-		for nrm in [l_nmx, l_nm5]:
+static func try_next(state : PlayerState, sliceback : int, allow : ST.CancelInfo):
+	var his = state.input_history
+	if his.bts[0].nf == 1:
+		for nrm in [his.sx, his.s5]:
 			var ok = false
 			var move : DT.MoveInfo = state._info.moves_nr.get(nrm)
 			if move:
@@ -33,29 +24,13 @@ func init():
 	pass
 
 func check_next(state : PlayerState):
+	var next = null
 	if state_t == move.n_frames:
 		return CsIdle.new()
+	elif att_processed and info.cancels:
+		var info = query_hit()
+		next = CsNormal.try_next(state, 0, info.cancels)
+		if next: return next
 
 func deinit():
 	pass
-
-func step(state : PlayerState):
-    _step()
-	state.boxes = []
-	var found_att = false
-	for b in move.boxes:
-		var is_att = b.ty == ST.BOX_TY.HIT || b.ty == ST.BOX_TY.GRAB
-		if b.frame_start <= state_t && b.frame_end >= state_t:
-			state.boxes.push_back(b as ST.BoxInfo)
-			if is_att and not found_att:
-				found_att = true
-				#state.att_part = ST.ATTACK_PART.ACTIVE
-				current_att = b.hit_i
-		#elif is_att and not found_att:
-			#if b.frame_start > state.state_t:
-				#state.att_part = ST.ATTACK_PART.STARTUP
-			#else:
-				#state.att_part = ST.ATTACK_PART.RECOVERY
-
-func query_hit():
-	return move.hit_info[current_att]

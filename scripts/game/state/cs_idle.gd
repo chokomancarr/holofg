@@ -4,13 +4,6 @@ const _STATE_NAME = "idle"
 
 var standing = true
 
-static func try_next(state : PlayerState):
-	var d = state.input_history.last_dir()
-	var b = state.input_history.last_bts()
-	
-	if b == 0 and (d < 4 or d == 5):
-		return new()
-
 func _init():
 	anim_name = "5"
 
@@ -19,7 +12,7 @@ func init():
 
 func check_next(state : PlayerState):
 	var next = null
-	next = CsNormal.try_next(state, ST.CancelInfo.from_all())
+	next = CsNormal.try_next(state, 0, ST.CancelInfo.from_all())
 	if next: return next
 	
 	next = CsWalk.try_next(state)
@@ -29,7 +22,7 @@ func deinit():
 	pass
 
 func step(state : PlayerState):
-    _step()
+	_step()
 	var d = state.input_history.last_dir()
 	if standing != (d > 3):
 		standing = !standing

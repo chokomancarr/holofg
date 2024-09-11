@@ -43,6 +43,7 @@ class HitInfo:
 
 class CancelInfo:
 	var everything: bool = false
+	var normal_lmh: int = 3
 	var all_specials: bool = false
 	var super_1: bool = false
 	var super_2: bool = false
@@ -53,6 +54,8 @@ class CancelInfo:
 	var targets: Array[String] = []
 	var normals: Array[String] = []
 	var from_t: int = 0
+	
+	static var _normal_strengths = [ "lmh", "mh", "h", "" ]
 	
 	static func from_all():
 		return ObjUtil.fill(new(), [true])
@@ -77,7 +80,7 @@ class CancelInfo:
 	func can_sp(s : String):
 		return everything || all_specials || specials.has(s)
 	func can_nr(s : String):
-		return everything || normals.has(s)
+		return everything || normals.has(s) || _normal_strengths[normal_lmh].contains(s[1])
 
 enum STATE_TY {
 	IDLE_5 = 0x0001,

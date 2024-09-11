@@ -2,8 +2,6 @@ extends Node
 
 var p1_chara_info : DT.CharaInfo = null
 var p2_chara_info : DT.CharaInfo = null
-var p1_chara_logic : CharaLogic = null
-var p2_chara_logic : CharaLogic = null
 var game_state : GameState = null
 var net_master : _GameNetBase = null
 
@@ -20,8 +18,6 @@ func _ready():
 func new_match(p1 : int, p2 : int, ty : _GameNetBase.TY):
 	p1_chara_info = all_chara_infos[p1]
 	p2_chara_info = all_chara_infos[p2]
-	p1_chara_logic = load("res://scripts/chara/chara_logic_%d.gd" % p1).new()
-	p2_chara_logic = load("res://scripts/chara/chara_logic_%d.gd" % p2).new()
 	game_state = GameState.from_players(
 		PlayerState.create(p1_chara_info, true), 
 		PlayerState.create(p2_chara_info, false)

@@ -27,7 +27,7 @@
 			"boxes": [
 				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 1000]},
 				{"frame_start": 2,"frame_end": 14,"ty": "HURT","rect": [200, 500, 450, 350]},
-				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [150, 550, 450, 250]}
+				{"frame_start": 4,"frame_end": 7,"ty": "HIT","hit_info": 0,"rect": [150, 550, 450, 250]}
 			],
 			"hit_info": [
 				{

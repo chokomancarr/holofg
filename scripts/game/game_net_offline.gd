@@ -17,7 +17,8 @@ func get_input_state(is_p1):
 	return p1_inputs.step() if is_p1 else p2_inputs.step()
 
 func get_game_state():
-	return _step_game_state(GameMaster.game_state, p1_inputs.step(), p2_inputs.step())
+	_step_game_state(GameMaster.game_state, p1_inputs.step(), p2_inputs.step())
+	return GameMaster.game_state
 
 func _get_debug_text():
 	var p1 = p1_inputs as InputMan.PlayerInput

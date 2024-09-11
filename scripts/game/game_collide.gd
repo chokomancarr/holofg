@@ -12,11 +12,11 @@ static func step(game_state : GameState):
 	var hit2 = _check_hit(game_state.p2, game_state.p1)
 
 	if hit1:
-		CharaLogic.apply_hit(game_state.p2, hit1, dist)
-		game_state.freeze(12, true)
+		game_state.p2.on_hit(hit1, dist)
+		game_state.freeze(10, true)
 	if hit2:
-		CharaLogic.apply_hit(game_state.p1, hit2, dist)
-		game_state.freeze(12, true)
+		game_state.p1.on_hit(hit2, dist)
+		game_state.freeze(10, true)
 
 static func _proc_push(game_state : GameState):
 	var p1 = game_state.p1
@@ -32,7 +32,7 @@ static func _proc_push(game_state : GameState):
 	var dp = (p2.pos - p1.pos).abs()
 	var dx = CHARA_DIST - dp.x
 	if dp.y != 0:
-		var cr = (p1.state & ST.STATE_CROUCH_BIT) > 0 or (p2.state & ST.STATE_CROUCH_BIT) > 0
+		var cr = false#(p1.state & ST.STATE_CROUCH_BIT) > 0 or (p2.state & ST.STATE_CROUCH_BIT) > 0
 		var ht = CHARA_HALF_HEIGHT_CR if cr else CHARA_HALF_HEIGHT
 		var dy = (dp.y - ht) * 2
 		if dy > 0:
@@ -73,7 +73,10 @@ static func _proc_push(game_state : GameState):
 	return dp.x
 
 static func _check_hit(p1 : PlayerState, p2 : PlayerState):
-	if p1.att_processed:
+	var p1state = p1.state as _CsAttBase
+	if not p1state:
+		return null
+	if p1state.att_processed:
 		return null
 	var hurts : Array[ST.BoxInfo] = []
 	for b in p2.boxes:
@@ -86,6 +89,6 @@ static func _check_hit(p1 : PlayerState, p2 : PlayerState):
 			b2.position += dp
 			for b3 in hurts:
 				if b2.intersects(b3.rect):
-					p1.att_processed = true
-					return p1.current_action.hit_info[b.hit_i]
+					p1state.att_processed = true
+					return p1state.query_hit()
 	return null

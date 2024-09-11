@@ -5,7 +5,7 @@ const _STATE_NAME = "walk"
 var fwd = true
 
 static func try_next(state : PlayerState):
-	var d = state.input_history.dirs[0][0]
+	var d = state.input_history.last_dir()
 	if d == 4 or d == 6:
 		return new()
 
@@ -17,18 +17,19 @@ func init():
 
 func check_next(state : PlayerState):
 	var next = null
-	next = CsNormal.try_next(state, ST.CancelInfo.from_all())
+	next = CsNormal.try_next(state, 1, ST.CancelInfo.from_all())
 	if next: return next
 	
-	var ldir = state.input_history.dirs[0][0]
-	if state.input_history.bts[0][0] != 0 or (ldir != 4 and ldir != 6):
+	var lbt = state.input_history.last_bts()
+	var ldir = state.input_history.last_dir()
+	if lbt != 0 or (ldir != 4 and ldir != 6):
 		return CsIdle.new()
 
 func deinit():
 	pass
 
 func step(state : PlayerState):
-    _step()
+	_step()
 	var d = state.input_history.last_dir()
 	if fwd != (d > 5):
 		fwd = !fwd

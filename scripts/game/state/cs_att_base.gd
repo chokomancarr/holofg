@@ -18,11 +18,12 @@ func step(state : PlayerState):
 				att_part = ST.ATTACK_PART.ACTIVE
 				current_att = b.hit_i
 		elif is_att and not found_att:
-			if b.frame_start > state.state_t:
+			if b.frame_start > state_t:
 				att_part = ST.ATTACK_PART.STARTUP
 			else:
 				att_part = ST.ATTACK_PART.RECOVERY
-	att_processed = !found_att
+				att_processed = false
+	#att_processed = !found_att
 
 func query_hit():
 	return move.hit_info[current_att]

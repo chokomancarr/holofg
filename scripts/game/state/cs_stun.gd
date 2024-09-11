@@ -7,7 +7,7 @@ static func try_next(state : PlayerState):
 	return null
 
 func _init(p : PlayerState, info : ST.HitInfo):
-	anim_name = "stun"
+	anim_name = "stun_st_head"
 	n_stun = info.stun_hit
 
 func init():
@@ -21,6 +21,8 @@ func deinit():
 	pass
 
 func step(state : PlayerState):
-    _step()
+	_step()
 	state.boxes = [state._info.idle_box] as Array[ST.BoxInfo]
 
+func get_anim_frame():
+	return (state_t * 60) / n_stun

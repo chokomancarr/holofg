@@ -1,38 +1,50 @@
 class_name IN
 
+const V = "v"
+const NF = "nf"
+const NP = "np"
+
 class InputHistory:
-	var bts : Array
+	var his : Array[InputState]
 	var dirs : Array
-	var sx : String
-	var s5 : String
 	
 	func _init():
-		bts.push_front({ v: 0, nf: 1 })
-		dirs.push_front({ v: 5, nf: 1 })
+		his.push_front(InputState.new())
+		dirs.push_front({ V: 5, NF: 1 })
 	
 	func push(v : InputState):
-		sx = v.name(false)
-		s5 = v.name(true)
+		#sx = v.name(false)
+		#s5 = v.name(true)
 		var b = v.bts()
 		var d = v.dir_flipped()
 		
-		if b == bts[0].v:
-			bts[0].nf += 1
+		if v.val == his[0].val:
+			his[0].nf += 1
 		else:
-			bts.push_front({ v: b, nf: 1 })
-			if bts.size() > 30:
-				bts.pop_back()
+			var st = v.clone()
+			st.processed = false
+			st.new_bt = (b & (~his[0].bts())) > 0
+			his.push_front(st)
+			#bts.push_front({ V: b, NF: 1, "used": false, NP: (b & (~bts[0].v)) > 0, "_id": _id })
+			if his.size() > 30:
+				his.pop_back()
 		
 		if d == dirs[0].v:
 			dirs[0].nf += 1
 		else:
-			dirs.push_front({ v: d, nf: 1 })
+			dirs.push_front({ V: d, NF: 1 })
 			if dirs.size() > 30:
 				dirs.pop_back()
+	
+	func last_bts():
+		return his[0].bts()
+	func last_dir():
+		return dirs[0].v
 
 class InputState:
 	var val : int = 5
 	var nf : int = 1
+	var new_bt : bool = false
 	var processed : bool = false
 	
 	func _init(val = 5, nf = 1):
@@ -139,21 +151,21 @@ class InputCommand:
 			return _DIR_ALLOWED[cmd].has(dir)
 
 	func check(history : InputHistory):
-		if history.bts[0] != bt: return false
+		if history.his[0].bts() != bt: return false
 		var ff = 0
 		var ci = 0
 		var cn = command.size()
 		if cn == 0:
-			return command_str == history.sx or command_str == history.s5
+			return command_str == history.his[0].name(false) or command_str == history.his[0].name(true)
 		var cmd = command[0]
 		var is_opt = false
 		for h in history.dirs:
-			var dir = h[0]
+			var dir = h.v
 			if ff == 0 and dir == 5:
-				if h[1] > t_dir2bt:
+				if h.nf > t_dir2bt:
 					break
 				else:
-					ff += h[1]
+					ff += h.nf
 					if ff > t_dirs:
 						break
 					continue
@@ -179,7 +191,7 @@ class InputCommand:
 				is_opt = cmd > 1000
 				cmd &= ~1024
 			
-			ff += h[1]
+			ff += h.nf
 			if ff > t_dirs:
 				break
 		return false

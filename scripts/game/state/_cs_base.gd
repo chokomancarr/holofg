@@ -21,7 +21,7 @@ func _step():
 	next_offset = Vector2i.ZERO
 
 func get_anim_frame():
-	return state_t
+	return state_t - 1
 
 func query_hit():
 	assert(false, "state does not implement query_hit!")

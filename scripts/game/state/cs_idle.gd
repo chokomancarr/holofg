@@ -25,13 +25,11 @@ func check_next(state : PlayerState):
 	next = CsWalk.try_next(state)
 	if next: return next
 
-func clone_next():
-	return _clone_next(ObjUtil.clone(self, new()))
-
 func deinit():
 	pass
 
 func step(state : PlayerState):
+    _step()
 	var d = state.input_history.last_dir()
 	if standing != (d > 3):
 		standing = !standing

@@ -1,11 +1,9 @@
-class_name CsNormal extends _CsBase
-
-const _STATE_NAME = "normal"
-
-const move_prio = 2
+class_name _CsAttBase extends _CsBase
 
 var move : DT.MoveInfo
 var current_att : int
+var att_processed : bool
+var att_part : ST.ATTACK_PART
 
 static func try_next(state : PlayerState, allow : ST.CancelInfo):
 	var last_input = state.input_history.history[0]
@@ -26,19 +24,6 @@ static func try_next(state : PlayerState, allow : ST.CancelInfo):
 					res.anim_name = move.name
 					return res
 
-func _init():
-	pass
-
-func init():
-	pass
-
-func check_next(state : PlayerState):
-	if state_t == move.n_frames:
-		return CsIdle.new()
-
-func deinit():
-	pass
-
 func step(state : PlayerState):
     _step()
 	state.boxes = []
@@ -49,13 +34,20 @@ func step(state : PlayerState):
 			state.boxes.push_back(b as ST.BoxInfo)
 			if is_att and not found_att:
 				found_att = true
-				#state.att_part = ST.ATTACK_PART.ACTIVE
+			    att_part = ST.ATTACK_PART.ACTIVE
 				current_att = b.hit_i
-		#elif is_att and not found_att:
-			#if b.frame_start > state.state_t:
-				#state.att_part = ST.ATTACK_PART.STARTUP
-			#else:
-				#state.att_part = ST.ATTACK_PART.RECOVERY
+		elif is_att and not found_att:
+			if b.frame_start > state.state_t:
+				att_part = ST.ATTACK_PART.STARTUP
+			else:
+				att_part = ST.ATTACK_PART.RECOVERY
+    att_processed = !found_att
 
 func query_hit():
 	return move.hit_info[current_att]
+
+func query_stun():
+    if att_part == ST.ATTACK_PART.RECOVERY:
+        return ST.STUN_TY.PUNISH_COUNTER
+    else:
+        return ST.STUN_TY.COUNTER

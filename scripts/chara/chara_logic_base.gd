@@ -77,7 +77,7 @@ func _init_common_moves():
 var force_rename = false
 var res_state : ST.STATE_TY
 
-func step(state : PlayerState, st_old : PlayerState, inputs : IN.InputState):
+func step(state : PlayerState, inputs : IN.InputState):
 	if state.action_is_p2:
 		inputs.val |= IN.DIR_FLIP_BIT
 	else:
@@ -92,7 +92,7 @@ func step(state : PlayerState, st_old : PlayerState, inputs : IN.InputState):
 	state.pos += state.state.next_offset
 
 static func apply_hit(p : PlayerState, hit_info: ST.HitInfo, ppldist : int):
-	pass
+	p.state = CsStun.new(p, hit_info)
 
 static func _get_stun_ty(p : PlayerState):
 	return ST.STUN_TY.NORMAL

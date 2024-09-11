@@ -27,12 +27,19 @@ static func create(info : DT.CharaInfo, is_p1 : bool) -> PlayerState:
 	res.state = CsIdle.new()
 	return res
 
-static func from(src: PlayerState) -> PlayerState:
-	var res = ObjUtil.clone(src, new())
-	res.input_history = src.input_history.clone()
-	var tar_state = src.state
+func prestep() -> PlayerState:
+	var tar_state = state
 	while tar_state:
-		res.state = tar_state
-		tar_state = res.state.check_next(res)
-	res.state = res.state.clone_next()
-	return res
+		state = tar_state
+		tar_state = state.check_next(self)
+	return self
+
+#static func from(src: PlayerState) -> PlayerState:
+#	var res = ObjUtil.clone(src, new())
+#	res.input_history = src.input_history.clone()
+#	var tar_state = src.state
+#	while tar_state:
+#		res.state = tar_state
+#		tar_state = res.state.check_next(res)
+#	res.state = res.state.clone_next()
+#	return res

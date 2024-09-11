@@ -23,13 +23,11 @@ func check_next(state : PlayerState):
 	next = CsIdle.try_next(state)
 	if next: return next
 
-func clone_next():
-	return _clone_next(ObjUtil.clone(self, new()))
-
 func deinit():
 	pass
 
 func step(state : PlayerState):
+    _step()
 	var d = state.input_history.last_dir()
 	if fwd != (d > 5):
 		fwd = !fwd

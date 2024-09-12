@@ -37,7 +37,7 @@ func step():
 func check_next(state : PlayerState):
 	var next = null
 	if state.pos.y == 0:
-		return CsIdle.new()
+		return CsLandRecovery.new(3)
 	if att_processed:
 		var info = query_hit()
 		if info.cancels:

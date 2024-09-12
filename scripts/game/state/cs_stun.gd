@@ -4,7 +4,9 @@ const _STATE_NAME = "stun"
 var n_stun : int
 
 func _init(p : PlayerState, info : ST.HitInfo):
-	anim_name = "stun_st_head"
+	anim_name = "stun_%s_%s" % [
+		"st", ST.STUN_DIR.find_key(info.stun_dir).to_lower()
+	]
 	n_stun = info.stun_hit
 
 func init():

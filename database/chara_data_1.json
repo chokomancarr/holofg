@@ -37,7 +37,8 @@
 						"normals": [ "5l" ]
 					},
 					"push": 150,
-					"minspace": 300
+					"minspace": 300,
+					"dir": "HEAD"
 				}
 			]
 		},
@@ -50,8 +51,9 @@
 			"hit_info": [{
 				"stun": [ 8, 13 ],
 				"cancel": {
-						"targets": [ "5m.5m" ]
-					}
+					"targets": [ "5m.5m" ]
+				},
+				"dir": "BODY"
 			}]
 		},
 		"5m.5m": {
@@ -70,7 +72,7 @@
 				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
 				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [100, 350, 150, 100]}
 			],
-			"hit_info": [{"stun": [ 8, 13 ]}]
+			"hit_info": [{"stun": [ 8, 13 ], "dir": "HEAD"}]
 		},
 		"2l": {
 			"n_frames": 16,
@@ -78,7 +80,7 @@
 				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
 				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [100, 350, 150, 100]}
 			],
-			"hit_info": [{"stun": [ 8, 13 ]}]
+			"hit_info": [{"stun": [ 8, 13 ], "dir": "LEG"}]
 		},
 		"2m": {
 			"n_frames": 20,
@@ -86,7 +88,7 @@
 				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
 				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [100, 350, 150, 100]}
 			],
-			"hit_info": [{"stun": [ 8, 13 ]}]
+			"hit_info": [{"stun": [ 8, 13 ], "dir": "LEG"}]
 		},
 		"2h": {
 			"n_frames": 30,
@@ -94,7 +96,7 @@
 				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
 				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [100, 350, 150, 100]}
 			],
-			"hit_info": [{"stun": [ 8, 13 ]}]
+			"hit_info": [{"stun": [ 8, 13 ], "dir": "LEG"}]
 		},
 		"4h": {
 			"n_frames": 24,

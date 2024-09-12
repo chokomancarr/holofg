@@ -39,6 +39,7 @@ class HitInfo:
 	var ty := ATTACK_TY.MID
 	var knock_ty := KNOCK_TY.NONE
 	var punish_knock_ty := KNOCK_TY.NONE
+	var dir := STUN_DIR.HEAD
 	var cancels := CancelInfo.new()
 
 class CancelInfo:

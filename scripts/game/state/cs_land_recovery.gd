@@ -21,3 +21,9 @@ func deinit():
 func step(state : PlayerState):
 	_step()
 	state.boxes = [state._info.idle_box] as Array[ST.BoxInfo]
+
+func query_stun():
+	return ST.STUN_TY.PUNISH_COUNTER
+
+func get_anim_frame():
+	return (state_t * 60) / n_recovery

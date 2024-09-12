@@ -129,6 +129,7 @@ static func _parse_move(nm : String, frames : Dictionary):
 			hres.cancels.normal_lmh = "lmh".find(nm[-1]) + 1
 			if h.has("push"): hres.push_hit = h.push
 			if h.has("minspace"): hres.min_space = h.minspace
+			if h.has("dir"): hres.dir = ST.STUN_DIR.get(h.dir)
 			move.hit_info.push_back(hres)
 	return move
 

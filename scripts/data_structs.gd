@@ -80,7 +80,9 @@ class CancelInfo:
 	func can_sp(s : String):
 		return everything || all_specials || specials.has(s)
 	func can_nr(s : String):
-		return everything || normals.has(s) || _normal_strengths[normal_lmh].contains(s[1])
+		return everything || normals.has(s) || _normal_strengths[normal_lmh].contains(s[-1])
+	func can_anr(s : String):
+		return everything || _normal_strengths[normal_lmh].contains(s[-1])
 
 enum STATE_TY {
 	IDLE_5 = 0x0001,

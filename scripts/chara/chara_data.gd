@@ -125,6 +125,8 @@ static func _parse_move(nm : String, frames : Dictionary):
 			if h.has("ty"): hres.ty = ST.ATTACK_TY.get(h.ty)
 			if h.has("knock_ty"): hres.knock_ty = ST.KNOCK_TY.get(h.knock_ty)
 			if h.has("cancel"): hres.cancels = ST.CancelInfo.from_json(h.cancel)
+			else: hres.cancels = ST.CancelInfo.new()
+			hres.cancels.normal_lmh = "lmh".find(nm[-1]) + 1
 			if h.has("push"): hres.push_hit = h.push
 			if h.has("minspace"): hres.min_space = h.minspace
 			move.hit_info.push_back(hres)

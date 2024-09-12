@@ -3,9 +3,6 @@ class_name CsStun extends _CsBase
 const _STATE_NAME = "stun"
 var n_stun : int
 
-static func try_next(state : PlayerState):
-	return null
-
 func _init(p : PlayerState, info : ST.HitInfo):
 	anim_name = "stun_st_head"
 	n_stun = info.stun_hit

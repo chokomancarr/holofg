@@ -17,4 +17,4 @@ func _process(delta):
 	#par.scale.x = -1 if pst.action_is_p2 else 1
 	arm.rotation.y = -PI / 2 if pst.action_is_p2 else PI / 2
 	
-	anim_ctrl.step(pst, delta)
+	anim_ctrl.step(GameMaster.game_state, pst, delta)

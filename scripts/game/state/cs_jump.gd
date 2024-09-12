@@ -12,7 +12,6 @@ static var _jump_moves = (func ():
 	var _v = 1
 	const _g = 10
 	for i in range(18):
-		#_jumpcurve.push_back([0, roundi(cos(PI * 0.5 * i / 17.0)) * 100])
 		_jumpcurve.push_back([0, _v])
 		_v += _g
 	_jumpcurve.append_array([ [0, 0], [0, 0], [0, 0] ])
@@ -46,9 +45,6 @@ static var _jump_moves = (func ():
 ).call()
 
 static func try_next(state : PlayerState):
-	#if state.input_history.his[0].nf > 1:
-	#	return null
-	
 	for i in range(3):
 		if _jump_moves[i].cmd.check(state.input_history):
 			return new(i)
@@ -62,8 +58,16 @@ func init():
 	pass
 
 func check_next(state : PlayerState):
+	var next = null
 	if state_t == move.n_frames:
 		return CsIdle.new()
+	else:
+		if state_t > 2:
+			next = CsAirNormal.try_next(state, 4, ST.CancelInfo.from_all(), dir)
+			if next:
+				next.jump_traj = move.offsets
+				next.jump_traj_off = state_t
+				return next
 
 func deinit():
 	pass

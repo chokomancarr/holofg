@@ -5,6 +5,20 @@ var current_att : int
 var att_processed : bool
 var att_part : ST.ATTACK_PART
 
+func _check_inputs(state, sliceback, callback):
+	var his = state.input_history
+	var n = 0
+	var move : DT.MoveInfo
+	for st : IN.InputState in his.his:
+		n += st.nf
+		if st.processed or n > sliceback:
+			return null
+		if not st.new_bt:
+			continue
+		var res = callback.call(st, n)
+		if res:
+			return res
+
 func step(state : PlayerState):
 	_step()
 	state.boxes = []

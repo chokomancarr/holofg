@@ -27,19 +27,21 @@ static func create(info : DT.CharaInfo, is_p1 : bool) -> PlayerState:
 	res.state = CsIdle.new()
 	return res
 
-func add_inputs(inputs : IN.InputState):
+func add_inputs(inputs : IN.InputState) -> PlayerState:
 	if action_is_p2:
 		inputs.val |= IN.DIR_FLIP_BIT
 	else:
 		inputs.val &= ~IN.DIR_FLIP_BIT
 	input_history.push(inputs)
+	return self
 
-func prestep() -> PlayerState:
+func prestep():
 	var tar_state = state
 	while tar_state:
 		state = tar_state
+		if state.use_pos_flip:
+			action_is_p2 = pos_is_p2
 		tar_state = state.check_next(self)
-	return self
 
 func step():
 	state.step(self)

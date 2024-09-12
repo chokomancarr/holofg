@@ -3,6 +3,7 @@ class_name _CsBase
 var state_t : int = 0
 var next_offset : Vector2i
 var anim_name : String = ""
+var use_pos_flip : bool
 
 func init():
 	pass

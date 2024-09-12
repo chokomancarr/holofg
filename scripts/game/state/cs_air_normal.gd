@@ -1,25 +1,21 @@
-class_name CsNormal extends _CsAttBase
+class_name CsAirNormal extends _CsAttBase
 
-const _STATE_NAME = "normal"
+const _STATE_NAME = "airnormal"
 
 const move_prio = 2
+var jump_traj : DT.OffsetInfo
+var jump_traj_off : int
 
-
-static func try_next(state : PlayerState, sliceback : int, allow : ST.CancelInfo):
-#	var his = state.input_history
-#	var n = 0
-#	var move : DT.MoveInfo
-#	for st : IN.InputState in his.his:
-#		n += st.nf
-#		if st.processed or n > sliceback:
-#			return null
-#		if not st.new_bt:
-#			continue
+static func try_next(state : PlayerState, sliceback : int, allow : ST.CancelInfo, jdir: int):
+	var jx = "%d." % [ jdir + 7 ]
+	var j8 = "8."
 	return _check_inputs(state, sliceback, func (st, n):
-		for nrm in [st.name(false), st.name(true)]:
-			move = state._info.moves_nr.get(nrm)
+		var nmx = st.name(false)
+		var nm5 = st.name(true)
+		for nrm in [jx + nmx, j8 + nmx, jx + nm5, j8 + nm5]:
+			move = state._info.moves_j_nr.get(nrm)
 			if move:
-				if allow.can_nr(nrm):
+				if allow.can_anr(nrm):
 					var res = new()
 					res.move = move
 					res.anim_name = move.name
@@ -34,11 +30,15 @@ func _init():
 func init():
 	pass
 
+func step():
+	super.step()
+	next_offset = jump_traj.eval(jump_traj_off + state_t - 1)
+
 func check_next(state : PlayerState):
 	var next = null
-	if state_t == move.n_frames:
+	if state.pos.y == 0:
 		return CsIdle.new()
-	elif att_processed:
+	if att_processed:
 		var info = query_hit()
 		if info.cancels:
 			next = CsTargetCombo.try_next(state, state_t + 10, info.cancels)

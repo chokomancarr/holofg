@@ -33,3 +33,9 @@ func _get_debug_text():
 		return "(%s) %s (%s)  P%d" % [p.state.state_t, p.state._STATE_NAME, p.state.anim_name, i]
 	
 	return "%s\n%s" % [ pr.call(p1, 1), pr.call(p2, 2) ]
+
+func get_anim_timescale():
+	return (1.0 / (freeze_n - 1)) if is_frozen() else 1.0
+
+func get_anim_framediff():
+	return (freeze_t / freeze_n) if is_frozen() else 0.0

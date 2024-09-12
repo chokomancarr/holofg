@@ -8,6 +8,7 @@ var first = true
 
 func _init():
 	anim_name = "5"
+	use_pos_flip = true
 
 func init():
 	pass
@@ -31,6 +32,7 @@ func deinit():
 
 func step(state : PlayerState):
 	_step()
+	
 	var d = state.input_history.last_dir()
 	if standing != (d > 3):
 		standing = !standing

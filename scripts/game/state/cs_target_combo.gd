@@ -1,6 +1,6 @@
-class_name CsNormal extends _CsAttBase
+class_name CsTargetCombo extends _CsAttBase
 
-const _STATE_NAME = "normal"
+const _STATE_NAME = "targetcombo"
 
 const move_prio = 2
 
@@ -16,16 +16,16 @@ static func try_next(state : PlayerState, sliceback : int, allow : ST.CancelInfo
 #		if not st.new_bt:
 #			continue
 	return _check_inputs(state, sliceback, func (st, n):
-		for nrm in [st.name(false), st.name(true)]:
-			move = state._info.moves_nr.get(nrm)
-			if move:
-				if allow.can_nr(nrm):
-					var res = new()
-					res.move = move
-					res.anim_name = move.name
-					
-					st.processed = true
-					return res
+		var nms = [ st.name(false), st.name(true) ]
+		for tar in allow.targets:
+			var move = state._info.moves_tr[tar]
+			if nms.has(move.cmd.command_str):
+				var res = new()
+				res.move = move
+				res.anim_name = move.name
+				
+				st.processed = true
+				return res
 	)
 
 func _init():
@@ -42,10 +42,7 @@ func check_next(state : PlayerState):
 		var info = query_hit()
 		if info.cancels:
 			next = CsTargetCombo.try_next(state, state_t + 10, info.cancels)
-			if next: return next
-			
-			next = CsNormal.try_next(state, state_t + 10, info.cancels)
-			if next: return next
+		if next: return next
 
 func deinit():
 	pass

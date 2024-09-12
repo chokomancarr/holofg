@@ -10,6 +10,8 @@ var pos: Vector2i
 var pos_is_p2: bool
 var action_is_p2: bool
 
+var summons: _SmBase
+
 var boxes: Array[ST.BoxInfo] = []
 var move_name: String = "5"
 

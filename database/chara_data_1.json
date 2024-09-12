@@ -8,7 +8,7 @@
 	"moves": {
 		"supers": [ "236s", "214s" ],
 		"specials": [
-			"623l", "214l"
+			"623l", "214l", "236l"
 		],
 		"normals": [ "4h" ],
 		"targets": [ "5m.5m", "214l.6l", "214l.6l.6l" ],
@@ -156,6 +156,15 @@
 				{
 					"stun": [ 12, 50 ]
 				}
+			]
+		},
+		"236l": {
+			"n_frames" : 60,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 60,"ty": "HURT","rect": [-200, 0, 400, 1000]}
+			],
+			"spawns": [
+				{ "f": 12, "sig": "TOWA_236L" }
 			]
 		},
 		"8.5l": {

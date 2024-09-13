@@ -21,11 +21,14 @@ func _step():
 	state_t += 1
 	next_offset = Vector2i.ZERO
 
-func get_anim_frame():
-	return state_t - 1
+func get_anim_frame(df):
+	return state_t
 
 func query_hit():
 	assert(false, "state does not implement query_hit!")
 
 func query_stun():
 	return ST.STUN_TY.NORMAL
+
+func get_frame_meter_color():
+	return null

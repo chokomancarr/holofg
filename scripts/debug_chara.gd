@@ -23,8 +23,8 @@ func _physics_process(delta):
 	
 	_update_input_history_ui(game_state)
 	
-	#if game_state.freeze_n == 0 || game_state.freeze_t == 0:
-		#frame_meter.step(game_state.p1, game_state.p2)
+	if game_state.freeze_n == 0 || game_state.freeze_t == 0:
+		frame_meter.step(game_state.p1, game_state.p2)
 
 	if show_hitbox:
 		_draw_debug_chara(game_state.p1, 0)
@@ -37,23 +37,22 @@ const _dir_unicode = [
 ]
 
 func _update_input_history_ui(game_state : GameState):
-	pass
-#	for c in _his_gc.get_children():
-#		c.queue_free()
-#	
-#	for i in game_state.p1.input_history.history:
-#		var d = Label.new()
-#		d.text = str(mini(i.nf, 99)) + "  "
-#		_his_gc.add_child(d)
-#		d = Label.new()
-#		d.text = _dir_unicode[i.dir()]
-#		_his_gc.add_child(d)
-#		d = Label.new()
-#		if i.l(): d.text += "L "
-#		if i.m(): d.text += "M "
-#		if i.h(): d.text += "H "
-#		if i.s(): d.text += "S "
-#		_his_gc.add_child(d)
+	for c in _his_gc.get_children():
+		c.queue_free()
+	
+	for i in game_state.p1.input_history.his:
+		var d = Label.new()
+		d.text = str(mini(i.nf, 99)) + "  "
+		_his_gc.add_child(d)
+		d = Label.new()
+		d.text = _dir_unicode[i.dir()]
+		_his_gc.add_child(d)
+		d = Label.new()
+		if i.l(): d.text += "L "
+		if i.m(): d.text += "M "
+		if i.h(): d.text += "H "
+		if i.s(): d.text += "S "
+		_his_gc.add_child(d)
 
 var _boxview_elems = [
 	[], []

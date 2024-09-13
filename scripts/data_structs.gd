@@ -32,6 +32,7 @@ class BoxInfoFrame extends BoxInfo:
 		self.frame_end = ed
 
 class HitInfo:
+	var n_freeze: int
 	var stun_block : int
 	var stun_hit : int
 	var push_hit : int
@@ -84,6 +85,13 @@ class CancelInfo:
 		return everything || normals.has(s) || _normal_strengths[normal_lmh].contains(s[-1])
 	func can_anr(s : String):
 		return everything || _normal_strengths[normal_lmh].contains(s[-1])
+
+class SpawnInfo:
+	var frame: int
+	var sig: String
+
+
+
 
 enum STATE_TY {
 	IDLE_5 = 0x0001,

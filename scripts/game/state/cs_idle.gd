@@ -15,6 +15,9 @@ func init():
 
 func check_next(state : PlayerState):
 	var next = null
+	next = CsSpecial.try_next(state, 10 if first else 1, ST.CancelInfo.from_all())
+	if next: return next
+	
 	next = CsNormal.try_next(state, 10 if first else 1, ST.CancelInfo.from_all())
 	if next: return next
 	
@@ -43,5 +46,5 @@ func step(state : PlayerState):
 	
 	first = false
 
-func get_anim_frame():
+func get_anim_frame(df):
 	return -1

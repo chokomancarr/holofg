@@ -31,11 +31,16 @@ func clear():
 		c.color = Color.TRANSPARENT
 
 func step(p1 : PlayerState, p2 : PlayerState):
-	var r1 = _get_c(p1)
-	var r2 = _get_c(p2)
+	var r1 = p1.state.get_frame_meter_color()
+	var r2 = p2.state.get_frame_meter_color()
 	if not r1 and not r2:
 		pos = -1
 		return
+	
+	if r1 and p1.state.state_t == 1:
+		r1 = r1.darkened(0.2)
+	if r2 and p2.state.state_t == 1:
+		r2 = r2.darkened(0.2)
 	
 	if pos == -1:
 		pos = 0
@@ -51,15 +56,3 @@ func step(p1 : PlayerState, p2 : PlayerState):
 		pos = 0
 	p1_cells[pos].color = Color.TRANSPARENT
 	p2_cells[pos].color = Color.TRANSPARENT
-
-func _get_c(p : PlayerState):
-	match p.state:
-		ST.STATE_TY.ACTION:
-			match p.att_part:
-				ST.ATTACK_PART.STARTUP: return Color.LIME_GREEN
-				ST.ATTACK_PART.ACTIVE: return Color.RED
-				ST.ATTACK_PART.RECOVERY: return Color.ROYAL_BLUE
-		ST.STATE_TY.STUN:
-			return Color.YELLOW
-		_:
-			return null

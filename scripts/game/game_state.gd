@@ -21,7 +21,7 @@ static func from_info(info_p1 : DT.CharaInfo, info_p2 : DT.CharaInfo):
 	)
 
 func is_frozen():
-	return freeze_t < freeze_n
+	return freeze_n > 0
 
 func freeze(n, canbuf = false):
 	freeze_t = 0
@@ -38,4 +38,4 @@ func get_anim_timescale():
 	return (1.0 / (freeze_n - 1)) if is_frozen() else 1.0
 
 func get_anim_framediff():
-	return (freeze_t / freeze_n) if is_frozen() else 0.0
+	return (freeze_t * 1.0 / freeze_n) if is_frozen() else 0.0

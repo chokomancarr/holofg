@@ -15,10 +15,13 @@ class CharaInfo:
 
 class MoveInfo:
 	var name: String
+	var alias_name: String
 	var cmd: IN.InputCommand
 	var n_frames: int
+	var can_rapid: bool
 	var boxes: Array[ST.BoxInfoFrame]
 	var hit_info: Array[ST.HitInfo]
+	var spawn_info: Array[ST.SpawnInfo]
 	var offsets : OffsetInfo
 	var can_hold : bool = false
 	var is_jump: bool = false
@@ -28,6 +31,9 @@ class MoveInfo:
 
 class OffsetInfo:
 	var vals = []
+	static func from_json(o, nf):
+		return from_keys(o.offsets, nf) if o.offsets_use_keyframes else from_vals(o.offsets, nf)
+	
 	static func from_vals(vs : Array, n : int):
 		var res = new()
 		for v in vs:
@@ -73,10 +79,7 @@ static func load_chara(chara_id):
 	var dash = data.frames["66"]
 	if dash:
 		res.dash_nf_fwd = dash.n_frames
-		res.dash_off_fwd =\
-			OffsetInfo.from_keys(dash.offsets, res.dash_nf_fwd)\
-				if dash.offsets_use_keyframes\
-			else OffsetInfo.from_vals(dash.offsets, res.dash_nf_fwd)
+		res.dash_off_fwd = OffsetInfo.from_json(dash, res.dash_nf_fwd)
 	
 	for sp in data.moves.specials:
 		res.moves_sp.push_back(_parse_move(sp, data.frames))
@@ -100,11 +103,15 @@ static func load_chara(chara_id):
 static func _parse_move(nm : String, frames : Dictionary):
 	var move = MoveInfo.new()
 	var src = frames[nm]
-	move.name = nm
+	move.name = nm.replace(".", "_")
 	move.cmd = IN.InputCommand.from_string(nm)
 	move.n_frames = src.n_frames
+	if src.has("alias"):
+		move.alias_name = src.alias
+	if src.has("rapid"):
+		move.can_rapid = src.rapid
 	if src.has("boxes"):
-		for d in (src.boxes):
+		for d in src.boxes:
 			var bres = ST.BoxInfoFrame.new(
 				parse_box(d),
 				d.frame_start,
@@ -117,9 +124,12 @@ static func _parse_move(nm : String, frames : Dictionary):
 				_:
 					pass
 			move.boxes.push_back(bres)
+	if src.has("offsets"):
+		move.offsets = OffsetInfo.from_json(src.offsets, move.n_frames)
 	if src.has("hit_info"):
-		for h in (src.hit_info):
+		for h in src.hit_info:
 			var hres = ST.HitInfo.new()
+			hres.n_freeze = h.n_freeze if h.has("n_freeze") else 10
 			hres.stun_block = h.stun[0]
 			hres.stun_hit = h.stun[1]
 			if h.has("ty"): hres.ty = ST.ATTACK_TY.get(h.ty)
@@ -131,6 +141,13 @@ static func _parse_move(nm : String, frames : Dictionary):
 			if h.has("minspace"): hres.min_space = h.minspace
 			if h.has("dir"): hres.dir = ST.STUN_DIR.get(h.dir)
 			move.hit_info.push_back(hres)
+	if src.has("spawns"):
+		for s in src.spawns:
+			var sres = ST.SpawnInfo.new()
+			sres.frame = s.f
+			sres.sig = s.sig
+			move.spawn_info.push_back(sres)
+	
 	return move
 
 static func parse_box(d):

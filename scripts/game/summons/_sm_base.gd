@@ -1,7 +1,7 @@
 class_name _SmBase
 
-var pos : iVector2
-var next_offset : iVector2
+var pos : Vector2i
+var next_offset : Vector2i
 var alive : bool
 
 var scene : String

@@ -7,6 +7,8 @@ const move_prio = 1
 var dir: int
 var move : DT.MoveInfo
 
+var aerial : bool
+ 
 static var _jump_moves = (func ():
 	var _jumpcurve = []
 	var _v = 1
@@ -19,9 +21,9 @@ static var _jump_moves = (func ():
 	for i in range(21):
 		_jumpcurve.push_back([0, -_jumpcurve[20 - i][1]])
 	var jump_offsets = [
-		DT.OffsetInfo.from_vals(_jumpcurve, 41),
-		DT.OffsetInfo.from_vals(_jumpcurve, 41),
-		DT.OffsetInfo.from_vals(_jumpcurve, 41)
+		DT.OffsetInfo.from_vals(_jumpcurve, 43),
+		DT.OffsetInfo.from_vals(_jumpcurve, 43),
+		DT.OffsetInfo.from_vals(_jumpcurve, 43)
 	] as Array[DT.OffsetInfo]
 	for i in range(41):
 		jump_offsets[0].vals[i].x = -20
@@ -74,5 +76,9 @@ func deinit():
 
 func step(state : PlayerState):
 	_step()
+	aerial = state_t > 2 && state_t < 39
 	state.boxes = [state._info.idle_box] as Array[ST.BoxInfo]
-	next_offset = move.offsets.eval(state_t - 1)
+	next_offset = move.offsets.eval(state_t)
+
+func get_frame_meter_color():
+	return Color.LIGHT_BLUE if aerial else Color.GREEN_YELLOW

@@ -13,7 +13,7 @@ static func try_next(state : PlayerState, sliceback : int, allow : ST.CancelInfo
 		var nmx = st.name(false)
 		var nm5 = st.name(true)
 		for nrm in [jx + nmx, j8 + nmx, jx + nm5, j8 + nm5]:
-			move = state._info.moves_j_nr.get(nrm)
+			var move = state._info.moves_j_nr.get(nrm)
 			if move:
 				if allow.can_anr(nrm):
 					var res = new()
@@ -30,9 +30,9 @@ func _init():
 func init():
 	pass
 
-func step():
-	super.step()
-	next_offset = jump_traj.eval(jump_traj_off + state_t - 1)
+func step(state):
+	super.step(state)
+	next_offset = jump_traj.eval(jump_traj_off + state_t)
 
 func check_next(state : PlayerState):
 	var next = null

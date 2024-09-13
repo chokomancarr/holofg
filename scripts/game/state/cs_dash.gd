@@ -55,3 +55,6 @@ func step(state : PlayerState):
 	_step()
 	state.boxes = [state._info.idle_box] as Array[ST.BoxInfo]
 	next_offset = move.offsets.eval(state_t - 1)
+
+func get_frame_meter_color():
+	return Color.LIGHT_BLUE

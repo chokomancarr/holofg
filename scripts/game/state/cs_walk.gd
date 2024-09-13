@@ -40,5 +40,5 @@ func step(state : PlayerState):
 	state.boxes = [state._info.idle_box] as Array[ST.BoxInfo]
 	next_offset.x = state._info.walk_sp_fwd if fwd else -state._info.walk_sp_rev
 
-func get_anim_frame():
+func get_anim_frame(df):
 	return -1

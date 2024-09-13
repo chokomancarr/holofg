@@ -10,6 +10,8 @@ var pos: Vector2i
 var pos_is_p2: bool
 var action_is_p2: bool
 
+var dist_to_opp: Vector2i
+
 var summons: _SmBase
 
 var boxes: Array[ST.BoxInfo] = []
@@ -38,8 +40,12 @@ func add_inputs(inputs : IN.InputState) -> PlayerState:
 	return self
 
 func prestep():
+	var n = 0
 	var tar_state = state
 	while tar_state:
+		n += 1
+		if n > 1:
+			print_debug(state._STATE_NAME, " -> ", tar_state._STATE_NAME)
 		state = tar_state
 		if state.use_pos_flip:
 			action_is_p2 = pos_is_p2

@@ -100,6 +100,26 @@ class InputState:
 		
 		return res
 	
+	func names():
+		var bt = ""
+		if l(): bt += "l"
+		if m(): bt += "m"
+		if h(): bt += "h"
+		if s(): bt += "s"
+		
+		var d = dir()
+		
+		var res = []
+		if d != 5:
+			if [ 1, 3, 7, 9 ].has(d):
+				res.push_back(str(d) + bt)
+				d = d + 1 if (d == 1 or d == 7) else d - 1
+			res.push_back(str(d) + bt)
+		
+		res.push_back("5" + bt)
+		
+		return res
+	
 	func serialize() -> Dictionary:
 		return {
 			"v": val,

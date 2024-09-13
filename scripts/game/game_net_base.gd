@@ -26,14 +26,16 @@ func _step_game_state(state : GameState, p1_inputs, p2_inputs):
 	var p2 = state.p2.add_inputs(p2_inputs)
 	
 	if state.is_frozen():
-		state.freeze_t += 1
-		return
-	else:
-		state.freeze_n = 0
-		if state.countdown > 0:
-			state.countdown -= 1
-			if state.countdown == 0:
-				return
+		if state.freeze_t == state.freeze_n:
+			state.freeze_n = 0
+		else:
+			state.freeze_t += 1
+			return
+
+	if state.countdown > 0:
+		state.countdown -= 1
+		if state.countdown == 0:
+			return
 	
 	p1.prestep()
 	p2.prestep()

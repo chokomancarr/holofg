@@ -11,12 +11,17 @@ static func step(game_state : GameState):
 	var hit1 = _check_hit(game_state.p1, game_state.p2)
 	var hit2 = _check_hit(game_state.p2, game_state.p1)
 
+	var freeze = 0
+
 	if hit1:
 		game_state.p2.on_hit(hit1, dist)
-		game_state.freeze(10, true)
+		freeze = hit1.n_freeze
 	if hit2:
 		game_state.p1.on_hit(hit2, dist)
-		game_state.freeze(10, true)
+		freeze = maxi(freeze, hit2.n_freeze)
+	
+	if freeze > 0:
+		game_state.freeze(freeze, true)
 
 static func _proc_push(game_state : GameState):
 	var p1 = game_state.p1
@@ -69,6 +74,10 @@ static func _proc_push(game_state : GameState):
 	
 	var cx = clampi((p1.pos.x + p2.pos.x) / 2, WALL_W, 10000 - WALL_W)
 	game_state.wall = Vector2i(cx - WALL_W, cx + WALL_W)
+	
+	var sdp = p2.pos - p1.pos
+	p1.dist_to_opp = sdp
+	p2.dist_to_opp = -sdp
 	
 	return dp.x
 

@@ -21,8 +21,7 @@ class MoveInfo:
 	var n_frames: int
 	var can_rapid: bool
 	var boxes: Array[ST.BoxInfoFrame]
-	var hit_info: Array[ST.HitInfo]
-	var opp_info: ST.OppAnimInfo
+	var att_info: Array[ST._AttInfoBase]
 	var spawn_info: Array[ST.SpawnInfo]
 	var offsets : OffsetInfo
 	var can_hold : bool = false
@@ -120,6 +119,7 @@ static func _parse_move(nm : String, frames : Dictionary):
 		move.alias_name = src.alias
 	if src.has("rapid"):
 		move.can_rapid = src.rapid
+	var att_info_ty = null
 	if src.has("boxes"):
 		for d in src.boxes:
 			var bres = ST.BoxInfoFrame.new(
@@ -127,36 +127,49 @@ static func _parse_move(nm : String, frames : Dictionary):
 				d.frame_start,
 				d.frame_end
 			)
-			match bres.ty:
-				ST.BOX_TY.HIT:
-					if d.has("hit_info"):
-						bres.hit_i = roundi(d.hit_info)
-				_:
-					pass
+			att_info_ty = bres.ty
+			if d.has("att_info"):
+				bres.hit_i = d.att_info
+			else:
+				bres.hit_i = 0
 			move.boxes.push_back(bres)
 	if src.has("offsets"):
 		move.offsets = OffsetInfo.from_json(src.offsets, move.n_frames)
-	if src.has("hit_info"):
-		for h in src.hit_info:
-			var hres = ST.HitInfo.new()
-			hres.n_freeze = h.n_freeze if h.has("n_freeze") else 10
-			hres.stun_block = h.stun[0]
-			hres.stun_hit = h.stun[1]
-			if h.has("ty"): hres.ty = ST.ATTACK_TY.get(h.ty)
-			if h.has("knock_ty"): hres.knock_ty = ST.KNOCK_TY.get(h.knock_ty)
-			if h.has("cancel"): hres.cancels = ST.CancelInfo.from_json(h.cancel)
-			else: hres.cancels = ST.CancelInfo.new()
-			hres.cancels.normal_lmh = "lmh".find(nm[-1]) + 1
-			if h.has("push"): hres.push_hit = h.push
-			if h.has("minspace"): hres.min_space = h.minspace
-			if h.has("dir"): hres.dir = ST.STUN_DIR.get(h.dir)
-			move.hit_info.push_back(hres)
-	if src.has("opp_info"):
-		var h = src.opp_info
-		var hres = ST.OppAnimInfo.new()
-		hres.nf = h.n_frames
-		hres.fix_dist = h.fix_dist if h.has("fix_dist") else 10000000
-		move.opp_info = hres
+	if att_info_ty and src.has("att_info"):
+		for h in src.att_info:
+			var hres
+			match att_info_ty:
+				ST.BOX_TY.HIT:
+					hres = ST.AttInfo_Hit.new()
+					hres.n_freeze = h.n_freeze if h.has("n_freeze") else 10
+					hres.stun_block = h.stun[0]
+					hres.stun_hit = h.stun[1]
+					if h.has("ty"): hres.ty = ST.ATTACK_TY.get(h.ty)
+					if h.has("knock_ty"): hres.knock_ty = ST.KNOCK_TY.get(h.knock_ty)
+					if h.has("cancel"): hres.cancels = ST.CancelInfo.from_json(h.cancel)
+					else: hres.cancels = ST.CancelInfo.new()
+					hres.cancels.normal_lmh = "lmh".find(nm[-1]) + 1
+					if h.has("push"): hres.push_hit = h.push
+					if h.has("minspace"): hres.min_space = h.minspace
+					if h.has("dir"): hres.dir = ST.STUN_DIR.get(h.dir)
+				ST.BOX_TY.GRAB:
+					hres = ST.AttInfo_Grab.new()
+					hres.ty = h.ty if h.has("ty") else ST.ATTACK_TY.GRAB
+					hres.opp_nf = h.n_frames
+					hres.fix_dist = h.fix_dist if h.has("fix_dist") else 10000000
+					hres.end_dpos = h.end_dpos
+					if h.has("bounds_offset"):
+						hres.bounds_offset = OffsetInfo.from_json(h.bounds_offset, hres.opp_nf)
+				_:
+					pass
+			move.att_info.push_back(hres)
+	#if src.has("opp_info"):
+		#var h = src.opp_info
+		#var hres = ST.OppAnimInfo.new()
+		#hres.nf = h.n_frames
+		#hres.fix_dist = h.fix_dist if h.has("fix_dist") else 10000000
+		#hres.end_dpos = h.end_dpos
+		#move.opp_info = hres
 	if src.has("spawns"):
 		for s in src.spawns:
 			var sres = ST.SpawnInfo.new()

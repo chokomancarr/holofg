@@ -19,7 +19,8 @@ func step(state : PlayerState):
 				has_att = true
 				found_att = true
 				att_part = ST.ATTACK_PART.ACTIVE
-				current_att = -1 if is_grab else b.hit_i
+				current_att = b.hit_i
+				attack_ty = query_hit().ty
 		elif is_att and not found_att:
 			if b.frame_start > state_t:
 				att_part = ST.ATTACK_PART.STARTUP
@@ -36,7 +37,7 @@ func step(state : PlayerState):
 		next_offset = move.offsets.eval(state_t - 1)
 
 func query_hit():
-	return move.hit_info[current_att] if current_att >= 0 else move.opp_info
+	return move.att_info[current_att]
 
 func query_stun():
 	if att_part == ST.ATTACK_PART.RECOVERY:

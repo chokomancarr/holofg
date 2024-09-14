@@ -8,15 +8,9 @@ func _init(n):
 	self.n_recovery = n
 	anim_name = "8_recovery"
 
-func init():
-	pass
-
 func check_next(state : PlayerState):
 	if state_t == n_recovery:
 		return CsIdle.new()
-
-func deinit():
-	pass
 
 func step(state : PlayerState):
 	_step()

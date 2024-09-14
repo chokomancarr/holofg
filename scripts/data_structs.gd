@@ -31,21 +31,26 @@ class BoxInfoFrame extends BoxInfo:
 		self.frame_start = st
 		self.frame_end = ed
 
-class HitInfo:
+class _AttInfoBase:
+	var ty := ATTACK_TY.MID
+
+class AttInfo_Hit extends _AttInfoBase:
 	var n_freeze: int
 	var stun_block : int
 	var stun_hit : int
 	var push_hit : int
 	var min_space : int
-	var ty := ATTACK_TY.MID
 	var knock_ty := KNOCK_TY.NONE
 	var punish_knock_ty := KNOCK_TY.NONE
 	var dir := STUN_DIR.HEAD
 	var cancels := CancelInfo.new()
 
-class OppAnimInfo:
-	var nf: int
-	var fix_dist: int
+class AttInfo_Grab extends _AttInfoBase:
+	var opp_nf : int
+	var fix_dist := 1000000
+	var end_dpos : int
+	var can_tech : bool
+	var bounds_offset : DT.OffsetInfo
 
 class CancelInfo:
 	var everything: bool = false
@@ -111,7 +116,7 @@ static var STATE_CROUCH_BIT = 0x0002
 static var STATE_BLOCK_BIT = 0x0100
 
 enum BOX_TY {
-	HIT = 0, HURT = 1, GRAB = 2, COLLISION = 3
+	HIT = 1, HURT = 2, GRAB = 3, COLLISION = 4
 }
 
 static func get_box_color(ty : BOX_TY):
@@ -126,7 +131,8 @@ enum ATTACK_PART {
 	STARTUP, ACTIVE, RECOVERY, NONE
 }
 enum ATTACK_TY {
-	HIGH, MID, LOW, GRAB
+	NONE = 0, HIGH = 0x1001, MID = 0x1002, LOW = 0x1003, AIR = 0x1004, GRAB = 0x0010, AIR_GRAB = 0x0011, CMD_GRAB = 0x0012,
+	_HIT_BIT = 0x1000, _GRAB_BIT = 0x0010
 }
 enum STUN_TY {
 	BLOCK, NORMAL, COUNTER, PUNISH_COUNTER
@@ -136,4 +142,8 @@ enum STUN_DIR {
 }
 enum KNOCK_TY {
 	NONE, KNOCKDOWN, HARD_KNOCKDOWN, CRUSH_FWD, CRUSH_BACK, LIFT, LIFT_JUGGLE
+}
+enum BLOCK_TY {
+	NONE, LOW, HIGH, PARRY,
+	ALL #shouldnt happen in actual games, just for training mode for blocking all
 }

@@ -17,19 +17,10 @@ static func try_next(state : PlayerState, sliceback : int):
 				return res
 	)
 
-func _init():
-	pass
-
-func init():
-	pass
-
 func check_next(state : PlayerState):
 	var next = null
 	if state_t == move.n_frames:
 		return CsIdle.new()
-
-func deinit():
-	pass
 
 func step(state : PlayerState):
 	if state_t == 7:
@@ -37,3 +28,5 @@ func step(state : PlayerState):
 			move = move.whiff
 			anim_name = move.name
 	super.step(state)
+	if att_processed:
+		state.boxes = []

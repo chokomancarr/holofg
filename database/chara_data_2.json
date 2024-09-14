@@ -29,9 +29,9 @@
 			"boxes": [
 				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 1000]},
 				{"frame_start": 2,"frame_end": 14,"ty": "HURT","rect": [200, 500, 450, 350]},
-				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [150, 550, 450, 250]}
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","att_info": 0,"rect": [150, 550, 450, 250]}
 			],
-			"hit_info": [
+			"att_info": [
 				{
 					"stun": [ 8, 11 ],
 					"cancel": {
@@ -48,12 +48,12 @@
 			"rapid": true,
 			"n_frames": 18,
 			"boxes": [
-				{"frame_start": -3,"frame_end": -2,"ty": "HIT","hit_info": 0,"rect": [0, 0, 0, 0]},
+				{"frame_start": -3,"frame_end": -2,"ty": "HIT","att_info": 0,"rect": [0, 0, 0, 0]},
 				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 1000]},
 				{"frame_start": 2,"frame_end": 14,"ty": "HURT","rect": [200, 500, 450, 350]},
-				{"frame_start": 8,"frame_end": 10,"ty": "HIT","hit_info": 0,"rect": [150, 550, 450, 250]}
+				{"frame_start": 8,"frame_end": 10,"ty": "HIT","att_info": 0,"rect": [150, 550, 450, 250]}
 			],
-			"hit_info": [{
+			"att_info": [{
 				"stun": [ 8, 11 ],
 				"cancel": {
 					"all_specials": true,
@@ -68,9 +68,9 @@
 			"n_frames": 19,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 19,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 7,"frame_end": 9,"ty": "HIT","hit_info": 0,"rect": [150, 300, 450, 250]}
+				{"frame_start": 7,"frame_end": 9,"ty": "HIT","att_info": 0,"rect": [150, 300, 450, 250]}
 			],
-			"hit_info": [{
+			"att_info": [{
 				"stun": [ 8, 13 ],
 				"cancel": {
 					"targets": [ "5m.5m" ]
@@ -84,9 +84,9 @@
 			"n_frames": 25,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 25,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 7,"frame_end": 9,"ty": "HIT","hit_info": 0,"rect": [150, 300, 450, 250]}
+				{"frame_start": 7,"frame_end": 9,"ty": "HIT","att_info": 0,"rect": [150, 300, 450, 250]}
 			],
-			"hit_info": [{
+			"att_info": [{
 				"stun": [ 19, 21 ],
 				"push": -500,
 			}]
@@ -95,9 +95,9 @@
 			"n_frames": 24,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 24,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 10,"frame_end": 12,"ty": "HIT","hit_info": 0,"rect": [150, 450, 600, 250]}
+				{"frame_start": 10,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [150, 450, 600, 250]}
 			],
-			"hit_info": [{
+			"att_info": [{
 				"stun": [ 8, 13 ],
 				"push": 150,
 				"minspace": 700,
@@ -109,41 +109,41 @@
 			"boxes": [
 				{"frame_start": 0,"frame_end": 16,"ty": "HURT","rect": [-200, 0, 400, 800]},
 				{"frame_start": 2,"frame_end": 14,"ty": "HURT","rect": [200, 300, 450, 350]},
-				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [150, 300, 450, 250]}
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","att_info": 0,"rect": [150, 300, 450, 250]}
 			],
-			"hit_info": [{"stun": [ 8, 13 ], "dir": "BODY"}]
+			"att_info": [{"stun": [ 8, 13 ], "dir": "BODY"}]
 		},
 		"2m": {
 			"n_frames": 20,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
-				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [100, 350, 150, 100]}
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","att_info": 0,"rect": [100, 350, 150, 100]}
 			],
-			"hit_info": [{"stun": [ 8, 13 ], "dir": "LEG"}]
+			"att_info": [{"stun": [ 8, 13 ], "dir": "LEG"}]
 		},
 		"2h": {
 			"n_frames": 30,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
-				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [100, 350, 150, 100]}
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","att_info": 0,"rect": [100, 350, 150, 100]}
 			],
-			"hit_info": [{"stun": [ 8, 13 ], "dir": "LEG"}]
+			"att_info": [{"stun": [ 8, 13 ], "dir": "LEG"}]
 		},
 		"4h": {
 			"n_frames": 24,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
-				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [100, 350, 150, 100]}
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","att_info": 0,"rect": [100, 350, 150, 100]}
 			],
-			"hit_info": [{"stun": [ 8, 13 ]}]
+			"att_info": [{"stun": [ 8, 13 ]}]
 		},
 		"623l": {
 			"n_frames": 40,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
-				{"frame_start": 4,"frame_end": 6,"ty": "HIT","hit_info": 0,"rect": [100, 350, 150, 100]}
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","att_info": 0,"rect": [100, 350, 150, 100]}
 			],
-			"hit_info": [{"stun": [ 10, 50 ]}]
+			"att_info": [{"stun": [ 10, 50 ]}]
 		},
 		"214l": {
 			"alias": "4s",
@@ -154,11 +154,11 @@
 			},
 			"boxes": [
 				{"frame_start": 0,"frame_end": 50,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 13,"frame_end": 15,"ty": "HIT","hit_info": 0,"rect": [150, 250, 450, 250]},
-				{"frame_start": 20,"frame_end": 22,"ty": "HIT","hit_info": 0,"rect": [150, 250, 450, 250]},
-				{"frame_start": 27,"frame_end": 29,"ty": "HIT","hit_info": 1,"rect": [150, 250, 450, 250]}
+				{"frame_start": 13,"frame_end": 15,"ty": "HIT","att_info": 0,"rect": [150, 250, 450, 250]},
+				{"frame_start": 20,"frame_end": 22,"ty": "HIT","att_info": 0,"rect": [150, 250, 450, 250]},
+				{"frame_start": 27,"frame_end": 29,"ty": "HIT","att_info": 1,"rect": [150, 250, 450, 250]}
 			],
-			"hit_info": [
+			"att_info": [
 				{
 					"n_freeze": 5,
 					"stun": [ 12, 30 ],
@@ -189,9 +189,9 @@
 			"land_recovery": 3,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 50,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 4,"frame_end": 12,"ty": "HIT","hit_info": 0,"rect": [-150, -50, 400, 200]}
+				{"frame_start": 4,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [-150, -50, 400, 200]}
 			],
-			"hit_info": [
+			"att_info": [
 				{
 					"stun": [ 11, 16 ]
 				}
@@ -203,9 +203,9 @@
 			"boxes": [
 				{"frame_start": 0,"frame_end": 40,"ty": "HURT","rect": [-200, 0, 400, 1000]},
 				{"frame_start": 3,"frame_end": 30,"ty": "HURT","rect": [50, -100, 400, 500]},
-				{"frame_start": 7,"frame_end": 16,"ty": "HIT","hit_info": 0,"rect": [100, -150, 300, 250]}
+				{"frame_start": 7,"frame_end": 16,"ty": "HIT","att_info": 0,"rect": [100, -150, 300, 250]}
 			],
-			"hit_info": [
+			"att_info": [
 				{
 					"stun": [ 15, 19 ]
 				}
@@ -217,9 +217,9 @@
 			"boxes": [
 				{"frame_start": 0,"frame_end": 40,"ty": "HURT","rect": [-200, 0, 400, 1000]},
 				{"frame_start": 5,"frame_end": 30,"ty": "HURT","rect": [100, 200, 550, 400]},
-				{"frame_start": 9,"frame_end": 16,"ty": "HIT","hit_info": 0,"rect": [100, 250, 500, 300]}
+				{"frame_start": 9,"frame_end": 16,"ty": "HIT","att_info": 0,"rect": [100, 250, 500, 300]}
 			],
-			"hit_info": [
+			"att_info": [
 				{
 					"stun": [ 18, 21 ]
 				}
@@ -228,13 +228,18 @@
 		"5g": {
 			"n_frames": 70,
 			"boxes": [
-				{"frame_start": 0,"frame_end": 70,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 4,"frame_end": 7,"ty": "GRAB","rect": [200, 0, 200, 1000]}
+				{"frame_start": 0,"frame_end": 7,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 4,"frame_end": 7,"ty": "GRAB","att_info": 0,"rect": [200, 0, 200, 1000]}
 			],
-			"opp_info": {
+			"att_info": [{
 				"n_frames": 70,
-				"fix_dist": 500
-			},
+				"fix_dist": 500,
+				"end_dpos": 650,
+				"bounds_offset": {
+					"offsets_use_keyframes": true,
+					"offsets": [ [0, [ 0, 0 ]], [40, [ 108, 0 ]], [47, [ 0, 0 ]] ]
+				}
+			}],
 			"whiff": {
 				"anim_name": "5g.whiff",
 				"n_frames": 30,

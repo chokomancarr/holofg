@@ -13,9 +13,6 @@ func _init():
 	anim_name = "6"
 	use_pos_flip = true
 
-func init():
-	pass
-
 func check_next(state : PlayerState):
 	var next = null
 	
@@ -27,9 +24,6 @@ func check_next(state : PlayerState):
 	if ldir != 4 and ldir != 6:
 		return CsIdle.new()
 
-func deinit():
-	pass
-
 func step(state : PlayerState):
 	_step()
 	var d = state.input_history.last_dir()
@@ -37,6 +31,8 @@ func step(state : PlayerState):
 		fwd = !fwd
 		anim_name = "6" if fwd else "4"
 		state_t = 0
+	
+	block_state = ST.BLOCK_TY.NONE if fwd else ST.BLOCK_TY.HIGH
 	
 	state.boxes = [state._info.idle_box] as Array[ST.BoxInfo]
 	next_offset.x = state._info.walk_sp_fwd if fwd else -state._info.walk_sp_rev

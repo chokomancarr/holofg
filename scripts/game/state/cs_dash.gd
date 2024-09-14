@@ -39,15 +39,9 @@ func _init(fwd):
 	anim_name = "66" if fwd else "44"
 	move = move_fwd if fwd else move_rev
 
-func init():
-	pass
-
 func check_next(state : PlayerState):
 	if state_t == move.n_frames:
 		return CsIdle.new()
-
-func deinit():
-	pass
 
 func step(state : PlayerState):
 	_step()

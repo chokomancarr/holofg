@@ -18,9 +18,6 @@ func _init(n):
 	self.state_t = n - 1
 	anim_name = "parry"
 
-func init():
-	pass
-
 func check_next(state : PlayerState):
 	if in_recovery:
 		if state_t == NF_RECOVERY + rec_df - 1:
@@ -28,9 +25,6 @@ func check_next(state : PlayerState):
 	else:
 		var next = CsTeleport.try_next(state)
 		if next: return next
-
-func deinit():
-	pass
 
 func step(state : PlayerState):
 	_step()

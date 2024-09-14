@@ -1,26 +1,24 @@
 class_name CsStunAnim extends _CsBase
 
 const _STATE_NAME = "stun_anim"
-var n_stun : int
+var info : ST.AttInfo_Grab
 
-func _init(opp : PlayerState, info : ST.OppAnimInfo):
+func _init(opp : PlayerState, info : ST.AttInfo_Grab):
 	anim_name = "opp/opp_" + opp.state.anim_name
-	n_stun = info.nf
+	self.info = info
 	state_t = opp.state.state_t
 
-func init():
-	pass
-
 func check_next(state : PlayerState):
-	if state_t == n_stun:
+	if state_t == info.opp_nf:
 		return CsIdle.new()
-
-func deinit():
-	pass
 
 func step(state : PlayerState):
 	_step()
-	state.boxes = [state._info.idle_box] as Array[ST.BoxInfo]
+	state.boxes = []
+	bounds_off += info.bounds_offset.eval(state_t - 1)
+
+func deinit(state : PlayerState):
+	state.pos.x += info.end_dpos if state.action_is_p2 else -info.end_dpos
 
 func get_frame_meter_color():
 	return Color.YELLOW

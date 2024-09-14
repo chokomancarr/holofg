@@ -39,9 +39,6 @@ func _init(dir):
 	offsets = _jump_offsets[dir]
 	anim_name = "8" #str(dir + 7)
 
-func init():
-	pass
-
 func check_next(state : PlayerState):
 	var next = null
 	if state_t == 40:
@@ -53,9 +50,6 @@ func check_next(state : PlayerState):
 				next.jump_traj = offsets
 				next.jump_traj_off = state_t
 				return next
-
-func deinit():
-	pass
 
 func step(state : PlayerState):
 	_step()

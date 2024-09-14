@@ -2,13 +2,16 @@ class_name _GameNetBase extends Node
 
 enum TY {
 	OFFLINE,
-	ONLINE
+	ONLINE,
+	TRAINING,
 }
 
 static func spawn(ty):
 	match ty:
 		TY.OFFLINE:
 			return GameNet_Offline.new()
+		TY.TRAINING:
+			return GameNet_Training.new()
 		TY.ONLINE:
 			pass
 

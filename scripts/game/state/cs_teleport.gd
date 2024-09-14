@@ -25,17 +25,11 @@ func _init(fwd):
 	self.fwd = fwd
 	anim_name = "tp_startup"
 
-func init():
-	pass
-
 func check_next(state : PlayerState):
 	if state_t == NF_FWD:
 		return CsIdle.new()
 	elif state_t >= NF_ATT:
 		return check_actions(state, NF_ATT if state_t == NF_ATT else 1, true)
-
-func deinit():
-	pass
 
 func step(state : PlayerState):
 	_step()

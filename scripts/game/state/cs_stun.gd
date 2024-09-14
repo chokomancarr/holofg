@@ -5,7 +5,7 @@ var n_stun : int
 
 var offsets : DT.OffsetInfo
 
-func _init(p : PlayerState, info : ST.HitInfo):
+func _init(p : PlayerState, info : ST.AttInfo_Hit):
 	state_t = 1
 	anim_name = "stun_%s_%s" % [
 		"st", ST.STUN_DIR.find_key(info.dir).to_lower()
@@ -20,15 +20,9 @@ func _init(p : PlayerState, info : ST.HitInfo):
 		var p0 = info.push_hit - p1 * n_stun
 		offsets = DT.OffsetInfo.from_keys([[1, [-pushmin - p0 - p1, 0]], [2, [-p1, 0]], [n_stun, [0, 0]]], n_stun + 5)
 
-func init():
-	pass
-
 func check_next(state : PlayerState):
 	if state_t == n_stun:
 		return CsIdle.new()
-
-func deinit():
-	pass
 
 func step(state : PlayerState):
 	_step()

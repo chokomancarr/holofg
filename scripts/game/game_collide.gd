@@ -7,35 +7,49 @@ const WALL_W = 2000
 
 static func step(game_state : GameState):
 	var dist = _proc_push(game_state)
-
-	var hit1 = _check_hit(game_state.p1, game_state.p2)
-	var hit2 = _check_hit(game_state.p2, game_state.p1)
-
-	var freeze = 0
-
-	if hit1:
-		if hit1 is ST.HitInfo:
-			game_state.p2.on_hit(hit1, dist)
-			freeze = hit1.n_freeze
-		else:
-			game_state.p2.on_grab(game_state.p1, hit1)
-			var fd = (hit1 as ST.OppAnimInfo).fix_dist
-			if fd < 100000:
-				if game_state.p1.action_is_p2: fd *= -1
-				game_state.p2.pos = game_state.p1.pos + Vector2i(fd, 0)
-	if hit2:
-		if hit2 is ST.HitInfo:
-			game_state.p1.on_hit(hit2, dist)
-			freeze = maxi(freeze, hit2.n_freeze)
-		else:
-			game_state.p1.on_grab(game_state.p2, hit2)
-			var fd = (hit2 as ST.OppAnimInfo).fix_dist
-			if fd < 100000:
-				if game_state.p2.action_is_p2: fd *= -1
-				game_state.p1.pos = game_state.p2.pos + Vector2i(fd, 0)
 	
-	if freeze > 0:
-		game_state.freeze(freeze, true)
+	var p1 = game_state.p1
+	var p2 = game_state.p2
+
+	var o = {
+		"hit1" : _check_hit(p1, p2) as ST._AttInfoBase,
+		"hit2" : _check_hit(p2, p1) as ST._AttInfoBase,
+		"freeze" : 0
+	}
+	#if hit1 or hit2:
+		#if hit1:
+			#if game_state.p1.state.query_stun() != ST.STUN_TY.PUNISH_COUNTER\
+			#and game_state.p1.state.query_stun() != ST.STUN_TY.PUNISH_COUNTER:
+				#game_state.p1.state = CsGrabTech.new()
+				#game_state.p2.state = CsGrabTech.new()
+				#return
+
+	var apply_hit = func (p : PlayerState, opp : PlayerState, hit : ST._AttInfoBase, o):
+		var counter_ty = p.state.query_stun()
+		if (hit.ty & ST.ATTACK_TY._HIT_BIT) > 0:
+			p.on_hit(hit as ST.AttInfo_Hit, dist)
+			o.freeze = maxi(o.freeze, hit.n_freeze)
+		else:
+			if p.state.attack_ty == ST.ATTACK_TY.GRAB and counter_ty != ST.STUN_TY.PUNISH_COUNTER:
+					p.state = CsGrabTech.new()
+					opp.state = CsGrabTech.new()
+					o.hit1 = null
+					o.hit2 = null
+			else:
+				p.on_grab(opp, hit as ST.AttInfo_Grab)
+				var fd = (hit as ST.AttInfo_Grab).fix_dist
+				if fd < 100000:
+					if opp.action_is_p2: fd *= -1
+					p.pos = opp.pos + Vector2i(fd, 0)
+					p.state.push_wall = true
+
+	if o.hit1:
+		apply_hit.call(p2, p1, o.hit1, o)
+	if o.hit2:
+		apply_hit.call(p1, p2, o.hit2, o)
+	
+	if o.freeze > 0:
+		game_state.freeze(o.freeze, true)
 
 static func _proc_push(game_state : GameState):
 	var p1 = game_state.p1
@@ -48,7 +62,7 @@ static func _proc_push(game_state : GameState):
 	if p2.pos.y < 0:
 		p2.pos.y = 0
 	
-	var dp = (p2.pos - p1.pos).abs()
+	var dp = (p2.bounded_pos - p1.bounded_pos).abs()
 	var dx = CHARA_DIST - dp.x
 	if dp.y != 0:
 		var cr = false#(p1.state & ST.STATE_CROUCH_BIT) > 0 or (p2.state & ST.STATE_CROUCH_BIT) > 0
@@ -64,29 +78,33 @@ static func _proc_push(game_state : GameState):
 		p2.pos.x += d
 		dp.x = CHARA_DIST
 	
-	if p1.pos.x < ww.x:
-		if push: p2.pos.x += ww.x - p1.pos.x
-		p1.pos.x = ww.x
+	var dpw = ww.x - p1.bounded_pos.x
+	if dpw > 0:
+		if push: p2.pos.x += dpw
+		p1.pos.x += dpw
 		if p1.pos.y > 0:
 			p1.pos.x += 1
-	if p2.pos.x < ww.x:
-		if push: p1.pos.x += ww.x - p2.pos.x
-		p2.pos.x = ww.x
+	dpw = ww.x - p2.bounded_pos.x
+	if dpw > 0:
+		if push: p1.pos.x += dpw
+		p2.pos.x += dpw
 		if p2.pos.y > 0:
 			p2.pos.x += 1
 	
-	if p1.pos.x > ww.y:
-		if push: p2.pos.x += ww.y - p1.pos.x
-		p1.pos.x = ww.y
+	dpw = p1.bounded_pos.x - ww.y
+	if dpw > 0:
+		if push: p2.pos.x -= dpw
+		p1.pos.x -= dpw
 		if p1.pos.y > 0:
 			p1.pos.x -= 1
-	if p2.pos.x > ww.y:
-		if push: p1.pos.x += ww.y - p2.pos.x
-		p2.pos.x = ww.y
+	dpw = p2.bounded_pos.x - ww.y
+	if dpw > 0:
+		if push: p1.pos.x -= dpw
+		p2.pos.x -= dpw
 		if p2.pos.y > 0:
 			p2.pos.x -= 1
 	
-	var cx = clampi((p1.pos.x + p2.pos.x) / 2, WALL_W, 10000 - WALL_W)
+	var cx = clampi((p1.bounded_pos.x + p2.bounded_pos.x) / 2, WALL_W, 10000 - WALL_W)
 	game_state.wall = Vector2i(cx - WALL_W, cx + WALL_W)
 	
 	var sdp = p2.pos - p1.pos

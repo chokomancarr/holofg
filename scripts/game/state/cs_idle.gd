@@ -6,15 +6,11 @@ var standing = true
 
 var first = true
 
+var _override_block_ty := ST.BLOCK_TY.NONE
+
 func _init():
 	anim_name = "5"
 	use_pos_flip = true
-
-func init():
-	pass
-
-func deinit():
-	pass
 
 func check_next(state : PlayerState):
 	var next = null
@@ -33,6 +29,11 @@ func step(state : PlayerState):
 		standing = !standing
 		anim_name = "5" if standing else "2"
 		state_t = 0
+	
+	if _override_block_ty != ST.BLOCK_TY.NONE:
+		block_state = _override_block_ty
+	else:
+		block_state = ST.BLOCK_TY.NONE if d > 1 else ST.BLOCK_TY.LOW
 	
 	state.boxes = [state._info.idle_box if standing else state._info.crouch_box] as Array[ST.BoxInfo]
 	

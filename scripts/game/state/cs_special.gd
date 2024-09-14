@@ -15,16 +15,7 @@ static func try_next(state : PlayerState, sliceback : int, allow : ST.CancelInfo
 				return res
 	)
 
-func _init():
-	pass
-
-func init():
-	pass
-
 func check_next(state : PlayerState):
 	var next = null
 	if state_t == move.n_frames:
 		return CsIdle.new()
-
-func deinit():
-	pass

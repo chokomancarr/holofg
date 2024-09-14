@@ -5,9 +5,15 @@ var next_offset : Vector2i
 var anim_name : String = ""
 var use_pos_flip : bool
 
+var block_state : ST.BLOCK_TY
+
+var attack_ty : ST.ATTACK_TY
+
 var push_wall : bool
 
 var req_freeze : int = 0
+
+var bounds_off : Vector2i
 
 static func _check_inputs(state, sliceback, callback):
 	var his = state.input_history
@@ -23,13 +29,13 @@ static func _check_inputs(state, sliceback, callback):
 		if res:
 			return res
 
-func init():
-	pass
-
 func check_next(state : PlayerState):
 	assert(false, "function must be implemented!")
 
-func deinit():
+func init(state : PlayerState):
+	pass
+
+func deinit(state : PlayerState):
 	pass
 
 func step(state : PlayerState):
@@ -39,6 +45,7 @@ func _step():
 	state_t += 1
 	next_offset = Vector2i.ZERO
 	req_freeze = 0
+	attack_ty = ST.ATTACK_TY.NONE
 
 func get_anim_frame(df):
 	return state_t

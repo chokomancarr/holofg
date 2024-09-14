@@ -23,12 +23,6 @@ static func try_next(state : PlayerState, sliceback : int, allow : ST.CancelInfo
 					return res
 	)
 
-func _init():
-	pass
-
-func init():
-	pass
-
 func step(state):
 	super.step(state)
 	next_offset = jump_traj.eval(jump_traj_off + state_t)
@@ -41,6 +35,3 @@ func check_next(state : PlayerState):
 		var info = query_hit()
 		if info.cancels:
 			pass
-
-func deinit():
-	pass

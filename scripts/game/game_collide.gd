@@ -14,11 +14,25 @@ static func step(game_state : GameState):
 	var freeze = 0
 
 	if hit1:
-		game_state.p2.on_hit(hit1, dist)
-		freeze = hit1.n_freeze
+		if hit1 is ST.HitInfo:
+			game_state.p2.on_hit(hit1, dist)
+			freeze = hit1.n_freeze
+		else:
+			game_state.p2.on_grab(game_state.p1, hit1)
+			var fd = (hit1 as ST.OppAnimInfo).fix_dist
+			if fd < 100000:
+				if game_state.p1.action_is_p2: fd *= -1
+				game_state.p2.pos = game_state.p1.pos + Vector2i(fd, 0)
 	if hit2:
-		game_state.p1.on_hit(hit2, dist)
-		freeze = maxi(freeze, hit2.n_freeze)
+		if hit2 is ST.HitInfo:
+			game_state.p1.on_hit(hit2, dist)
+			freeze = maxi(freeze, hit2.n_freeze)
+		else:
+			game_state.p1.on_grab(game_state.p2, hit2)
+			var fd = (hit2 as ST.OppAnimInfo).fix_dist
+			if fd < 100000:
+				if game_state.p2.action_is_p2: fd *= -1
+				game_state.p1.pos = game_state.p2.pos + Vector2i(fd, 0)
 	
 	if freeze > 0:
 		game_state.freeze(freeze, true)
@@ -42,7 +56,7 @@ static func _proc_push(game_state : GameState):
 		var dy = (dp.y - ht) * 2
 		if dy > 0:
 			dx -= (dy * CHARA_DIST) / ht
-	var push = false
+	var push = p1.state.push_wall or p2.state.push_wall
 	if dx > 0:
 		push = true
 		var d = dx * (0.5 if p2.pos > p1.pos else -0.5)
@@ -93,7 +107,7 @@ static func _check_hit(p1 : PlayerState, p2 : PlayerState):
 			hurts.push_back(b)
 	var dp = p1.pos - p2.pos
 	for b in p1.boxes:
-		if b.ty == ST.BOX_TY.HIT:
+		if b.ty == ST.BOX_TY.HIT || b.ty == ST.BOX_TY.GRAB:
 			var b2 = Rect2i(b.rect)
 			b2.position += dp
 			for b3 in hurts:

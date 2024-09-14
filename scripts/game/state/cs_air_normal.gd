@@ -2,7 +2,6 @@ class_name CsAirNormal extends _CsAttBase
 
 const _STATE_NAME = "airnormal"
 
-const move_prio = 2
 var jump_traj : DT.OffsetInfo
 var jump_traj_off : int
 
@@ -41,11 +40,7 @@ func check_next(state : PlayerState):
 	if att_processed:
 		var info = query_hit()
 		if info.cancels:
-			next = CsTargetCombo.try_next(state, state_t + 10, info.cancels)
-			if next: return next
-			
-			next = CsNormal.try_next(state, state_t + 10, info.cancels)
-			if next: return next
+			pass
 
 func deinit():
 	pass

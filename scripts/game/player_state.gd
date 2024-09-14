@@ -32,7 +32,7 @@ static func create(info : DT.CharaInfo, is_p1 : bool) -> PlayerState:
 	return res
 
 func add_inputs(inputs : IN.InputState) -> PlayerState:
-	if action_is_p2:
+	if pos_is_p2:
 		inputs.val |= IN.DIR_FLIP_BIT
 	else:
 		inputs.val &= ~IN.DIR_FLIP_BIT
@@ -44,8 +44,7 @@ func prestep():
 	var tar_state = state
 	while tar_state:
 		n += 1
-		if n > 1:
-			print_debug(state._STATE_NAME, " -> ", tar_state._STATE_NAME)
+		assert(n < 7, "transition limit per frame reached! there might be infinite loops?")
 		state = tar_state
 		if state.use_pos_flip:
 			action_is_p2 = pos_is_p2
@@ -53,7 +52,12 @@ func prestep():
 
 func step():
 	state.step(self)
+	if action_is_p2:
+		state.next_offset.x *= -1
 	pos += state.next_offset
 
 func on_hit(hit_info, dist):
 	state = CsStun.new(self, hit_info)
+
+func on_grab(opp, info):
+	state = CsStunAnim.new(opp, info)

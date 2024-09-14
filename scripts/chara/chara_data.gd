@@ -12,6 +12,7 @@ class CharaInfo:
 	var moves_nr: Dictionary
 	var moves_tr: Dictionary
 	var moves_j_nr: Dictionary
+	var grabs: Dictionary
 
 class MoveInfo:
 	var name: String
@@ -21,6 +22,7 @@ class MoveInfo:
 	var can_rapid: bool
 	var boxes: Array[ST.BoxInfoFrame]
 	var hit_info: Array[ST.HitInfo]
+	var opp_info: ST.OppAnimInfo
 	var spawn_info: Array[ST.SpawnInfo]
 	var offsets : OffsetInfo
 	var can_hold : bool = false
@@ -28,6 +30,8 @@ class MoveInfo:
 	var override_offsets : bool = true
 	var land_recovery : int = 0
 	var force_att_part := ST.ATTACK_PART.NONE
+	
+	var whiff: MoveInfo
 
 class OffsetInfo:
 	var vals = []
@@ -64,7 +68,8 @@ class OffsetInfo:
 static func load_chara(chara_id):
 	var data = (load("res://database/chara_data_%d.json" % chara_id) as JSON).data
 	data.moves.normals.append_array([ "5l", "5m", "5h", "2l", "2m", "2h" ])
-	data.moves.jump_normals.append_array([ "8.5l" ])
+	data.moves.jump_normals.append_array([ "8.5l", "8.5m", "8.5h" ])
+	data.moves.grabs.append_array([ "5g" ])
 	
 	var res = CharaInfo.new()
 	
@@ -98,12 +103,17 @@ static func load_chara(chara_id):
 		move.land_recovery = data.frames[jn].land_recovery
 		res.moves_j_nr[jn] = move
 	
+	for gb in data.moves.grabs:
+		res.grabs[gb] = _parse_move(gb, data.frames)
+	
 	return res
 
 static func _parse_move(nm : String, frames : Dictionary):
+	if not frames.has(nm):
+		assert(false, "missing frame data for " + nm + "!")
 	var move = MoveInfo.new()
 	var src = frames[nm]
-	move.name = nm.replace(".", "_")
+	move.name = (src.anim_name if src.has("anim_name") else nm).replace(".", "_")
 	move.cmd = IN.InputCommand.from_string(nm)
 	move.n_frames = src.n_frames
 	if src.has("alias"):
@@ -141,12 +151,21 @@ static func _parse_move(nm : String, frames : Dictionary):
 			if h.has("minspace"): hres.min_space = h.minspace
 			if h.has("dir"): hres.dir = ST.STUN_DIR.get(h.dir)
 			move.hit_info.push_back(hres)
+	if src.has("opp_info"):
+		var h = src.opp_info
+		var hres = ST.OppAnimInfo.new()
+		hres.nf = h.n_frames
+		hres.fix_dist = h.fix_dist if h.has("fix_dist") else 10000000
+		move.opp_info = hres
 	if src.has("spawns"):
 		for s in src.spawns:
 			var sres = ST.SpawnInfo.new()
 			sres.frame = s.f
 			sres.sig = s.sig
 			move.spawn_info.push_back(sres)
+	
+	if src.has("whiff"):
+		move.whiff = _parse_move("whiff", src)
 	
 	return move
 

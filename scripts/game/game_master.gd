@@ -9,11 +9,15 @@ var last_updated_time = 0
 
 var all_chara_infos = {}
 
+var anim_lib = {}
+
 var game_speed_scale = 1
 var game_paused = false
 
 func _ready():
-	all_chara_infos[1] = DT.load_chara(1)
+	#for i in range(1, 3):
+	#	all_chara_infos[i] = DT.load_chara(i)
+	all_chara_infos[2] = DT.load_chara(2)
 
 func new_match(p1 : int, p2 : int, ty : _GameNetBase.TY):
 	p1_chara_info = all_chara_infos[p1]
@@ -24,6 +28,19 @@ func new_match(p1 : int, p2 : int, ty : _GameNetBase.TY):
 	)
 	net_master = _GameNetBase.spawn(ty)
 	add_child(net_master)
+	
+	var par = get_node("/root/main/%ppl_spawn")
+	var ps1 = load("res://chara_scenes/chara_%d.tscn" % [ p1 ]).instantiate() as CharaRend
+	ps1.is_p1 = true
+	par.add_child(ps1)
+	var ps2 = load("res://chara_scenes/chara_%d.tscn" % [ p2 ]).instantiate() as CharaRend
+	ps1.is_p1 = false
+	par.add_child(ps2)
+	
+	ANIM.register(p1, ps1.anim)
+	ANIM.register(p2, ps2.anim)
+	ANIM.post_register(p1, ps2.anim)
+	ANIM.post_register(p2, ps1.anim)
 
 func reset():
 	game_state = null

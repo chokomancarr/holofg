@@ -1,5 +1,5 @@
 {
-	"chara_name": "Tokoyami Towa",
+	"chara_name": "TEST_CHARA",
 	"max_health": "10000",
 	"params": {
 		"walk": [20, 20],
@@ -8,11 +8,12 @@
 	"moves": {
 		"supers": [ "236s", "214s" ],
 		"specials": [
-			"214l", "236l"
+			"623l", "214l", "236l"
 		],
 		"normals": [ "4h" ],
-		"targets": [ "5l.5l", "5m.5m" ],
-		"jump_normals": [ ]
+		"targets": [ "5l.5l", "5m.5m", "214l.6l", "214l.6l.6l" ],
+		"jump_normals": [ ],
+		"grabs": [ ]
 	},
 	"frames": {
 		"idle": { "ty": "HURT", "rect": [-200, 0, 400, 1000] },
@@ -136,22 +137,46 @@
 			"hit_info": [{"stun": [ 10, 50 ]}]
 		},
 		"214l": {
-			"alias": "4s",
-			"n_frames": 50,
-			"offsets": {
-				"offsets_use_keyframes": true,
-				"offsets": [ [0, [ 30, 0 ]], [10, [ 0, 0 ]] ]
-			},
+			"n_frames": 40,
 			"boxes": [
-				{"frame_start": 0,"frame_end": 50,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 13,"frame_end": 15,"ty": "HIT","hit_info": 0,"rect": [150, 250, 450, 250]},
-				{"frame_start": 20,"frame_end": 22,"ty": "HIT","hit_info": 0,"rect": [150, 250, 450, 250]},
-				{"frame_start": 27,"frame_end": 29,"ty": "HIT","hit_info": 0,"rect": [150, 250, 450, 250]}
+				{"frame_start": 0,"frame_end": 40,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 13,"frame_end": 16,"ty": "HIT","hit_info": 0,"rect": [150, 550, 450, 250]}
 			],
 			"hit_info": [
 				{
-					"n_freeze": 5,
-					"stun": [ 12, 30 ]
+					"stun": [ 12, 30 ],
+					"cancel": {
+						"targets": [ "214l.6l" ]
+					}
+				}
+			]
+		},
+		"214l.6l": {
+			"command": "6l",
+			"n_frames": 40,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 40,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 13,"frame_end": 16,"ty": "HIT","hit_info": 0,"rect": [150, 550, 450, 250]}
+			],
+			"hit_info": [
+				{
+					"stun": [ 12, 30 ],
+					"cancel": {
+						"targets": [ "214l.6l.6l" ]
+					}
+				}
+			]
+		},
+		"214l.6l.6l": {
+			"command": "6l",
+			"n_frames": 50,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 50,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 13,"frame_end": 16,"ty": "HIT","hit_info": 0,"rect": [150, 550, 450, 250]}
+			],
+			"hit_info": [
+				{
+					"stun": [ 12, 50 ]
 				}
 			]
 		},
@@ -171,6 +196,32 @@
 			"boxes": [
 				{"frame_start": 0,"frame_end": 50,"ty": "HURT","rect": [-200, 0, 400, 1000]},
 				{"frame_start": 4,"frame_end": 12,"ty": "HIT","hit_info": 0,"rect": [-150, -50, 400, 200]}
+			],
+			"hit_info": [
+				{
+					"stun": [ 11, 16 ]
+				}
+			]
+		},
+		"8.5m": {
+			"n_frames": 40,
+			"land_recovery": 3,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 50,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 7,"frame_end": 15,"ty": "HIT","hit_info": 0,"rect": [100, -50, 300, 200]}
+			],
+			"hit_info": [
+				{
+					"stun": [ 15, 20 ]
+				}
+			]
+		},
+		"8.5h": {
+			"n_frames": 40,
+			"land_recovery": 3,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 50,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 7,"frame_end": 15,"ty": "HIT","hit_info": 0,"rect": [100, -50, 300, 200]}
 			],
 			"hit_info": [
 				{

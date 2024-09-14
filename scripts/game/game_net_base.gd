@@ -47,6 +47,10 @@ func _step_game_state(state : GameState, p1_inputs, p2_inputs):
 	p1.step()
 	p2.step()
 	
+	var freeze = maxi(p1.state.req_freeze, p2.state.req_freeze)
+	if freeze > 0:
+		state.freeze(freeze)
+	
 	GameCollider.step(state)
 
 func _get_debug_text():

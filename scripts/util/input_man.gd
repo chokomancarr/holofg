@@ -35,11 +35,14 @@ class ActionMap:
 	var button_m: int
 	var button_h: int
 	var button_s: int
+	var button_grab: int
+	var button_parry: int
 	
 	static func default_kb():
 		return ObjUtil.fill(new(), [
 			KEY_SPACE, KEY_S, KEY_A, KEY_D,
-			KEY_J, KEY_K, KEY_L, KEY_I
+			KEY_J, KEY_K, KEY_L, KEY_I,
+			KEY_U, KEY_O
 		])
 	static func default_pad():
 		return ObjUtil.fill(new(), [
@@ -47,7 +50,8 @@ class ActionMap:
 			#JOY_BUTTON_DPAD_LEFT, JOY_BUTTON_DPAD_RIGHT,
 			JOY_AXIS_LEFT_Y | JOY_AXIS_BIT, JOY_AXIS_LEFT_Y | JOY_AXIS_BIT,
 			JOY_AXIS_LEFT_X | JOY_AXIS_BIT, JOY_AXIS_LEFT_X | JOY_AXIS_BIT,
-			JOY_BUTTON_X, JOY_BUTTON_A, JOY_BUTTON_B, JOY_BUTTON_Y
+			JOY_BUTTON_X, JOY_BUTTON_A, JOY_BUTTON_B, JOY_BUTTON_Y,
+			JOY_BUTTON_RIGHT_SHOULDER, JOY_BUTTON_LEFT_SHOULDER
 		])
 	
 	func _get_dir(device : Device, va : int, vb : int):
@@ -69,7 +73,9 @@ class ActionMap:
 			fn.call(button_l),
 			fn.call(button_m),
 			fn.call(button_h),
-			fn.call(button_s)
+			fn.call(button_s),
+			fn.call(button_grab),
+			fn.call(button_parry)
 		]
 		
 		var i = 8
@@ -103,4 +109,4 @@ func get_player_input(i):
 	res.action_map = ActionMap.default_pad() if res.device.is_gamepad else ActionMap.default_kb()
 	return res
 
-const JOY_AXIS_BIT = 1 << 12
+const JOY_AXIS_BIT = 1 << 30

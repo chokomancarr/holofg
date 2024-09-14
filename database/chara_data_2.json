@@ -1,5 +1,5 @@
 {
-	"chara_name": "TEST_CHARA",
+	"chara_name": "Tokoyami Towa",
 	"max_health": "10000",
 	"params": {
 		"walk": [20, 20],
@@ -8,11 +8,12 @@
 	"moves": {
 		"supers": [ "236s", "214s" ],
 		"specials": [
-			"623l", "214l", "236l"
+			"214l", "236l"
 		],
 		"normals": [ "4h" ],
-		"targets": [ "5l.5l", "5m.5m", "214l.6l", "214l.6l.6l" ],
-		"jump_normals": [ ]
+		"targets": [ "5l.5l", "5m.5m" ],
+		"jump_normals": [ ],
+		"grabs": [ ]
 	},
 	"frames": {
 		"idle": { "ty": "HURT", "rect": [-200, 0, 400, 1000] },
@@ -38,12 +39,13 @@
 						"targets": [ "5l.5l" ]
 					},
 					"push": 150,
-					"minspace": 300,
+					"minspace": 400,
 					"dir": "HEAD"
 				}
 			]
 		},
 		"5l.5l": {
+			"rapid": true,
 			"n_frames": 18,
 			"boxes": [
 				{"frame_start": -3,"frame_end": -2,"ty": "HIT","hit_info": 0,"rect": [0, 0, 0, 0]},
@@ -58,14 +60,14 @@
 					"targets": [ "5l.5l" ]
 				},
 				"push": 150,
-				"minspace": 300,
+				"minspace": 400,
 				"dir": "HEAD"
 			}]
 		},
 		"5m": {
 			"n_frames": 19,
 			"boxes": [
-				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
+				{"frame_start": 0,"frame_end": 19,"ty": "HURT","rect": [-200, 0, 400, 1000]},
 				{"frame_start": 7,"frame_end": 9,"ty": "HIT","hit_info": 0,"rect": [150, 300, 450, 250]}
 			],
 			"hit_info": [{
@@ -73,26 +75,34 @@
 				"cancel": {
 					"targets": [ "5m.5m" ]
 				},
+				"push": 150,
+				"minspace": 500,
 				"dir": "BODY"
 			}]
 		},
 		"5m.5m": {
 			"n_frames": 25,
 			"boxes": [
-				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
+				{"frame_start": 0,"frame_end": 25,"ty": "HURT","rect": [-200, 0, 400, 1000]},
 				{"frame_start": 7,"frame_end": 9,"ty": "HIT","hit_info": 0,"rect": [150, 300, 450, 250]}
 			],
 			"hit_info": [{
-				"stun": [ 8, 13 ]
+				"stun": [ 19, 21 ],
+				"push": -500,
 			}]
 		},
 		"5h": {
 			"n_frames": 24,
 			"boxes": [
-				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
-				{"frame_start": 10,"frame_end": 12,"ty": "HIT","hit_info": 0,"rect": [150, 550, 450, 250]}
+				{"frame_start": 0,"frame_end": 24,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 10,"frame_end": 12,"ty": "HIT","hit_info": 0,"rect": [150, 450, 600, 250]}
 			],
-			"hit_info": [{"stun": [ 8, 13 ], "dir": "HEAD"}]
+			"hit_info": [{
+				"stun": [ 8, 13 ],
+				"push": 150,
+				"minspace": 700,
+				"dir": "HEAD"
+			}]
 		},
 		"2l": {
 			"n_frames": 16,
@@ -136,46 +146,31 @@
 			"hit_info": [{"stun": [ 10, 50 ]}]
 		},
 		"214l": {
-			"n_frames": 40,
-			"boxes": [
-				{"frame_start": 0,"frame_end": 40,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 13,"frame_end": 16,"ty": "HIT","hit_info": 0,"rect": [150, 550, 450, 250]}
-			],
-			"hit_info": [
-				{
-					"stun": [ 12, 30 ],
-					"cancel": {
-						"targets": [ "214l.6l" ]
-					}
-				}
-			]
-		},
-		"214l.6l": {
-			"command": "6l",
-			"n_frames": 40,
-			"boxes": [
-				{"frame_start": 0,"frame_end": 40,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 13,"frame_end": 16,"ty": "HIT","hit_info": 0,"rect": [150, 550, 450, 250]}
-			],
-			"hit_info": [
-				{
-					"stun": [ 12, 30 ],
-					"cancel": {
-						"targets": [ "214l.6l.6l" ]
-					}
-				}
-			]
-		},
-		"214l.6l.6l": {
-			"command": "6l",
+			"alias": "4s",
 			"n_frames": 50,
+			"offsets": {
+				"offsets_use_keyframes": true,
+				"offsets": [ [0, [ 30, 0 ]], [10, [ 0, 0 ]] ]
+			},
 			"boxes": [
 				{"frame_start": 0,"frame_end": 50,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 13,"frame_end": 16,"ty": "HIT","hit_info": 0,"rect": [150, 550, 450, 250]}
+				{"frame_start": 13,"frame_end": 15,"ty": "HIT","hit_info": 0,"rect": [150, 250, 450, 250]},
+				{"frame_start": 20,"frame_end": 22,"ty": "HIT","hit_info": 0,"rect": [150, 250, 450, 250]},
+				{"frame_start": 27,"frame_end": 29,"ty": "HIT","hit_info": 1,"rect": [150, 250, 450, 250]}
 			],
 			"hit_info": [
 				{
-					"stun": [ 12, 50 ]
+					"n_freeze": 5,
+					"stun": [ 12, 30 ],
+					"minspace": 700,
+					"dir": "BODY"
+				},
+				{
+					"n_freeze": 5,
+					"stun": [ 12, 30 ],
+					"push": 100,
+					"minspace": 700,
+					"dir": "BODY"
 				}
 			]
 		},
@@ -201,6 +196,53 @@
 					"stun": [ 11, 16 ]
 				}
 			]
+		},
+		"8.5m": {
+			"n_frames": 40,
+			"land_recovery": 3,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 40,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 3,"frame_end": 30,"ty": "HURT","rect": [50, -100, 400, 500]},
+				{"frame_start": 7,"frame_end": 16,"ty": "HIT","hit_info": 0,"rect": [100, -150, 300, 250]}
+			],
+			"hit_info": [
+				{
+					"stun": [ 15, 19 ]
+				}
+			]
+		},
+		"8.5h": {
+			"n_frames": 40,
+			"land_recovery": 3,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 40,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 5,"frame_end": 30,"ty": "HURT","rect": [100, 200, 550, 400]},
+				{"frame_start": 9,"frame_end": 16,"ty": "HIT","hit_info": 0,"rect": [100, 250, 500, 300]}
+			],
+			"hit_info": [
+				{
+					"stun": [ 18, 21 ]
+				}
+			]
+		},
+		"5g": {
+			"n_frames": 70,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 70,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 4,"frame_end": 7,"ty": "GRAB","rect": [200, 0, 200, 1000]}
+			],
+			"opp_info": {
+				"n_frames": 70,
+				"fix_dist": 500
+			},
+			"whiff": {
+				"anim_name": "5g.whiff",
+				"n_frames": 30,
+				"boxes": [
+					{"frame_start": 0,"frame_end": 30,"ty": "HURT","rect": [-200, 0, 500, 1000]},
+					{"frame_start": 4,"frame_end": 7,"ty": "GRAB","rect": [200, 0, 200, 1000]}
+				]
+			}
 		}
 	}
 }

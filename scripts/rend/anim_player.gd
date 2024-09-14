@@ -11,9 +11,13 @@ func _ready():
 
 func step(gst : GameState, pst : PlayerState, delta):
 	var anim_name = pst.state.anim_name
+	var lib_name = "flipped/" if pst.action_is_p2 else ""
+	var spl = anim_name.split("/")
+	if spl.size() > 1:
+		anim_name = spl[1]
+		lib_name = spl[0] + "_flipped/" if pst.action_is_p2 else spl[0] + "/"
+	anim_name = lib_name + anim_name
 	var frame = pst.state.get_anim_frame(gst.get_anim_framediff())
-	if pst.action_is_p2:
-		anim_name = "flipped/" + anim_name
 	if not anim.has_animation(anim_name):
 		if not missing_anims.has(anim_name):
 			missing_anims.push_back(anim_name)

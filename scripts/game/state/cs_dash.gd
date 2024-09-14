@@ -2,8 +2,6 @@ class_name CsDash extends _CsBase
 
 const _STATE_NAME = "dash"
 
-const move_prio = 1
-
 var fwd = true
 var move : DT.MoveInfo
 

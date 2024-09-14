@@ -1,4 +1,4 @@
-class_name CsIdle extends _CsBase
+class_name CsIdle extends _CsNeutralBase
 
 const _STATE_NAME = "idle"
 
@@ -13,25 +13,17 @@ func _init():
 func init():
 	pass
 
+func deinit():
+	pass
+
 func check_next(state : PlayerState):
 	var next = null
-	next = CsSpecial.try_next(state, 10 if first else 1, ST.CancelInfo.from_all())
-	if next: return next
 	
-	next = CsNormal.try_next(state, 10 if first else 1, ST.CancelInfo.from_all())
-	if next: return next
-	
-	next = CsDash.try_next(state)
-	if next: return next
-	
-	next = CsJump.try_next(state)
+	next = check_actions(state, 10 if state_t == 0 else 1)
 	if next: return next
 	
 	next = CsWalk.try_next(state)
 	if next: return next
-
-func deinit():
-	pass
 
 func step(state : PlayerState):
 	_step()

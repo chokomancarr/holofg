@@ -43,6 +43,10 @@ class HitInfo:
 	var dir := STUN_DIR.HEAD
 	var cancels := CancelInfo.new()
 
+class OppAnimInfo:
+	var nf: int
+	var fix_dist: int
+
 class CancelInfo:
 	var everything: bool = false
 	var normal_lmh: int = 3
@@ -114,6 +118,7 @@ static func get_box_color(ty : BOX_TY):
 	match ty:
 		BOX_TY.HIT:	return Color.DARK_RED
 		BOX_TY.HURT: return Color.FOREST_GREEN
+		BOX_TY.GRAB: return Color.DODGER_BLUE
 		BOX_TY.COLLISION: return Color(Color.DARK_GRAY, 0.3)
 		_: return Color.BLACK
 

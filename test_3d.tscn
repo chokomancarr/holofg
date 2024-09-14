@@ -1,12 +1,7 @@
-[gd_scene load_steps=21 format=3 uid="uid://biy7ct076k6ly"]
+[gd_scene load_steps=16 format=3 uid="uid://biy7ct076k6ly"]
 
-[ext_resource type="PackedScene" uid="uid://dq6r535trldjs" path="res://models/chara/1/1_suisei.blend" id="1_3jq5k"]
-[ext_resource type="Script" path="res://scripts/rend/chara_rend.gd" id="2_4y256"]
-[ext_resource type="Script" path="res://scripts/rend/anim_player.gd" id="2_7sf6i"]
-[ext_resource type="Script" path="res://scripts/util/anim_flipper.gd" id="2_brvgs"]
 [ext_resource type="Script" path="res://scripts/debug_chara.gd" id="3_8mmn3"]
 [ext_resource type="Script" path="res://scripts/frame_meter.gd" id="4_hxw85"]
-[ext_resource type="PackedScene" uid="uid://gnvcusqgfjh" path="res://models/chara/2/2_towa.blend" id="5_a4f2v"]
 [ext_resource type="Script" path="res://scripts/rend/game_ui.gd" id="7_1d45a"]
 [ext_resource type="Script" path="res://scripts/rend/cam_follow.gd" id="9_t20ph"]
 
@@ -94,89 +89,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.008, 0)
 mesh = SubResource("PlaneMesh_5nysy")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
-
-[node name="1_suisei" parent="." instance=ExtResource("1_3jq5k")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0)
-
-[node name="Skeleton3D" parent="1_suisei/Armature" index="0"]
-bones/0/rotation = Quaternion(0.707107, -1.37679e-07, -1.37679e-07, 0.707107)
-bones/1/rotation = Quaternion(6.76149e-28, 1, 0, -1.94707e-07)
-bones/2/rotation = Quaternion(-5.33851e-08, 0.707107, -0.707107, 5.33851e-08)
-bones/3/rotation = Quaternion(-1.72044e-08, 0.999999, -0.00124074, 7.54979e-08)
-bones/3/scale = Vector3(1, 1, 1)
-bones/4/rotation = Quaternion(-0.00248175, 4.12553e-08, -1.66512e-08, 0.999997)
-bones/4/scale = Vector3(1, 1, 1)
-bones/5/rotation = Quaternion(1.7017e-08, 0.999999, -0.00124076, 7.54979e-08)
-bones/5/scale = Vector3(1, 1, 1)
-bones/6/rotation = Quaternion(-0.00248174, -9.46835e-09, 1.76965e-08, 0.999997)
-bones/6/scale = Vector3(1, 1, 1)
-bones/7/rotation = Quaternion(-5.33851e-08, 0.707107, 0.707107, -5.33851e-08)
-bones/9/rotation = Quaternion(1.42926e-08, 1.6616e-08, -0.707107, 0.707107)
-bones/12/rotation = Quaternion(0.707107, -0.707107, 1.62479e-07, -5.33851e-08)
-bones/14/rotation = Quaternion(-5.45468e-08, 0.707107, -5.45468e-08, 0.707107)
-bones/14/scale = Vector3(1, 1, 1)
-bones/15/rotation = Quaternion(0.707107, -8.13419e-28, 0.707106, 1.49289e-27)
-bones/16/rotation = Quaternion(0.707107, -8.13419e-28, 0.707106, 1.49289e-27)
-bones/17/rotation = Quaternion(2.62177e-28, 1, -1.00974e-28, -7.54979e-08)
-bones/19/rotation = Quaternion(0.707107, -8.13419e-28, 0.707106, 1.49289e-27)
-bones/20/rotation = Quaternion(0.707107, -8.13419e-28, 0.707106, 1.49289e-27)
-bones/21/rotation = Quaternion(2.62177e-28, 1, -1.00974e-28, -7.54979e-08)
-bones/23/rotation = Quaternion(2.70205e-07, 8.46209e-14, 1, -3.2211e-14)
-bones/24/rotation = Quaternion(-0.707107, -6.18172e-08, 1.26441e-07, 0.707107)
-bones/26/rotation = Quaternion(-0.707107, 8.42937e-08, -1.46111e-07, 0.707107)
-bones/27/rotation = Quaternion(1, 7.78229e-09, 7.54979e-08, -8.52651e-14)
-bones/28/rotation = Quaternion(-3.86577e-14, 1.19244e-08, 7.78229e-09, 1)
-
-[node name="flip" type="Node" parent="1_suisei/AnimationPlayer" index="0"]
-script = ExtResource("2_brvgs")
-
-[node name="ctrl" type="Node" parent="1_suisei/AnimationPlayer" index="1"]
-script = ExtResource("2_7sf6i")
-
-[node name="chara_ctrl" type="Node" parent="1_suisei"]
-script = ExtResource("2_4y256")
-is_p1 = false
-
-[node name="2_towa" parent="." instance=ExtResource("5_a4f2v")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.51158, 0, 0)
-
-[node name="Skeleton3D" parent="2_towa/Armature" index="0"]
-bones/0/rotation = Quaternion(0.707107, -1.37679e-07, -1.37679e-07, 0.707107)
-bones/1/rotation = Quaternion(6.76149e-28, 1, 0, -1.94707e-07)
-bones/2/rotation = Quaternion(-5.33851e-08, 0.707107, -0.707107, 5.33851e-08)
-bones/3/rotation = Quaternion(-1.72044e-08, 0.999999, -0.00124074, 7.54979e-08)
-bones/3/scale = Vector3(1, 1, 1)
-bones/4/rotation = Quaternion(-0.00248175, 4.12553e-08, -1.66512e-08, 0.999997)
-bones/4/scale = Vector3(1, 1, 1)
-bones/5/rotation = Quaternion(1.7017e-08, 0.999999, -0.00124076, 7.54979e-08)
-bones/5/scale = Vector3(1, 1, 1)
-bones/6/rotation = Quaternion(-0.00248174, -9.46835e-09, 1.76965e-08, 0.999997)
-bones/6/scale = Vector3(1, 1, 1)
-bones/7/rotation = Quaternion(0.707107, 5.33851e-08, -5.33851e-08, 0.707107)
-bones/12/rotation = Quaternion(-5.33851e-08, 0.707107, 0.707107, -5.33851e-08)
-bones/14/rotation = Quaternion(1.42926e-08, 1.6616e-08, -0.707107, 0.707107)
-bones/17/rotation = Quaternion(0.707107, -0.707107, 1.62479e-07, -5.33851e-08)
-bones/19/rotation = Quaternion(-5.45468e-08, 0.707107, -5.45468e-08, 0.707107)
-bones/19/scale = Vector3(1, 1, 1)
-bones/20/rotation = Quaternion(0.707107, -8.13419e-28, 0.707106, 1.78561e-27)
-bones/20/scale = Vector3(1, 1, 1)
-bones/21/rotation = Quaternion(0.707107, -8.13419e-28, 0.707106, 1.78561e-27)
-bones/21/scale = Vector3(1, 1, 1)
-bones/22/rotation = Quaternion(2.62177e-28, 1, -1.00974e-28, -7.54979e-08)
-bones/24/rotation = Quaternion(0.707107, -8.13419e-28, 0.707106, 1.78561e-27)
-bones/24/scale = Vector3(1, 1, 1)
-bones/25/rotation = Quaternion(0.707107, -8.13419e-28, 0.707106, 1.78561e-27)
-bones/25/scale = Vector3(1, 1, 1)
-bones/26/rotation = Quaternion(2.62177e-28, 1, -1.00974e-28, -7.54979e-08)
-
-[node name="flip" type="Node" parent="2_towa/AnimationPlayer" index="0"]
-script = ExtResource("2_brvgs")
-
-[node name="ctrl" type="Node" parent="2_towa/AnimationPlayer" index="1"]
-script = ExtResource("2_7sf6i")
-
-[node name="chara_ctrl" type="Node" parent="2_towa"]
-script = ExtResource("2_4y256")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.291387, 0.956605, 0, -0.956605, 0.291387, 0, 4.97138, 1.51125)
@@ -457,5 +369,5 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "-"
 
-[editable path="1_suisei"]
-[editable path="2_towa"]
+[node name="ppl_spawn" type="Node" parent="."]
+unique_name_in_owner = true

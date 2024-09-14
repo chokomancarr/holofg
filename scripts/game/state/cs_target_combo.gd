@@ -26,11 +26,15 @@ func check_next(state : PlayerState):
 	elif att_processed:
 		var info = query_hit()
 		if info.cancels:
-			next = CsSpecial.try_next(state, state_t + 10, ST.CancelInfo.from_all())
+			next = CsSpecial.try_next(state, 10, ST.CancelInfo.from_all())
 			if next: return next
 			
-			next = CsTargetCombo.try_next(state, state_t + 10, info.cancels)
+			next = CsTargetCombo.try_next(state, 10, info.cancels)
 			if next: return next
+			
+			if move.can_rapid:
+				next = CsNormal.try_next(state, state_t + 10, info.cancels)
+				if next: return next
 
 func deinit():
 	pass

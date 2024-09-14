@@ -13,7 +13,7 @@ func _ready():
 	_begin.call_deferred()
 
 func _begin():
-	GameMaster.new_match(1, 1, _GameNetBase.TY.OFFLINE)
+	GameMaster.new_match(2, 2, _GameNetBase.TY.OFFLINE)
 	#print_debug(await NetUtil.get_my_ip())
 
 func _physics_process(delta):
@@ -52,6 +52,8 @@ func _update_input_history_ui(game_state : GameState):
 		if i.m(): d.text += "M "
 		if i.h(): d.text += "H "
 		if i.s(): d.text += "S "
+		if i.g(): d.text += "✋ "
+		if i.p(): d.text += "▲ "
 		_his_gc.add_child(d)
 
 var _boxview_elems = [

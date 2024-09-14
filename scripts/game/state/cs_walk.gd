@@ -1,4 +1,4 @@
-class_name CsWalk extends _CsBase
+class_name CsWalk extends _CsNeutralBase
 
 const _STATE_NAME = "walk"
 
@@ -18,12 +18,13 @@ func init():
 
 func check_next(state : PlayerState):
 	var next = null
-	next = CsNormal.try_next(state, 1, ST.CancelInfo.from_all())
+	
+	next = check_actions(state, 10 if state_t == 0 else 1)
 	if next: return next
 	
 	var lbt = state.input_history.last_bts()
 	var ldir = state.input_history.last_dir()
-	if lbt != 0 or (ldir != 4 and ldir != 6):
+	if ldir != 4 and ldir != 6:
 		return CsIdle.new()
 
 func deinit():

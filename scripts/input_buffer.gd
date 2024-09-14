@@ -23,7 +23,8 @@ class InputHistory:
 		else:
 			var st = v.clone()
 			st.processed = false
-			st.new_bt = (b & (~his[0].bts())) > 0
+			st.val_new = (b & (~his[0].bts())) + d
+			st.new_bt = st.val_new > 0
 			his.push_front(st)
 			#bts.push_front({ V: b, NF: 1, "used": false, NP: (b & (~bts[0].v)) > 0, "_id": _id })
 			if his.size() > 30:
@@ -43,6 +44,7 @@ class InputHistory:
 
 class InputState:
 	var val : int = 5
+	var val_new : int = 0
 	var nf : int = 1
 	var new_bt : bool = false
 	var processed : bool = false
@@ -72,13 +74,17 @@ class InputState:
 		#
 		#return res
 	
+	func _v(n): return val_new if n else val
+	
 	func dir(): return val & 15
-	func l(): return val & (1 << 8)
-	func m(): return val & (1 << 12)
-	func h(): return val & (1 << 16)
-	func s(): return val & (1 << 20)
-	func bt(e : BT): return val & e
-	func bts(): return val & ((1 << 22) - 16)
+	func l(n = false): return _v(n) & (1 << 8)
+	func m(n = false): return _v(n) & (1 << 12)
+	func h(n = false): return _v(n) & (1 << 16)
+	func s(n = false): return _v(n) & (1 << 20)
+	func g(n = false): return _v(n) & (1 << 24)
+	func p(n = false): return _v(n) & (1 << 28)
+	func bt(e : BT, n = false): return _v(n) & e
+	func bts(n = false): return _v(n) & ((1 << 30) - 16)
 	
 	func dir_flipped():
 		var res = dir()
@@ -91,32 +97,34 @@ class InputState:
 			res -= 2
 		return res
 	
-	func name(neutral):
+	func name(neutral, n = false):
 		var res = ("2" if dir() < 4 else "5") if neutral else str(dir())
-		if l(): res += "l"
-		if m(): res += "m"
-		if h(): res += "h"
-		if s(): res += "s"
+		if l(n): res += "l"
+		if m(n): res += "m"
+		if h(n): res += "h"
+		if s(n): res += "s"
 		
 		return res
 	
-	func names():
-		var bt = ""
-		if l(): bt += "l"
-		if m(): bt += "m"
-		if h(): bt += "h"
-		if s(): bt += "s"
+	func names(n = false):
+		var btt = []
+		if p(n): btt.push_back("p")
+		if g(n): btt.push_back("g")
+		if s(n): btt.push_back("s")
+		if h(n): btt.push_back("h")
+		if m(n): btt.push_back("m")
+		if l(n): btt.push_back("l")
 		
 		var d = dir()
 		
 		var res = []
-		if d != 5:
-			if [ 1, 3, 7, 9 ].has(d):
+		for bt in btt:
+			if d != 5:
+				if [ 1, 3, 7, 9 ].has(d):
+					res.push_back(str(d) + bt)
+					d = d + 1 if (d == 1 or d == 7) else d - 1
 				res.push_back(str(d) + bt)
-				d = d + 1 if (d == 1 or d == 7) else d - 1
-			res.push_back(str(d) + bt)
-		
-		res.push_back("5" + bt)
+			res.push_back("5" + bt)
 		
 		return res
 	
@@ -139,6 +147,9 @@ enum BT {
 	m = 1 << 12,
 	h = 1 << 16,
 	s = 1 << 20,
+	g = 1 << 24,
+	p = 1 << 28,
+	ANY = 1
 }
 
 const DIR_ANY_2 = 12
@@ -146,7 +157,7 @@ const DIR_ANY_4 = 14
 const DIR_ANY_6 = 16
 const DIR_ANY_8 = 18
 const DIR_OPT_BIT = 1024
-const DIR_FLIP_BIT = 1 << 25
+const DIR_FLIP_BIT = 1 << 31
 
 const _DIR_ALLOWED = {
 	12: [1,2,3],
@@ -171,7 +182,7 @@ class InputCommand:
 			return _DIR_ALLOWED[cmd].has(dir)
 
 	func check(history : InputHistory):
-		if history.his[0].bts() != bt: return false
+		if bt != BT.ANY and history.his[0].bts() != bt: return false
 		var ff = 0
 		var ci = 0
 		var cn = command.size()
@@ -259,6 +270,9 @@ class InputCommand:
 				res.command_str = s
 		
 		for c in bt:
-			res.bt += BT.get(c)
+			var b = BT.get(c)
+			if not b:
+				return null
+			res.bt += b
 		
 		return res

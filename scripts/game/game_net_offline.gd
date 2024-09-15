@@ -5,10 +5,7 @@ var p2_inputs : InputMan._InputSource
 
 func _ready():
 	p1_inputs = InputMan.get_player_input(0)
-	if InputMan.available_devices.size() > 1:
-		p2_inputs = InputMan.get_player_input(1)
-	else:
-		p2_inputs = InputMan.DummyInput.new()
+	p2_inputs = InputMan.get_player_input(1)
 
 func start():
 	pass

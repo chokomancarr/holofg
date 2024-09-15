@@ -61,9 +61,3 @@ func step():
 		state.next_offset.x *= -1
 	pos += state.next_offset
 	bounded_pos = pos + state.bounds_off
-
-func on_hit(att_info, dist):
-	state = CsStun.new(self, att_info)
-
-func on_grab(opp, info):
-	state = CsStunAnim.new(opp, info)

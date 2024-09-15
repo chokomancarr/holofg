@@ -13,7 +13,7 @@ func _ready():
 	_begin.call_deferred()
 
 func _begin():
-	GameMaster.new_match(2, 2, _GameNetBase.TY.OFFLINE)
+	GameMaster.new_match(2, 2, _GameNetBase.TY.TRAINING)
 	#print_debug(await NetUtil.get_my_ip())
 
 func _physics_process(delta):
@@ -80,10 +80,11 @@ func _draw_debug_chara(chara : PlayerState, p):
 			n2 = n
 	for i in range(n):
 		var b = chara.boxes[i]
+		var rect = b.get_rect(chara.action_is_p2)
 		var pt = bve[i]
 		pt[0].visible = true
-		pt[0].position = _tr(ST.coord2world(b.rect.position + chara.pos + Vector2i(5000-ctr, b.rect.size.y), sz), sz)
-		pt[0].size = ST.cmag2world(b.rect.size, sz) * ui_cam_scl
+		pt[0].position = _tr(ST.coord2world(rect.position + chara.pos + Vector2i(5000-ctr, rect.size.y), sz), sz)
+		pt[0].size = ST.cmag2world(rect.size, sz) * ui_cam_scl
 		pt[1].border_color = ST.get_box_color(b.ty)
 		pt[1].bg_color = Color(pt[1].border_color, 0.3)
 	for i in range(n2 - n):

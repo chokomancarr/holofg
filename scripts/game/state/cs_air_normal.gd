@@ -23,6 +23,9 @@ static func try_next(state : PlayerState, sliceback : int, allow : ST.CancelInfo
 					return res
 	)
 
+func _init():
+	airborne = true
+
 func step(state):
 	super.step(state)
 	next_offset = jump_traj.eval(jump_traj_off + state_t)

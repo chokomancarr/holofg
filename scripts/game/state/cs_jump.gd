@@ -38,6 +38,7 @@ func _init(dir):
 	self.dir = dir
 	offsets = _jump_offsets[dir]
 	anim_name = "8" #str(dir + 7)
+	airborne = true
 
 func check_next(state : PlayerState):
 	var next = null

@@ -9,6 +9,8 @@ var in_recovery = false
 var do_in_recovery = false
 var rec_df : int
 
+var parried_nf = -1
+
 static func try_next(state : PlayerState):
 	var his = state.input_history.his[0]
 	if his.bt(IN.BT.p):
@@ -19,8 +21,7 @@ func _init(n):
 	anim_name = "parry"
 
 func check_next(state : PlayerState):
-	if in_recovery:
-		if state_t == NF_RECOVERY + rec_df - 1:
+	if (in_recovery and state_t >= NF_RECOVERY + rec_df - 1) or state_t == 1000000:
 			return CsIdle.new()
 	else:
 		var next = CsTeleport.try_next(state)
@@ -28,15 +29,22 @@ func check_next(state : PlayerState):
 
 func step(state : PlayerState):
 	_step()
-	if not in_recovery:
-		if not state.input_history.his[0].bt(IN.BT.p):
-			in_recovery = true
-			rec_df = state_t
-	do_in_recovery = in_recovery and state_t > NF_MIN
-	if not do_in_recovery:
-		rec_df += 1
+	if parried_nf > 0:
+		parried_nf -= 1
+		if parried_nf == 0 and not state.input_history.his[0].bt(IN.BT.p):
+			state_t = 1000000
 	else:
-		anim_name = "parry_recovery"
+		if not in_recovery:
+			if not state.input_history.his[0].bt(IN.BT.p):
+				in_recovery = true
+				rec_df = state_t
+				if parried_nf == 0:
+					state_t = 1000000
+		do_in_recovery = in_recovery and state_t > NF_MIN
+		if not do_in_recovery:
+			rec_df += 1
+		else:
+			anim_name = "parry_recovery"
 	state.boxes = [state._info.idle_box] as Array[ST.BoxInfo]
 
 func get_anim_frame(df):
@@ -46,4 +54,7 @@ func get_anim_frame(df):
 		return -1
 
 func get_frame_meter_color():
-	return Color.ROYAL_BLUE if do_in_recovery else Color.LIGHT_PINK
+	return Color.ROYAL_BLUE if do_in_recovery else Color.HOT_PINK if parried_nf > 0 else Color.LIGHT_PINK
+
+func query_stun():
+	return ST.STUN_TY.PUNISH_COUNTER if do_in_recovery else ST.STUN_TY.PARRY

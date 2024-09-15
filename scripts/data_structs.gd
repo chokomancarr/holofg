@@ -14,12 +14,18 @@ static func cmag2world(c: Vector2i, sz : Vector2):
 class BoxInfo:
 	var ty: BOX_TY
 	var rect: Rect2i
+	var rect_flip: Rect2i
 	
 	var hit_i: int = 0
+	
+	func get_rect(f):
+		return rect_flip if f else rect
 	
 	func _init(ty, rect):
 		self.ty = ty
 		self.rect = rect
+		self.rect_flip = Rect2i(rect)
+		self.rect_flip.position.x = -self.rect_flip.position.x - self.rect_flip.size.x
 
 class BoxInfoFrame extends BoxInfo:
 	var frame_start: int
@@ -28,6 +34,7 @@ class BoxInfoFrame extends BoxInfo:
 	func _init(box : BoxInfo, st, ed):
 		self.ty = box.ty
 		self.rect = box.rect
+		self.rect_flip = box.rect_flip
 		self.frame_start = st
 		self.frame_end = ed
 
@@ -135,7 +142,10 @@ enum ATTACK_TY {
 	_HIT_BIT = 0x1000, _GRAB_BIT = 0x0010
 }
 enum STUN_TY {
-	BLOCK, NORMAL, COUNTER, PUNISH_COUNTER
+	BLOCK, PARRY, NORMAL, COUNTER, PUNISH_COUNTER
+}
+enum STUN_AIR_TY {
+	RESET, JUGGLE
 }
 enum STUN_DIR {
 	OVERHEAD, HEAD, HEAD_UP, HEAD_SIDE, BODY, BODY_UP, BODY_SIDE, LEG

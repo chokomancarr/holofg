@@ -1,6 +1,5 @@
 class_name CsParry extends _CsBase
 
-const NF_RECOVERY = 30
 const NF_MIN = 10
 
 const _STATE_NAME = "parry"
@@ -8,6 +7,8 @@ const _STATE_NAME = "parry"
 var in_recovery = false
 var do_in_recovery = false
 var rec_df : int
+
+var NF_RECOVERY = 30
 
 var parried_nf = -1
 
@@ -30,16 +31,17 @@ func check_next(state : PlayerState):
 func step(state : PlayerState):
 	_step()
 	if parried_nf > 0:
+		NF_RECOVERY = 4
 		parried_nf -= 1
-		if parried_nf == 0 and not state.input_history.his[0].bt(IN.BT.p):
+		if parried_nf == 1 and not state.input_history.his[0].bt(IN.BT.p):
 			state_t = 1000000
 	else:
 		if not in_recovery:
 			if not state.input_history.his[0].bt(IN.BT.p):
 				in_recovery = true
 				rec_df = state_t
-				if parried_nf == 0:
-					state_t = 1000000
+				#if parried_nf == 0:
+				#	state_t = 1000000
 		do_in_recovery = in_recovery and state_t > NF_MIN
 		if not do_in_recovery:
 			rec_df += 1
@@ -58,3 +60,12 @@ func get_frame_meter_color():
 
 func query_stun():
 	return ST.STUN_TY.PUNISH_COUNTER if do_in_recovery else ST.STUN_TY.PARRY
+
+func dict4hash():
+	return [ _STATE_NAME,
+		in_recovery,
+		do_in_recovery,
+		rec_df,
+		NF_RECOVERY,
+		parried_nf
+	]

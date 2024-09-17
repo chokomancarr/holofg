@@ -31,13 +31,25 @@ static func step(game_state : GameState):
 				p.state = CsStunAir.new(p, ST.STUN_AIR_TY.RESET if counter_ty == ST.STUN_TY.NORMAL else ST.STUN_AIR_TY.JUGGLE)
 			else:
 				match counter_ty:
+					ST.STUN_TY.BLOCK:
+						var block_ty = p.state.block_state
+						var canblock = (hit.ty & ~block_ty) == 0
+						if canblock:
+							p.state = CsBlock.new(p, hit as ST.AttInfo_Hit)
+							p.state.block_state = block_ty
+							#o.freeze = maxi(o.freeze, 5)
+							#return
+						else:
+							p.state = CsStun.new(p, hit as ST.AttInfo_Hit)
 					ST.STUN_TY.PARRY:
 						(p.state as CsParry).parried_nf = (hit as ST.AttInfo_Hit).stun_block
 					_:
 						p.state = CsStun.new(p, hit as ST.AttInfo_Hit)
 			o.freeze = maxi(o.freeze, hit.n_freeze)
 		elif hit.ty == ST.ATTACK_TY.GRAB:
-			if !p.state.airborne:
+			if p.state.airborne:
+				opp.state.att_processed = false
+			else:
 				if p.state.attack_ty == ST.ATTACK_TY.GRAB and counter_ty != ST.STUN_TY.PUNISH_COUNTER:
 						p.state = CsGrabTech.new()
 						opp.state = CsGrabTech.new()

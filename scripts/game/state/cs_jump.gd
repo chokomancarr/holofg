@@ -60,3 +60,8 @@ func step(state : PlayerState):
 
 func get_frame_meter_color():
 	return Color.LIGHT_BLUE if aerial else Color.GREEN_YELLOW
+
+func dict4hash():
+	return [ _STATE_NAME,
+		dir, offsets.hash
+	]

@@ -1,5 +1,10 @@
 extends Node
 
+static var root_node : Node
+
+static func get_timer(t):
+	return root_node.get_tree().create_timer(t, true, false, true)
+
 var p1_chara_info : DT.CharaInfo = null
 var p2_chara_info : DT.CharaInfo = null
 var game_state : GameState = null
@@ -18,6 +23,7 @@ func _ready():
 	#for i in range(1, 3):
 	#	all_chara_infos[i] = DT.load_chara(i)
 	all_chara_infos[2] = DT.load_chara(2)
+	root_node = get_node("/root")
 
 func new_match(p1 : int, p2 : int, ty : _GameNetBase.TY):
 	p1_chara_info = all_chara_infos[p1]

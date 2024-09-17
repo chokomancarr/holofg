@@ -22,3 +22,8 @@ func deinit(state : PlayerState):
 
 func get_frame_meter_color():
 	return Color.YELLOW
+
+
+func dict4hash():
+	return [ _STATE_NAME
+	]

@@ -34,6 +34,8 @@ class MoveInfo:
 
 class OffsetInfo:
 	var vals = []
+	var hash : int
+	
 	static func from_json(o, nf):
 		return from_keys(o.offsets, nf) if o.offsets_use_keyframes else from_vals(o.offsets, nf)
 	
@@ -59,10 +61,14 @@ class OffsetInfo:
 		var v = vals.back()
 		for _i in range(n - vals.size()):
 			vals.push_back(Vector2i(v))
+		hash = vals.hash()
 		return self
 	
 	func eval(i):
 		return vals[i]
+	
+	func hashed():
+		return hash
 
 static func load_chara(chara_id):
 	var data = (load("res://database/chara_data_%d.json" % chara_id) as JSON).data

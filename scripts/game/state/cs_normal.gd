@@ -31,3 +31,8 @@ func check_next(state : PlayerState):
 			
 			next = CsNormal.try_next(state, 10, info.cancels)
 			if next: return next
+
+func dict4hash():
+	return [ _STATE_NAME,
+		
+	]

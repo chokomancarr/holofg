@@ -32,3 +32,8 @@ func check_next(state : PlayerState):
 			if move.can_rapid:
 				next = CsNormal.try_next(state, state_t + 10, info.cancels)
 				if next: return next
+
+func dict4hash():
+	return [ _STATE_NAME,
+		
+	]

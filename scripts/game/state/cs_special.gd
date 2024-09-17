@@ -19,3 +19,8 @@ func check_next(state : PlayerState):
 	var next = null
 	if state_t == move.n_frames:
 		return CsIdle.new()
+
+func dict4hash():
+	return [ _STATE_NAME,
+		
+	]

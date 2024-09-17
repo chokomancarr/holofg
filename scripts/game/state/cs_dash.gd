@@ -50,3 +50,8 @@ func step(state : PlayerState):
 
 func get_frame_meter_color():
 	return Color.LIGHT_BLUE
+
+func dict4hash():
+	return [ _STATE_NAME,
+		fwd
+	]

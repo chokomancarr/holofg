@@ -20,3 +20,6 @@ func check_actions(state : PlayerState, sliceback, att_only = false):
 		
 		next = CsJump.try_next(state)
 		if next: return next
+
+func query_stun():
+	return ST.STUN_TY.NORMAL if block_state == ST.BLOCK_TY.NONE else ST.STUN_TY.BLOCK

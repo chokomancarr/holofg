@@ -41,6 +41,12 @@ class InputHistory:
 		return his[0].bts()
 	func last_dir():
 		return dirs[0].v
+	
+	func dict4hash():
+		return {
+			"hs": his.map(func (h : InputState): return h.hashed()),
+			"dr": dirs.map(func (h): return [ h.v, h.nf ].hash())
+		}
 
 class InputState:
 	var val : int = 5
@@ -59,20 +65,6 @@ class InputState:
 		res.nf = nf
 		res.processed = processed
 		return res
-	
-	#static func from_player(state: InputMan.ActionStatus):
-		#var res = new()
-		#res.val = 5 + state.axis_x() + 3 * state.axis_y()
-		#
-		#var i = 8
-		#for nm in ["l", "m", "h", "s"]:
-			#if state.get("button_" + nm) > 0:
-				#res.val += 1 << i
-				#res.bt_just = true
-			#
-			#i += 4
-		#
-		#return res
 	
 	func _v(n): return val_new if n else val
 	
@@ -128,17 +120,15 @@ class InputState:
 		
 		return res
 	
-	func serialize() -> Dictionary:
-		return {
-			"v": val,
-			"nf": nf
-		}
-	static func deserialize(d : Dictionary):
-		var res = new()
-		if d.has("v"):
-			res.val = d.v
-			res.nf = d.nf
-		return res
+	func serialize4input() -> Dictionary:
+		return { "v" : val }
+	static func deserialize4input(d : Dictionary):
+		return new(d["v"])
+	
+	func hashed():
+		return [
+			val, val_new, nf, new_bt, processed
+		].hash()
 
 const JUST_PRESSED = 1
 

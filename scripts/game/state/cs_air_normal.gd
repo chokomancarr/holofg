@@ -38,3 +38,8 @@ func check_next(state : PlayerState):
 		var info = query_hit()
 		if info.cancels:
 			pass
+
+func dict4hash():
+	return [ _STATE_NAME,
+		jump_traj, jump_traj_off
+	]

@@ -59,3 +59,21 @@ func query_stun():
 
 func get_frame_meter_color():
 	return null
+
+func _dict4hash():
+	return [
+		state_t,
+		next_offset,
+		#anim_name,
+		use_pos_flip,
+		airborne,
+		block_state,
+		attack_ty,
+		push_wall,
+		req_freeze,
+		bounds_off,
+		dict4hash()
+	]
+
+func dict4hash():
+	assert(false, "state does not implement dict4hash!")

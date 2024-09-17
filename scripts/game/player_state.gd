@@ -16,7 +16,6 @@ var dist_to_opp: Vector2i
 var summons: _SmBase
 
 var boxes: Array[ST.BoxInfo] = []
-var move_name: String = "5"
 
 var state: _CsBase
 
@@ -24,7 +23,6 @@ static func create(info : DT.CharaInfo, is_p1 : bool) -> PlayerState:
 	var res = new()
 	res._info = info
 	res.bar_health = info.max_health
-	#res.input_history = [ IN.InputState.new() ] as Array[IN.InputState]
 	res.input_history = IN.InputHistory.new()
 	res.pos = Vector2i(4000 if is_p1 else 6000, 0)
 	res.pos_is_p2 = !is_p1
@@ -60,4 +58,19 @@ func step():
 	if action_is_p2:
 		state.next_offset.x *= -1
 	pos += state.next_offset
-	bounded_pos = pos + state.bounds_off
+	bounded_pos = pos + (state.bounds_off if action_is_p2 else -state.bounds_off)
+
+func dict4hash():
+	return [
+		input_history.dict4hash(),
+		bar_health,
+		bar_super,
+		pos,
+		bounded_pos,
+		pos_is_p2,
+		action_is_p2,
+		dist_to_opp,
+		#summons,
+		boxes.map(func (b : ST.BoxInfo): return b.hashed()),
+		state._dict4hash()
+	]

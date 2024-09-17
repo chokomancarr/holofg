@@ -28,5 +28,11 @@ func step(state : PlayerState):
 			move = move.whiff
 			anim_name = move.name
 	super.step(state)
+	attack_ty = ST.ATTACK_TY.GRAB
 	if att_processed:
 		state.boxes = []
+
+func dict4hash2():
+	return [ _STATE_NAME,
+		
+	]

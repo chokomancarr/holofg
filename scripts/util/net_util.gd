@@ -4,7 +4,7 @@ signal req_complete
 
 var _my_ip : String
 
-var _stun_addr = null
+var _stun_addrs = null
 const _STUN_MAGIC_FLIP = 0x42A41221
 const _STUN_MAGIC = 0x2112A442
 
@@ -24,16 +24,17 @@ func _get_stun_req_packet():
 	return res
 
 func request_stun(socket : PacketPeerUDP):
-	if not _stun_addr:
+	if not _stun_addrs:
 		var req = HTTPRequest.new()
 		get_tree().root.add_child(req)
 		req.request_completed.connect(func (res, code, hd, bd : PackedByteArray):
-			_stun_addr = Array(bd.get_string_from_utf8().split("\n")).pick_random().split(":")
+			_stun_addrs = Array(bd.get_string_from_utf8().split("\n"))
 			req_complete.emit()
 		)
 		req.request("https://raw.githubusercontent.com/pradt2/always-online-stun/master/valid_ipv4s.txt")
 		await req_complete
 	
+	var _stun_addr = _stun_addrs.pick_random().split(":")
 	print("sending stun request to ", _stun_addr)
 	socket.connect_to_host(_stun_addr[0], int(_stun_addr[1]))
 	socket.put_packet(_get_stun_req_packet())
@@ -103,7 +104,7 @@ func mm_request(params, callback = null):
 		req_complete.emit()
 	)
 	var headers = ["ngrok-skip-browser-warning: 69420"]
-	req.request("https://equipped-chamois-big.ngrok-free.app/?" + params)
+	req.request("https://equipped-chamois-big.ngrok-free.app/" + params)
 	await req_complete
 	
 	if callback:
@@ -111,29 +112,29 @@ func mm_request(params, callback = null):
 	
 	return mm_res
 
-func mm_connect(username, callback = null):
-	var peer = PacketPeerUDP.new()
-	peer.bind(0)
-	
-	print_debug("sending connreq to mm using port ", peer.get_local_port(), "...")
-	
-	var req = HTTPRequest.new()
-	get_tree().root.add_child(req)
-	req.request_completed.connect(func (res, code, hd, bd):
-		var res_s = bd.get_string_from_utf8()
-		mm_res = JSON.parse_string(res_s)
-		req_complete.emit()
-	)
-	var headers = ["ngrok-skip-browser-warning: 69420"]
-	req.request("https://equipped-chamois-big.ngrok-free.app/connreq?user=foo")
-	await req_complete
-	
-	print_debug("mm replied: ", mm_res)
-	if not mm_res or not mm_res["ok"]:
-		return
-	print_debug("connecting to mm...")
-	
-	peer.connect_to_host(mm_res.server_ip, mm_res.server_port)
-	
-	if callback:
-		callback.call(peer)
+#func mm_connect(username, callback = null):
+	#var peer = PacketPeerUDP.new()
+	#peer.bind(0)
+	#
+	#print_debug("sending connreq to mm using port ", peer.get_local_port(), "...")
+	#
+	#var req = HTTPRequest.new()
+	#get_tree().root.add_child(req)
+	#req.request_completed.connect(func (res, code, hd, bd):
+		#var res_s = bd.get_string_from_utf8()
+		#mm_res = JSON.parse_string(res_s)
+		#req_complete.emit()
+	#)
+	#var headers = ["ngrok-skip-browser-warning: 69420"]
+	#req.request("https://equipped-chamois-big.ngrok-free.app/connreq?user=foo")
+	#await req_complete
+	#
+	#print_debug("mm replied: ", mm_res)
+	#if not mm_res or not mm_res["ok"]:
+		#return
+	#print_debug("connecting to mm...")
+	#
+	#peer.connect_to_host(mm_res.server_ip, mm_res.server_port)
+	#
+	#if callback:
+		#callback.call(peer)

@@ -53,3 +53,11 @@ func get_frame_meter_color():
 			return Color.RED
 		ST.ATTACK_PART.RECOVERY:
 			return Color.ROYAL_BLUE
+
+func dict4hash():
+	return [
+		move, current_att, att_processed, att_part, dict4hash2()
+	]
+
+func dict4hash2():
+	assert(false, "not implemented!")

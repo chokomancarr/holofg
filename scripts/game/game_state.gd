@@ -32,10 +32,22 @@ func _get_debug_text():
 	var pr = func (p : PlayerState, i):
 		return "(%s) %s (%s)  P%d" % [p.state.state_t, p.state._STATE_NAME, p.state.anim_name, i]
 	
-	return "%s\n%s" % [ pr.call(p1, 1), pr.call(p2, 2) ]
+	return "%s\n%s\n%d :state_hash" % [ pr.call(p1, 1), pr.call(p2, 2), dict4hash().hash() ]
 
 func get_anim_timescale():
 	return (1.0 / (freeze_n - 1)) if is_frozen() else 1.0
 
 func get_anim_framediff():
 	return (freeze_t * 1.0 / freeze_n) if is_frozen() else 0.0
+
+
+func dict4hash():
+	return {
+		"p1": p1.dict4hash(),
+		"p2": p2.dict4hash(),
+		"ft": freeze_t,
+		"fn": freeze_n,
+		"fb": freeze_canbuffer,
+		"cd": countdown,
+		"wl": wall
+	}

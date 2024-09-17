@@ -26,6 +26,11 @@ class BoxInfo:
 		self.rect = rect
 		self.rect_flip = Rect2i(rect)
 		self.rect_flip.position.x = -self.rect_flip.position.x - self.rect_flip.size.x
+	
+	func hashed():
+		return [
+			ty, rect, hit_i
+		].hash()
 
 class BoxInfoFrame extends BoxInfo:
 	var frame_start: int
@@ -138,8 +143,8 @@ enum ATTACK_PART {
 	STARTUP, ACTIVE, RECOVERY, NONE
 }
 enum ATTACK_TY {
-	NONE = 0, HIGH = 0x1001, MID = 0x1002, LOW = 0x1003, AIR = 0x1004, GRAB = 0x0010, AIR_GRAB = 0x0011, CMD_GRAB = 0x0012,
-	_HIT_BIT = 0x1000, _GRAB_BIT = 0x0010
+	NONE = 0, HIGH = 0x1000, MID = 0x1001, LOW = 0x1010, AIR = 0x1004, GRAB = 0x0100, AIR_GRAB = 0x0101, CMD_GRAB = 0x0102,
+	_HIT_BIT = 0x1000, _GRAB_BIT = 0x0100
 }
 enum STUN_TY {
 	BLOCK, PARRY, NORMAL, COUNTER, PUNISH_COUNTER
@@ -154,6 +159,6 @@ enum KNOCK_TY {
 	NONE, KNOCKDOWN, HARD_KNOCKDOWN, CRUSH_FWD, CRUSH_BACK, LIFT, LIFT_JUGGLE
 }
 enum BLOCK_TY {
-	NONE, LOW, HIGH, PARRY,
+	NONE = 0, HIGH = 0x1001, LOW = 0x1010,
 	ALL #shouldnt happen in actual games, just for training mode for blocking all
 }

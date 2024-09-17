@@ -39,3 +39,8 @@ func step(state : PlayerState):
 
 func get_anim_frame(df):
 	return -1
+
+func dict4hash():
+	return [ _STATE_NAME,
+		fwd
+	]

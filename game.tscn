@@ -1,0 +1,373 @@
+[gd_scene load_steps=16 format=3 uid="uid://biy7ct076k6ly"]
+
+[ext_resource type="Script" path="res://scripts/debug_chara.gd" id="1_6nb7d"]
+[ext_resource type="Script" path="res://scripts/rend/cam_follow.gd" id="2_ldlmx"]
+[ext_resource type="Script" path="res://scripts/frame_meter.gd" id="3_xmqwa"]
+[ext_resource type="Script" path="res://scripts/rend/game_ui.gd" id="4_pqnyw"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_whvl6"]
+size = Vector2(30, 5)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_e2wec"]
+size = Vector2(50, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lvxpt"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ux4ky"]
+size = Vector2(0.05, 10)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_5nysy"]
+size = Vector2(0.02, 2)
+
+[sub_resource type="Environment" id="Environment_o2aou"]
+background_mode = 1
+background_color = Color(0.482353, 0.482353, 0.482353, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oi1b7"]
+bg_color = Color(0.396078, 0.396078, 0.396078, 0.168627)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5f16b"]
+bg_color = Color(0.231373, 0.658824, 0.772549, 1)
+
+[sub_resource type="FontVariation" id="FontVariation_shavc"]
+variation_embolden = 1.07
+
+[sub_resource type="LabelSettings" id="LabelSettings_g1p6a"]
+font = SubResource("FontVariation_shavc")
+font_size = 40
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_otrjq"]
+bg_color = Color(0.960784, 0.627451, 0, 1)
+
+[node name="main" type="Node3D"]
+
+[node name="debug_chara" type="Node" parent="." groups=["network_sync"]]
+script = ExtResource("1_6nb7d")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 3.647)
+
+[node name="Node" type="Node" parent="Camera3D"]
+script = ExtResource("2_ldlmx")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_whvl6")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00775468, 0)
+mesh = SubResource("PlaneMesh_e2wec")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00775468, 0)
+mesh = SubResource("PlaneMesh_ux4ky")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.008, 0)
+mesh = SubResource("PlaneMesh_5nysy")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.008, 0)
+mesh = SubResource("PlaneMesh_5nysy")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.008, 0)
+mesh = SubResource("PlaneMesh_5nysy")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.008, 0)
+mesh = SubResource("PlaneMesh_5nysy")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.291387, 0.956605, 0, -0.956605, 0.291387, 0, 4.97138, 1.51125)
+shadow_enabled = true
+shadow_opacity = 0.5
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_o2aou")
+
+[node name="frame_meter" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_xmqwa")
+
+[node name="p1" type="CenterContainer" parent="frame_meter"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_top = 100.0
+offset_right = 20.0
+offset_bottom = 140.0
+grow_horizontal = 2
+
+[node name="gc" type="GridContainer" parent="frame_meter/p1"]
+layout_mode = 2
+theme_override_constants/h_separation = 2
+columns = 60
+
+[node name="p2" type="CenterContainer" parent="frame_meter"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_top = 120.0
+offset_right = 20.0
+offset_bottom = 160.0
+grow_horizontal = 2
+
+[node name="gc" type="GridContainer" parent="frame_meter/p2"]
+layout_mode = 2
+theme_override_constants/h_separation = 2
+columns = 60
+
+[node name="input_history" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="gc" type="GridContainer" parent="input_history"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 60.0
+offset_bottom = 60.0
+theme_override_constants/h_separation = 5
+columns = 3
+
+[node name="box_view" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ui" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_pqnyw")
+
+[node name="top_cc" type="CenterContainer" parent="ui"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+
+[node name="vb" type="VBoxContainer" parent="ui/top_cc"]
+layout_mode = 2
+theme_override_constants/separation = -5
+
+[node name="hb1" type="HBoxContainer" parent="ui/top_cc/vb"]
+layout_mode = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="game_ui_hp_p1" type="ProgressBar" parent="ui/top_cc/vb/hb1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(400, 30)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_5f16b")
+step = 1.0
+value = 50.0
+fill_mode = 1
+show_percentage = false
+
+[node name="game_ui_time" type="Label" parent="ui/top_cc/vb/hb1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "99"
+label_settings = SubResource("LabelSettings_g1p6a")
+horizontal_alignment = 1
+
+[node name="game_ui_hp_p2" type="ProgressBar" parent="ui/top_cc/vb/hb1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(400, 30)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_5f16b")
+step = 1.0
+value = 50.0
+show_percentage = false
+
+[node name="hb2" type="HBoxContainer" parent="ui/top_cc/vb"]
+layout_mode = 2
+theme_override_constants/separation = 80
+alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ui/top_cc/vb/hb2"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="game_ui_sp3_p1" type="ProgressBar" parent="ui/top_cc/vb/hb2/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 15)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+step = 1.0
+value = 50.0
+fill_mode = 1
+show_percentage = false
+
+[node name="game_ui_sp2_p1" type="ProgressBar" parent="ui/top_cc/vb/hb2/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 15)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+step = 1.0
+value = 50.0
+fill_mode = 1
+show_percentage = false
+
+[node name="game_ui_sp1_p1" type="ProgressBar" parent="ui/top_cc/vb/hb2/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 15)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+step = 1.0
+value = 50.0
+fill_mode = 1
+show_percentage = false
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="ui/top_cc/vb/hb2"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="game_ui_sp1_p2" type="ProgressBar" parent="ui/top_cc/vb/hb2/HBoxContainer2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 15)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+step = 1.0
+value = 50.0
+show_percentage = false
+
+[node name="game_ui_sp2_p2" type="ProgressBar" parent="ui/top_cc/vb/hb2/HBoxContainer2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 15)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+step = 1.0
+value = 50.0
+show_percentage = false
+
+[node name="game_ui_sp3_p2" type="ProgressBar" parent="ui/top_cc/vb/hb2/HBoxContainer2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 15)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+step = 1.0
+value = 50.0
+show_percentage = false
+
+[node name="game_ui_debug_info" type="Label" parent="ui"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -23.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "game_speed: 1.0"
+horizontal_alignment = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="ui"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 100.0
+offset_bottom = 123.0
+grow_horizontal = 2
+
+[node name="GridContainer" type="GridContainer" parent="ui/CenterContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+columns = 3
+
+[node name="Label" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "0(0)"
+horizontal_alignment = 2
+
+[node name="Label2" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "Damage (Combo)"
+horizontal_alignment = 1
+
+[node name="Label3" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "0(0)"
+
+[node name="Label4" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+
+[node name="Label5" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "Scaling"
+horizontal_alignment = 1
+
+[node name="Label6" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "100%"
+
+[node name="Label7" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "-"
+horizontal_alignment = 2
+
+[node name="Label8" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "Attack Type"
+horizontal_alignment = 1
+
+[node name="Label9" type="Label" parent="ui/CenterContainer/GridContainer"]
+layout_mode = 2
+text = "-"
+
+[node name="ppl_spawn" type="Node" parent="."]
+unique_name_in_owner = true

@@ -6,9 +6,9 @@
 		"dash": [20, 20]
 	},
 	"moves": {
-		"supers": [ "236s", "214s" ],
+		"supers": [ ],
 		"specials": [
-			"214l", "236l"
+			"214l"
 		],
 		"normals": [ "4h" ],
 		"targets": [ "5l.5l", "5m.5m" ],
@@ -68,7 +68,8 @@
 			"n_frames": 19,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 19,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 7,"frame_end": 9,"ty": "HIT","att_info": 0,"rect": [150, 300, 450, 250]}
+				{"frame_start": 2,"frame_end": 14,"ty": "HURT","att_info": 0,"rect": [100, 200, 650, 400]},
+				{"frame_start": 7,"frame_end": 9,"ty": "HIT","att_info": 0,"rect": [150, 300, 550, 250]}
 			],
 			"att_info": [{
 				"stun": [ 8, 13 ],
@@ -84,6 +85,7 @@
 			"n_frames": 25,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 25,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 2,"frame_end": 14,"ty": "HURT","att_info": 0,"rect": [100, 200, 650, 400]}, 
 				{"frame_start": 7,"frame_end": 9,"ty": "HIT","att_info": 0,"rect": [150, 300, 450, 250]}
 			],
 			"att_info": [{

@@ -38,3 +38,8 @@ func get_anim_frame(df):
 
 func get_frame_meter_color():
 	return Color.YELLOW
+
+func dict4hash():
+	return [ _STATE_NAME,
+		n_stun, offsets.hash
+	]

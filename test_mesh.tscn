@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3 uid="uid://dijmvxlcu8blx"]
+
+[ext_resource type="Script" path="res://scripts/test_mesh.gd" id="1_y7sah"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_y7sah")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 19.0
+offset_right = 167.0
+offset_bottom = 66.0
+
+[node name="TextEdit" type="TextEdit" parent="."]
+layout_mode = 0
+offset_left = 496.0
+offset_top = 13.0
+offset_right = 799.0
+offset_bottom = 60.0
+placeholder_text = "ip:addr"

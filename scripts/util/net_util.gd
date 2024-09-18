@@ -1,6 +1,6 @@
 extends Node
 
-signal req_complete
+signal req_complete(int)
 
 var _my_ip : String
 
@@ -96,20 +96,20 @@ func _listen_udp(sock : PacketPeerUDP, callback : Callable):
 			"data": sock.get_packet()
 		})
 
-func mm_request(params, callback = null):
+func mm_request(params):
 	var req = HTTPRequest.new()
 	get_tree().root.add_child(req)
 	req.request_completed.connect(func (res, code, hd, bd):
-		mm_res = JSON.parse_string(bd.get_string_from_utf8())
-		req_complete.emit()
+		if code == 200:
+			mm_res = JSON.parse_string(bd.get_string_from_utf8())
+			req_complete.emit(true)
+		else:
+			req_complete.emit(false)
 	)
 	var headers = ["ngrok-skip-browser-warning: 69420"]
 	req.request("https://equipped-chamois-big.ngrok-free.app/" + params)
-	await req_complete
-	
-	if callback:
-		callback.call(mm_res)
-	
+	if not await req_complete:
+		return null
 	return mm_res
 
 #func mm_connect(username, callback = null):

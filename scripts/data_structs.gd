@@ -44,7 +44,8 @@ class BoxInfoFrame extends BoxInfo:
 		self.frame_end = ed
 
 class _AttInfoBase:
-	var ty := ATTACK_TY.MID
+	var ty := ATTACK_TY.HIGH
+	var dmg := 1000
 
 class AttInfo_Hit extends _AttInfoBase:
 	var n_freeze: int
@@ -81,7 +82,9 @@ class CancelInfo:
 	static var _normal_strengths = [ "lmh", "mh", "h", "" ]
 	
 	static func from_all():
-		return ObjUtil.fill(new(), [true])
+		var res = new()
+		res.everything = true
+		return res
 	
 	static func from_json(json : Dictionary):
 		var res = new()
@@ -160,5 +163,5 @@ enum KNOCK_TY {
 }
 enum BLOCK_TY {
 	NONE = 0, HIGH = 0x1001, LOW = 0x1010,
-	ALL #shouldnt happen in actual games, just for training mode for blocking all
+	ALL  #shouldnt happen in actual games, just for training mode
 }

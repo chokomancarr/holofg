@@ -95,3 +95,8 @@ func _tr(vec, sz):
 	vec *= ui_cam_scl
 	vec += Vector2(sz.x * 0.5, sz.y - ui_cam_off * sz.y)
 	return vec
+
+func _unhandled_input(e):
+	if e is InputEventKey and e.is_pressed():
+		if e.keycode == KEY_F4:
+			GameMaster.new_match(2, 2, _GameNetBase.TY.TRAINING)

@@ -6,7 +6,7 @@ var standing = true
 
 var first = true
 
-var _override_block_ty := ST.BLOCK_TY.NONE
+static var _override_block_ty := ST.BLOCK_TY.NONE
 
 func _init():
 	anim_name = "5"

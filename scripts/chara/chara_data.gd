@@ -158,6 +158,7 @@ static func _parse_move(nm : String, frames : Dictionary):
 					if h.has("push"): hres.push_hit = h.push
 					if h.has("minspace"): hres.min_space = h.minspace
 					if h.has("dir"): hres.dir = ST.STUN_DIR.get(h.dir)
+					if h.has("dmg"): hres.dmg = h.dmg
 				ST.BOX_TY.GRAB:
 					hres = ST.AttInfo_Grab.new()
 					hres.ty = h.ty if h.has("ty") else ST.ATTACK_TY.GRAB

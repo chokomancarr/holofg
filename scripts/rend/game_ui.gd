@@ -28,5 +28,17 @@ func _process(dt):
 			spbars_p1[i].value = gst.p1.bar_super - i * 100
 			spbars_p2[i].value = gst.p2.bar_super - i * 100
 	
+	var upd_hit_stat = func (p : _CsBase, i, j):
+		if p is _CsStunBase:
+			get_node("cen_cc/gc/dmg%d" % i).text = "%d (%d)" % [ p.last_dmg, p.total_dmg ]
+			get_node("cen_cc/gc/scl%d" % i).text = "%d%%" % (p.combo_scaling / 100)
+			#get_node("cen_cc/gc/ty%d" % i).text = ST.ATTACK_TY.find_key(p.last_att_ty)
+		elif p is _CsAttBase:
+			if p.attack_ty != ST.ATTACK_TY.NONE:
+				get_node("cen_cc/gc/ty%d" % j).text = ST.ATTACK_TY.find_key(p.attack_ty)
+	
+	upd_hit_stat.call(gst.p1.state, 2, 1)
+	upd_hit_stat.call(gst.p2.state, 1, 2)
+	
 	debug_info.text = "%.1f game_speed\n%d frame_rate\n%s\n%s" % \
 		[ GameMaster.game_speed_scale, roundi(1.0 / dt), GameMaster.game_state._get_debug_text(), GameMaster.net_master._get_debug_text() ]

@@ -38,21 +38,42 @@ class ActionMap:
 	var button_grab: int
 	var button_parry: int
 	
+	const nms = [
+		"move_up",
+		"move_down",
+		"move_left",
+		"move_right",
+		"button_l",
+		"button_m",
+		"button_h",
+		"button_s",
+		"button_grab",
+		"button_parry"
+	]
+	
 	static func default_kb():
-		return ObjUtil.fill(new(), [
+		var res = new()
+		const keys = [
 			KEY_SPACE, KEY_S, KEY_A, KEY_D,
 			KEY_J, KEY_K, KEY_L, KEY_I,
 			KEY_U, KEY_O
-		])
+		]
+		for i in len(nms):
+			res.set(nms[i], keys[i])
+		return res
 	static func default_pad():
-		return ObjUtil.fill(new(), [
+		var res = new()
+		const keys = [
 			#JOY_BUTTON_DPAD_UP, JOY_BUTTON_DPAD_DOWN,
 			#JOY_BUTTON_DPAD_LEFT, JOY_BUTTON_DPAD_RIGHT,
 			JOY_AXIS_LEFT_Y | JOY_AXIS_BIT, JOY_AXIS_LEFT_Y | JOY_AXIS_BIT,
 			JOY_AXIS_LEFT_X | JOY_AXIS_BIT, JOY_AXIS_LEFT_X | JOY_AXIS_BIT,
 			JOY_BUTTON_X, JOY_BUTTON_A, JOY_BUTTON_B, JOY_BUTTON_Y,
 			JOY_BUTTON_RIGHT_SHOULDER, JOY_BUTTON_LEFT_SHOULDER
-		])
+		]
+		for i in len(nms):
+			res.set(nms[i], keys[i])
+		return res
 	
 	func _get_dir(device : Device, va : int, vb : int):
 		var _joy = func (v): return Input.is_joy_button_pressed(device.id, v)

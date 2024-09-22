@@ -1,4 +1,4 @@
-class_name CsStun extends _CsBase
+class_name CsStun extends _CsStunBase
 
 const _STATE_NAME = "stun"
 var n_stun : int
@@ -41,5 +41,5 @@ func get_frame_meter_color():
 
 func dict4hash():
 	return [ _STATE_NAME,
-		n_stun, offsets.hash
+		n_stun, offsets.hash if offsets else null
 	]

@@ -33,14 +33,15 @@
 			],
 			"att_info": [
 				{
-					"stun": [ 8, 11 ],
+					"stun": [ 8, 12 ],
 					"cancel": {
 						"all_specials": true,
 						"targets": [ "5l.5l" ]
 					},
 					"push": 150,
 					"minspace": 400,
-					"dir": "HEAD"
+					"dir": "HEAD",
+					"dmg": 300
 				}
 			]
 		},
@@ -54,14 +55,15 @@
 				{"frame_start": 8,"frame_end": 10,"ty": "HIT","att_info": 0,"rect": [150, 550, 450, 250]}
 			],
 			"att_info": [{
-				"stun": [ 8, 11 ],
+				"stun": [ 8, 12 ],
 				"cancel": {
 					"all_specials": true,
 					"targets": [ "5l.5l" ]
 				},
 				"push": 150,
 				"minspace": 400,
-				"dir": "HEAD"
+				"dir": "HEAD",
+				"dmg": 300
 			}]
 		},
 		"5m": {
@@ -72,13 +74,14 @@
 				{"frame_start": 7,"frame_end": 9,"ty": "HIT","att_info": 0,"rect": [150, 300, 550, 250]}
 			],
 			"att_info": [{
-				"stun": [ 8, 13 ],
+				"stun": [ 10, 16 ],
 				"cancel": {
 					"targets": [ "5m.5m" ]
 				},
 				"push": 150,
 				"minspace": 500,
-				"dir": "BODY"
+				"dir": "BODY",
+				"dmg": 500
 			}]
 		},
 		"5m.5m": {
@@ -89,21 +92,25 @@
 				{"frame_start": 7,"frame_end": 9,"ty": "HIT","att_info": 0,"rect": [150, 300, 450, 250]}
 			],
 			"att_info": [{
-				"stun": [ 19, 21 ],
+				"stun": [ 18 , 21 ],
 				"push": -500,
+				"dmg": 500
 			}]
 		},
 		"5h": {
 			"n_frames": 24,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 24,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 2,"frame_end": 20,"ty": "HURT","rect": [200, 0, 200, 400]},
+				{"frame_start": 5,"frame_end": 16,"ty": "HURT","rect": [200, 400, 500, 350]},
 				{"frame_start": 10,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [150, 450, 600, 250]}
 			],
 			"att_info": [{
-				"stun": [ 8, 13 ],
+				"stun": [ 14, 18 ],
 				"push": 150,
 				"minspace": 700,
-				"dir": "HEAD"
+				"dir": "HEAD",
+				"dmg": 800
 			}]
 		},
 		"2l": {
@@ -113,31 +120,54 @@
 				{"frame_start": 2,"frame_end": 14,"ty": "HURT","rect": [200, 300, 450, 350]},
 				{"frame_start": 4,"frame_end": 6,"ty": "HIT","att_info": 0,"rect": [150, 300, 450, 250]}
 			],
-			"att_info": [{"stun": [ 8, 13 ], "dir": "BODY"}]
+			"att_info": [{"stun": [ 12, 14 ], "dir": "BODY", "dmg": 300}]
 		},
 		"2m": {
 			"n_frames": 20,
 			"boxes": [
-				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
-				{"frame_start": 4,"frame_end": 6,"ty": "HIT","att_info": 0,"rect": [100, 350, 150, 100]}
+				{"frame_start": 0,"frame_end": 20,"ty": "HURT","rect": [-200, 0, 400, 800]},
+				{"frame_start": 4,"frame_end": 18,"ty": "HURT","rect": [200, 0, 600, 300]},
+				{"frame_start": 7,"frame_end": 10,"ty": "HIT","att_info": 0,"rect": [100, 0, 650, 200]}
 			],
-			"att_info": [{"stun": [ 8, 13 ], "dir": "LEG"}]
+			"att_info": [{
+				"stun": [ 10, 17 ],
+				"push": 150,
+				"minspace": 700,
+				"ty": "LOW",
+				"dir": "LEG",
+				"dmg": 500
+			}]
 		},
 		"2h": {
 			"n_frames": 30,
 			"boxes": [
-				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
-				{"frame_start": 4,"frame_end": 6,"ty": "HIT","att_info": 0,"rect": [100, 350, 150, 100]}
+				{"frame_start": 0,"frame_end": 4,"ty": "HURT","rect": [-200, 0, 400, 800]},
+				{"frame_start": 4,"frame_end": 26,"ty": "HURT","rect": [0, 0, 400, 800]},
+				{"frame_start": 26,"frame_end": 30,"ty": "HURT","rect": [-200, 0, 400, 800]},
+				{"frame_start": 4,"frame_end": 22,"ty": "HURT","rect": [200, 0, 500, 300]},
+				{"frame_start": 9,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [200, 0, 700, 200]}
 			],
-			"att_info": [{"stun": [ 8, 13 ], "dir": "LEG"}]
+			"att_info": [{
+				"stun": [ 12, 25 ],
+				"push": 150,
+				"minspace": 500,
+				"ty": "LOW",
+				"dir": "LEG",
+				"dmg": 800
+			}]
 		},
 		"4h": {
 			"n_frames": 24,
 			"boxes": [
-				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
-				{"frame_start": 4,"frame_end": 6,"ty": "HIT","att_info": 0,"rect": [100, 350, 150, 100]}
+				{"frame_start": 0,"frame_end": 24,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 6,"frame_end": 16,"ty": "HURT","rect": [100, 500, 400, 500]},
+				{"frame_start": 8,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [200, 500, 200, 300]},
+				{"frame_start": 8,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [300, 800, 200, 300]}
 			],
-			"att_info": [{"stun": [ 8, 13 ]}]
+			"att_info": [{
+				"stun": [ 15, 20 ],
+				"dmg": 500
+			}]
 		},
 		"623l": {
 			"n_frames": 40,
@@ -163,16 +193,18 @@
 			"att_info": [
 				{
 					"n_freeze": 5,
-					"stun": [ 12, 30 ],
+					"stun": [ 25, 30 ],
 					"minspace": 700,
-					"dir": "BODY"
+					"dir": "BODY",
+					"dmg": 500
 				},
 				{
 					"n_freeze": 5,
-					"stun": [ 12, 30 ],
+					"stun": [ 18, 26 ],
 					"push": 100,
 					"minspace": 700,
-					"dir": "BODY"
+					"dir": "BODY",
+					"dmg": 500
 				}
 			]
 		},
@@ -195,7 +227,8 @@
 			],
 			"att_info": [
 				{
-					"stun": [ 11, 16 ]
+					"stun": [ 11, 16 ],
+					"dmg": 300
 				}
 			]
 		},
@@ -209,7 +242,8 @@
 			],
 			"att_info": [
 				{
-					"stun": [ 15, 19 ]
+					"stun": [ 15, 19 ],
+					"dmg": 500
 				}
 			]
 		},
@@ -223,7 +257,8 @@
 			],
 			"att_info": [
 				{
-					"stun": [ 18, 21 ]
+					"stun": [ 18, 21 ],
+					"dmg": 800
 				}
 			]
 		},
@@ -240,7 +275,8 @@
 				"bounds_offset": {
 					"offsets_use_keyframes": true,
 					"offsets": [ [0, [ 0, 0 ]], [40, [ 108, 0 ]], [47, [ 0, 0 ]] ]
-				}
+				},
+				"dmg": 1000
 			}],
 			"whiff": {
 				"anim_name": "5g.whiff",

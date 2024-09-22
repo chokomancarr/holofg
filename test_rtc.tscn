@@ -1,0 +1,72 @@
+[gd_scene load_steps=3 format=3 uid="uid://bcmjnhc12m44s"]
+
+[ext_resource type="Script" path="res://scripts/test_rtc.gd" id="1_ggn3g"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wbnx0"]
+bg_color = Color(0.219608, 0.219608, 0.219608, 1)
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ggn3g")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 19.0
+offset_right = 431.0
+offset_bottom = 480.0
+
+[node name="type" type="Label" parent="."]
+layout_mode = 0
+offset_left = 488.0
+offset_top = 15.0
+offset_right = 713.0
+offset_bottom = 44.0
+
+[node name="TextEdit" type="TextEdit" parent="."]
+layout_mode = 0
+offset_left = 496.0
+offset_top = 53.0
+offset_right = 810.0
+offset_bottom = 358.0
+placeholder_text = "info here"
+
+[node name="msg" type="TextEdit" parent="."]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 498.0
+offset_right = 351.0
+offset_bottom = 538.0
+placeholder_text = "msg to send"
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 503.0
+offset_top = 375.0
+offset_right = 617.0
+offset_bottom = 413.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_wbnx0")
+text = "Execute"
+
+[node name="sendmsg" type="Button" parent="."]
+layout_mode = 0
+offset_left = 371.0
+offset_top = 498.0
+offset_right = 485.0
+offset_bottom = 536.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_wbnx0")
+text = "Send"
+
+[node name="getice" type="Button" parent="."]
+layout_mode = 0
+offset_left = 653.0
+offset_top = 375.0
+offset_right = 767.0
+offset_bottom = 413.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_wbnx0")
+text = "Get Ice"

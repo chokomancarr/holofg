@@ -2,3 +2,5 @@
 .godot/
 *.blend1
 export/
+server/target/
+Cargo.lock

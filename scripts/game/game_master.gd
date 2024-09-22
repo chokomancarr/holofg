@@ -36,6 +36,10 @@ func new_match(p1 : int, p2 : int, ty : _GameNetBase.TY):
 	add_child(net_master)
 	
 	var par = get_node("/root/main/%ppl_spawn")
+	
+	for c in par.get_children():
+		c.queue_free()
+	
 	var ps1 = load("res://chara_scenes/chara_%d.tscn" % [ p1 ]).instantiate() as CharaRend
 	ps1.is_p1 = true
 	par.add_child(ps1)

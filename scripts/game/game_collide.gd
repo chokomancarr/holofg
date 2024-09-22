@@ -28,7 +28,10 @@ static func step(game_state : GameState):
 		var counter_ty = p.state.query_stun()
 		if (hit.ty & ST.ATTACK_TY._HIT_BIT) > 0:
 			if p.state.airborne:
+				var sto = p.state as _CsStunBase
 				p.state = CsStunAir.new(p, ST.STUN_AIR_TY.RESET if counter_ty == ST.STUN_TY.NORMAL else ST.STUN_AIR_TY.JUGGLE)
+				var dmg = (p.state as _CsStunBase).apply_scaling(sto, hit as ST.AttInfo_Hit)
+				p.bar_health = maxi(p.bar_health - dmg, 0)
 			else:
 				match counter_ty:
 					ST.STUN_TY.BLOCK:
@@ -44,7 +47,10 @@ static func step(game_state : GameState):
 					ST.STUN_TY.PARRY:
 						(p.state as CsParry).parried_nf = (hit as ST.AttInfo_Hit).stun_block
 					_:
+						var sto = p.state as _CsStunBase
 						p.state = CsStun.new(p, hit as ST.AttInfo_Hit)
+						var dmg = (p.state as _CsStunBase).apply_scaling(sto, hit as ST.AttInfo_Hit)
+						p.bar_health = maxi(p.bar_health - dmg, 0)
 			o.freeze = maxi(o.freeze, hit.n_freeze)
 		elif hit.ty == ST.ATTACK_TY.GRAB:
 			if p.state.airborne:
@@ -58,6 +64,7 @@ static func step(game_state : GameState):
 				else:
 					if true:
 						p.state = CsGrabOpp.new(opp, hit as ST.AttInfo_Grab)
+						p.bar_health = maxi(p.bar_health - hit.dmg, 0)
 						var fd = (hit as ST.AttInfo_Grab).fix_dist
 						if fd < 100000:
 							if opp.action_is_p2: fd *= -1

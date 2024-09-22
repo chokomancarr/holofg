@@ -1,4 +1,4 @@
-class_name CsStunAir extends _CsBase
+class_name CsStunAir extends _CsStunBase
 
 const _STATE_NAME = "stun_air"
 

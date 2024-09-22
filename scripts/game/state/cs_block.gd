@@ -43,5 +43,5 @@ func query_stun():
 
 func dict4hash():
 	return [ _STATE_NAME,
-		n_stun, offsets.hash
+		n_stun, offsets.hash if offsets else null
 	]

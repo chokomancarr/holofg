@@ -8,6 +8,8 @@ var recording : bool
 var playback : bool
 
 var block_ty := ST.BLOCK_TY.NONE
+var block_usecd := true
+var block_cd := 0
 
 func _ready():
 	p1_inputs = InputMan.get_player_input(0)
@@ -32,8 +34,15 @@ func get_game_state():
 		if Input.is_key_pressed(KEY_F12):
 			_stop_playback()
 	else:
-		if GameMaster.game_state.p2.state is CsIdle:
-			GameMaster.game_state.p2.state._override_block_ty = block_ty
+		if block_usecd:
+			var s2 = GameMaster.game_state.p2
+			if s2.state is _CsStunBase:
+				if s2.state.check_next(s2) is CsIdle:
+					block_cd = 60
+			else:
+				if block_cd > 0:
+					block_cd -= 1
+		CsIdle._override_block_ty = block_ty if block_cd == 0 else ST.BLOCK_TY.ALL
 		_step_game_state(GameMaster.game_state, p1_inputs.step(), p2_inputs.step())
 		if Input.is_key_pressed(KEY_F9):
 			_start_recording()
@@ -48,6 +57,8 @@ func _unhandled_key_input(e: InputEvent):
 			if not recording and not playback:
 				const blks = [ ST.BLOCK_TY.NONE, ST.BLOCK_TY.HIGH, ST.BLOCK_TY.LOW, ST.BLOCK_TY.ALL, ST.BLOCK_TY.NONE ]
 				block_ty = blks[blks.find(block_ty) + 1]
+		elif e.keycode == KEY_N:
+			block_usecd = !block_usecd
 
 func _start_recording():
 	dummy_recorder = RecordedInputs.new()
@@ -67,7 +78,7 @@ func _stop_playback():
 func _get_debug_text():
 	var res = ""
 	
-	res += "%s : block type\n" % [ ST.BLOCK_TY.find_key(block_ty) ]
+	res += "%s : switch block [B]\n%s : block after hit [N]\n" % [ ST.BLOCK_TY.find_key(block_ty), "Y" if block_usecd else "N" ]
 	
 	if recording:
 		res += "%d :recording\nF10 to stop" % [ dummy_recorder.n ]

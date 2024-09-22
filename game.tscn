@@ -113,9 +113,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -20.0
-offset_top = 100.0
+offset_top = 480.0
 offset_right = 20.0
-offset_bottom = 140.0
+offset_bottom = 520.0
 grow_horizontal = 2
 
 [node name="gc" type="GridContainer" parent="frame_meter/p1"]
@@ -129,9 +129,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -20.0
-offset_top = 120.0
+offset_top = 500.0
 offset_right = 20.0
-offset_bottom = 160.0
+offset_bottom = 540.0
 grow_horizontal = 2
 
 [node name="gc" type="GridContainer" parent="frame_meter/p2"]
@@ -314,7 +314,7 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "game_speed: 1.0"
 horizontal_alignment = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="ui"]
+[node name="cen_cc" type="CenterContainer" parent="ui"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -322,50 +322,50 @@ offset_top = 100.0
 offset_bottom = 123.0
 grow_horizontal = 2
 
-[node name="GridContainer" type="GridContainer" parent="ui/CenterContainer"]
+[node name="gc" type="GridContainer" parent="ui/cen_cc"]
 layout_mode = 2
 theme_override_constants/h_separation = 20
 columns = 3
 
-[node name="Label" type="Label" parent="ui/CenterContainer/GridContainer"]
+[node name="dmg1" type="Label" parent="ui/cen_cc/gc"]
 layout_mode = 2
 text = "0(0)"
 horizontal_alignment = 2
 
-[node name="Label2" type="Label" parent="ui/CenterContainer/GridContainer"]
+[node name="Label2" type="Label" parent="ui/cen_cc/gc"]
 layout_mode = 2
 text = "Damage (Combo)"
 horizontal_alignment = 1
 
-[node name="Label3" type="Label" parent="ui/CenterContainer/GridContainer"]
+[node name="dmg2" type="Label" parent="ui/cen_cc/gc"]
 layout_mode = 2
 text = "0(0)"
 
-[node name="Label4" type="Label" parent="ui/CenterContainer/GridContainer"]
+[node name="scl1" type="Label" parent="ui/cen_cc/gc"]
 layout_mode = 2
 text = "100%"
 horizontal_alignment = 2
 
-[node name="Label5" type="Label" parent="ui/CenterContainer/GridContainer"]
+[node name="Label5" type="Label" parent="ui/cen_cc/gc"]
 layout_mode = 2
 text = "Scaling"
 horizontal_alignment = 1
 
-[node name="Label6" type="Label" parent="ui/CenterContainer/GridContainer"]
+[node name="scl2" type="Label" parent="ui/cen_cc/gc"]
 layout_mode = 2
 text = "100%"
 
-[node name="Label7" type="Label" parent="ui/CenterContainer/GridContainer"]
+[node name="ty1" type="Label" parent="ui/cen_cc/gc"]
 layout_mode = 2
 text = "-"
 horizontal_alignment = 2
 
-[node name="Label8" type="Label" parent="ui/CenterContainer/GridContainer"]
+[node name="Label8" type="Label" parent="ui/cen_cc/gc"]
 layout_mode = 2
 text = "Attack Type"
 horizontal_alignment = 1
 
-[node name="Label9" type="Label" parent="ui/CenterContainer/GridContainer"]
+[node name="ty2" type="Label" parent="ui/cen_cc/gc"]
 layout_mode = 2
 text = "-"
 

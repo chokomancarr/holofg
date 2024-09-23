@@ -19,7 +19,13 @@
  *  - /post { type="lobby_leave" }
  */
 
+use threadpool::ThreadPool;
 use std::collections::HashMap;
+use std::io::BufRead;
+use std::io::BufReader;
+use std::io::Read;
+use std::net::TcpListener;
+use std::net::TcpStream;
 use std::process::Stdio;
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -30,9 +36,9 @@ use std::time::SystemTime;
 use std::convert::TryFrom;
 use rand::Rng;
 use tide::Request;
-use ngrok::prelude::*;
+//use ngrok::prelude::*;
 
-type ID = u32;
+type ID = usize;
 type TIME = u64;
 type _State = Arc<RwLock<State>>;
 enum MSG {
@@ -53,10 +59,10 @@ fn ret_err<T, S : Into<String>>(code : u16, msg : S) -> Result<T, tide::Error> {
     Err(tide::Error::from_str(code, msg.into()))
 }
 
-fn _mpsc_send<S : Into<String>>(host : &ClientInfo, msg : S) -> Result<(), mpsc::SendError<MSG>> {
+fn _mpsc_send<S : Into<String>>(host : &Client, msg : S) -> Result<(), mpsc::SendError<MSG>> {
     host.msgs.0.read().unwrap().send(MSG::S(msg.into()))
 }
-fn _mpsc_send_skip(host : &ClientInfo) -> Result<(), mpsc::SendError<MSG>> {
+fn _mpsc_send_skip(host : &Client) -> Result<(), mpsc::SendError<MSG>> {
     host.msgs.0.read().unwrap().send(MSG::SKIP)
 }
 
@@ -104,58 +110,55 @@ fn get_num<T>(obj : &DICT, key : &str) -> Result<ID, Result<T, tide::Error>> {
     }
 }
 
-#[derive(Debug)]
+const MAX_CLIENTS : usize = 10;
+const MAX_THREADS : usize = 5;
+
 struct State {
-    i_client: ID,
-    clients: HashMap<ID, ClientInfo>,
-    lobbies: HashMap<String, Lobby>
+    free_ids : RwLock<Vec<usize>>, //only used by hello
+    clients: [RwLock<Option<Client>>; MAX_CLIENTS], //this will be hogged in /poll, so we structure like this
+    lobbies: RwLock<HashMap<String, RwLock<Lobby>>> //nobody will hog this
 }
-#[derive(Debug)]
-struct ClientInfo {
+struct Client {
     username: String,
     last_polled: TIME,
     msgs: (RwLock<mpsc::Sender<MSG>>, Mutex<mpsc::Receiver<MSG>>)
 }
-#[derive(Debug)]
 struct Lobby {
     host: ID,
     client: Option<ID>
 }
 
-#[tokio::main]
-async fn main() -> tide::Result<()> {
-    /*let tunnel = ngrok::Session::builder()
-        .authtoken("2lKc8ZOXU0GcG0B6z96Y7iM78KR_7dAA5nT9gbfeHVZH5HXA9")
-        .connect()
-        .await.expect("could not connect to ngrok service!");
-    let endpoint = tunnel
-        .http_endpoint()
-        .domain("equipped-chamois-big.ngrok-free.app")
-        .forwards_to("localhost:8000")
-        .listen()
-        .await.expect("could not listen to ngrok endpoint!");
+fn main() {
+    let state = State { free_ids: RwLock::new((0..MAX_CLIENTS).collect()), clients: std::array::from_fn(|_| RwLock::new(None)), lobbies: RwLock::new(HashMap::new()) };
+    let state = Arc::new(RwLock::new(state));
 
-    println!("ngrok listening on {} => {}", endpoint.forwards_to(), endpoint.url());*/
+    let thread_pool = ThreadPool::new(MAX_THREADS);
 
-    let state = State{ i_client: 0, clients: HashMap::new(), lobbies: HashMap::new() };
-    let mut app = tide::with_state(Arc::new(RwLock::new(state)));
-    //call /hello first thing to register the client
-    app.at("/hello").post(req_hello);
-    //call /poll periodically. this will block until theres a message or timeout.
-    app.at("/poll").get(req_poll);
-    //call /post when theres something to tell the matchmaker
-    app.at("/post").post(req_post);
+    let listener = TcpListener::bind("localhost:0").unwrap();
 
     let _ngrok = std::process::Command::new("ngrok")
-        .args([ "http", "--domain=equipped-chamois-big.ngrok-free.app", "8000" ])
+        .args([ "http", "--domain=equipped-chamois-big.ngrok-free.app", &listener.local_addr().unwrap().port().to_string() ])
         .stdout(Stdio::null())
-        .spawn()?;
+        .spawn().expect("could not spawn ngrok");
 
-    //let mut listener = tide::listener::ConcurrentListener::new()
-    //    .with_listener("localhost:0");
-    //listener.listen(app).await?;
-    app.listen("localhost:8000").await?;
-    Ok(())
+    println!("listening on {:?}", &listener.local_addr().unwrap());
+
+    for stream in listener.incoming() {
+        let stream = stream.unwrap();
+        let state = state.clone();
+
+        thread_pool.execute(move || {
+            handle_connection(stream, state);
+        });
+    }
+}
+
+fn handle_connection(mut stream : TcpStream, state : _State) {
+    let mut s = String::new();
+    BufReader::new(&mut stream).read_to_string(&mut s).expect("cannot read string");
+    let http_request: Vec<_> = s.split("\n").collect();
+
+    println!("Request: {http_request:#?}");
 }
 
 // curl -X POST -H "type:hello" -d "{ "\""username"\"":"\""foo"\"" }" localhost:8080/hello
@@ -164,25 +167,37 @@ async fn req_hello(mut req: Request<_State>) -> tide::Result {
         None => return ret_err(400, "malformed request type or body!"),
         Some((ci, _ty, body, remote)) => (ci, _ty, body, remote)
     };
-    
-    let mut state = req.state().write().unwrap();
-    let ci = state.i_client;
-    state.i_client += 1;
-
     let username = match get_str(&body, "username") { Ok(s) => s, Err(e) => return e };
     
-    println!("added user {}", username);
+    println!("locking state");
+    let state = req.state().read().unwrap();
+
+    let next_id = {
+        println!("locking free_ids");
+        let mut used = state.free_ids.write().unwrap();
+        used.pop()
+    };
+    if next_id.is_none() {
+        return ret_err(500, "out of client slots");
+    }
+    let next_id = next_id.unwrap();
 
     let mpsc = mpsc::channel();
 
-    state.clients.insert(ci, ClientInfo { username, last_polled: current_time(), msgs: (RwLock::new(mpsc.0), Mutex::new(mpsc.1)) });
-    ret_ok!(format!("\"id\":{}", ci))
+    println!("locking client");
+    let mut client = state.clients[next_id].write().unwrap();
+
+    println!("adding user {}", &username);
+    *client = Some(Client { username, last_polled: current_time(), msgs: (RwLock::new(mpsc.0), Mutex::new(mpsc.1)) });
+    
+    ret_ok!(format!("\"id\":{}", next_id))
 }
 
 async fn req_poll(req: Request<_State>) -> tide::Result {
     let ci = req.header("id").expect("missing id header")[0].as_str().parse::<ID>().expect("id is not valid number!");
     let state = req.state().read().unwrap();
-    let client = state.clients.get(&ci).expect("client entry missing!");
+    let client = state.clients[ci].read().unwrap();
+    let client = client.as_ref().expect("client not registered");
     let msg = client.msgs.1.lock().unwrap().recv_timeout(Duration::from_secs(30));
     match msg {
         Ok(s) => match s {
@@ -193,6 +208,7 @@ async fn req_poll(req: Request<_State>) -> tide::Result {
     }
 }
 
+/*
 async fn req_post(mut req: Request<_State>) -> tide::Result {
     let (cid, ty, body, _remote) = match parse_req(&mut req).await {
         None => return ret_err(400, "malformed request type or body!"),
@@ -351,4 +367,4 @@ async fn _lobby_leave(state : &_State, _cid : ID, body : DICT) -> tide::Result {
 async fn _lobby_close(state : &_State, _cid : ID, body : DICT) -> tide::Result {
     
     unimplemented!()
-}
+}*/

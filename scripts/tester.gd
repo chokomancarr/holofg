@@ -22,6 +22,9 @@ func _on_connect_mm():
 		$"Control/vb/online".queue_free()
 		$"Control/vb/online_bts".visible = true
 		logg("connected to server!")
+		
+		OnlineLobby.start_polling_loop()
+		pass
 	else:
 		($"Control/vb/online" as Button).disabled = false
 		logg("... failed!", 0)
@@ -50,9 +53,9 @@ func _on_p2(p2):
 func _on_join_srv():
 	logg("joining lobby...")
 	$"Control/vb/online_bts/clt/Button".disabled = true
-	var lobby_code = $"Control/vb/hb/clt/Button".text
-	var ok = await OnlineLobby.join(lobby_code)
-	if ok:
+	var lobby_code = $"Control/vb/online_bts/clt/code".text
+	var lobby = await OnlineLobby.join(lobby_code)
+	if lobby:
 		$"Control/vb/online_bts".visible = false
 		$"Control/vb/lobby".visible = true
 		($"Control/vb/lobby/p1" as Label).text = lobby.p1.nm

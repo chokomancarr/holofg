@@ -124,7 +124,7 @@ horizontal_alignment = 2
 [node name="p2" type="Label" parent="Node/Control/vb/lobby"]
 layout_mode = 2
 
-[node name="start" type="Button" parent="Node/Control/vb/lobby"]
+[node name="Button" type="Button" parent="Node/Control/vb/lobby"]
 layout_mode = 2
 disabled = true
-text = "start game"
+text = "ready"

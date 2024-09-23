@@ -18,7 +18,7 @@ class PeerNetInfo:
 			me.ices.push_back(name)
 		)
 	
-	async func get_info():
+	func get_info():
 		for i in range(30):
 			if sdp and ices.size() >= 3:
 				return [ sdp, ices ]
@@ -27,8 +27,8 @@ class PeerNetInfo:
 			return [ sdp, ices ]
 
 class PlayerInfo:
-	var id : int,
-	var nm : String,
+	var id : int
+	var nm : String
 	var rdy : bool
 	func _init(id, nm):
 		self.id = id
@@ -37,16 +37,16 @@ class PlayerInfo:
 class LobbyInfo:
 	signal on_p2
 	
-	var code : String,
-	var is_p2 : bool,
-	var p1 : PlayerInfo,
+	var code : String
+	var is_p2 : bool
+	var p1 : PlayerInfo
 	var p2 : PlayerInfo
 
 
-func enc_net(info):
-	return Marshalls.utf8_to_base64(info[0] + "\x01" + "\n".join(info[1]))
-func dec_net(s):
-	var res = Marshalls.base64_to_utf8(s).split("\x01")
+static func enc_net(info):
+	return Marshalls.utf8_to_base64(info[0] + char(1) + "\n".join(info[1]))
+static func dec_net(s):
+	var res = Marshalls.base64_to_utf8(s).split(char(1))
 	return [res[0], res[1].split("\n")]
 
 
@@ -74,8 +74,8 @@ func process():
 	if rtc:
 		rtc.poll()
 
-static func _init_http(client : HTTPClient):
-	client.blocking_mode_enabled = true
+static func _init_http(client : HTTPClient, block):
+	client.blocking_mode_enabled = block
 	if client.connect_to_host("https://equipped-chamois-big.ngrok-free.app") != OK:
 		print_debug("could not connect to host!")
 		return false
@@ -95,12 +95,17 @@ static func _post(url : String, ty : String, body : Dictionary):
 	while busy:
 		await signals.request_done
 	busy = true
-	var headers = PackedStringArray(["ngrok-skip-browser-warning: 69420", "type: " + ty])
+	var headers = PackedStringArray(["ngrok-skip-browser-warning: 69420", "type: " + ty, "id: " + str(my_info.id if my_info else 0)])
 	http_poster.request(HTTPClient.METHOD_POST, url, headers, JSON.stringify(body))
 	
-	while not http_poster.has_response():
+	var st = http_poster.get_status()
+	while st == HTTPClient.STATUS_REQUESTING:
+		await GameMaster.get_timer(0.1).timeout
 		http_poster.poll()
-		await GameMaster.get_timer(0.5).timeout
+		st = http_poster.get_status()
+	
+	if st != HTTPClient.STATUS_BODY:
+		return null
 	
 	var code = http_poster.get_response_code()
 	var response = PackedByteArray()
@@ -123,12 +128,19 @@ static func _post(url : String, ty : String, body : Dictionary):
 	}
 
 static func _poll():
-	var headers = PackedStringArray(["ngrok-skip-browser-warning: 69420"])
+	var headers = PackedStringArray(["ngrok-skip-browser-warning: 69420", "id: " + str(my_info.id)])
 	http_poller.request(HTTPClient.METHOD_GET, "/poll", headers)
 	
-	while not http_poller.has_response():
+	var st = http_poller.get_status()
+	while st == HTTPClient.STATUS_REQUESTING:
+		await GameMaster.get_timer(0.1).timeout
 		http_poller.poll()
-		await GameMaster.get_timer(0.5).timeout
+		st = http_poller.get_status()
+	
+	if st == HTTPClient.STATUS_CONNECTED:
+		return { "code": 504, "body": {}, "body_raw": "" }
+	elif st != HTTPClient.STATUS_BODY:
+		return null
 	
 	var code = http_poller.get_response_code()
 	var response = PackedByteArray()
@@ -151,29 +163,29 @@ static func _poll():
 static func init(usrnm : String):
 	assert(state == STATE.NO_INIT)
 	
+	signals = new()
+	signals.listeners["join_request"] = OnlineLobby._on_join_req
+	
 	http_poster = HTTPClient.new()
 	http_poller = HTTPClient.new()
 	
-	var res = await _init_http(http_poster)
+	var res = await _init_http(http_poster, true)
 	if !res: return false
 	
-	res = await _init_http(http_poller)
+	res = await _init_http(http_poller, false)
 	if !res: return false
 	
 	res = await _post("/hello", "hello", { "username": usrnm })
-	var body = JSON.stringify(res.body)
+	var body = res.body
 	if res.code != 200:
-		print_debug("hello failed: ", res.code, body)
+		print_debug("hello failed: ", res.code, res.body_raw)
 		return false
 	
 	my_info = PlayerInfo.new(body["id"], usrnm)
 	
 	rtc = WebRTCMultiplayerPeer.new()
-	rtc.peer_connected.connect(_on_peer_conn)
-	rtc.peer_disconnected.connect(_on_peer_dconn)
-	
-	signals = new()
-	signals.listeners["join_request"] = _on_join_req
+	rtc.peer_connected.connect(OnlineLobby._on_peer_conn)
+	rtc.peer_disconnected.connect(OnlineLobby._on_peer_dconn)
 	
 	GameMaster.root_node.add_child(signals)
 	
@@ -184,7 +196,7 @@ static func init(usrnm : String):
 static func create():
 	assert(state == STATE.MENU)
 	
-	var res = await _post("/post", "lobby_new", { "id": my_info.id })
+	var res = await _post("/post", "lobby_new", {})
 	if res.code != 200:
 		print_debug("create lobby fail: ", res.body_raw)
 		return null
@@ -192,7 +204,7 @@ static func create():
 	rtc.create_mesh(my_info.id)
 	
 	lobby = LobbyInfo.new()
-	lobby.code = res["lobby_code"]
+	lobby.code = res.body["lobby_code"]
 	lobby.p1 = my_info
 	
 	state = STATE.LOBBY_WAIT
@@ -202,10 +214,10 @@ static func create():
 static func join(code):
 	assert(state == STATE.MENU)
 	
-	var res = await _post("/post", "lobby_has", { "id": my_info.id, "lobby_code": code })
+	var res = await _post("/post", "lobby_has", { "lobby_code": code })
 	if res.code != 200:
 		print_debug("check lobby fail: ", res.body_raw)
-		return false
+		return null
 	
 	var host_id = res["host_id"]
 	var host_name = res["host_name"]
@@ -215,32 +227,32 @@ static func join(code):
 	var peer := WebRTCPeerConnection.new()
 	assert(!peer.initialize(NetUtil.get_ice_servers()))
 	
-	assert(!mp.add_peer(peer, host_id))
+	assert(!rtc.add_peer(peer, host_id))
 	
 	var peer_info = PeerNetInfo.new(peer)
 	
 	assert(!peer.create_offer())
 	
-	multiplayer.multiplayer_peer = mp
+	signals.multiplayer.multiplayer_peer = rtc
 	
 	var my_net_info = await peer_info.get_info()
 	if not my_net_info:
 		print_debug("could not generate peer sdp / ice!")
-		return false
+		return null
 	
 	assert(!peer.set_local_description("offer", my_net_info[0]))
 	
-	var res = await _post("/post", "lobby_join", {
-		"id": my_info.id, "lobby_code": code, "net_info": enc_net(my_net_info)
+	res = await _post("/post", "lobby_join", {
+		"lobby_code": code, "net_info": enc_net(my_net_info)
 	})
 	if res.code != 200:
 		print_debug("join lobby fail: ", res.body_raw)
-		return false
+		return null
 	
 	for i in range(11):
 		if i == 10:
 			print_debug("lobby host did not reply!")
-			return false
+			return null
 		if unhandled_msgs.has("host_info"):
 			break
 		await GameMaster.get_timer(1.0).timeout
@@ -261,18 +273,18 @@ static func join(code):
 			break
 		if i == 10:
 			print_debug("connection timeout!")
-			return false
+			return null
 		await GameMaster.get_timer(0.5).timeout
 	
 	lobby = LobbyInfo.new()
-	lobby.code = lobby_code
+	lobby.code = code
 	lobby.p1 = PlayerInfo.new(host_id, host_name)
 	lobby.p2 = my_info
 	lobby.is_p2 = true
 	
-	return true
+	return lobby
 
-static func _next_connd_peer = -1
+static var _next_connd_peer = -1
 static func _on_peer_conn(i):
 	_next_connd_peer = i
 
@@ -291,12 +303,12 @@ static func _on_join_req(body : Dictionary):
 	
 	var peer_info = PeerNetInfo.new(peer)
 	
-	assert(!mp.add_peer(peer, req_id))
+	assert(!rtc.add_peer(peer, req_id))
 	assert(!peer.set_remote_description("offer", net_info[0]))
 	for s in net_info[1]:
 		peer.add_ice_candidate("0", 0, s)
 	
-	multiplayer.multiplayer_peer = mp
+	signals.multiplayer.multiplayer_peer = rtc
 	
 	var my_net_info = await peer_info.get_info()
 	if not my_net_info:
@@ -308,7 +320,7 @@ static func _on_join_req(body : Dictionary):
 	_next_connd_peer = -1
 	
 	var res = await _post("/post", "join_accept", {
-		"id": my_info.id, "req_id": req_id, "net_info": enc_net(my_net_info)
+		"req_id": req_id, "net_info": enc_net(my_net_info)
 	})
 	if res.code != 200:
 		print_debug("accept join fail: ", res.body_raw)
@@ -322,8 +334,8 @@ static func _on_join_req(body : Dictionary):
 			return
 		await GameMaster.get_timer(0.5).timeout
 	
-	var res = await _post("/post", "client_joined", {
-		"id": my_info.id, "lobby_code": lobby_code, "my_info.id": req_id
+	res = await _post("/post", "client_joined", {
+		"lobby_code": lobby_code, "my_info.id": req_id
 	})
 	if res.code != 200:
 		print_debug("accept join fail: ", res.body_raw)
@@ -335,6 +347,10 @@ static func start_polling_loop():
 	poll = true
 	while poll:
 		var res = await _poll()
+		if not res:
+			print_debug("polling returned error: ", res.code, JSON.stringify(res.body))
+			poll = false
+			return
 		if res.code == 504:
 			await GameMaster.get_timer(0.5).timeout
 		else:

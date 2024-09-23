@@ -22,18 +22,23 @@
 use std::collections::HashMap;
 use std::process::Stdio;
 use std::sync::Arc;
+use std::sync::Mutex;
+use std::sync::RwLock;
 use std::sync::mpsc;
+use std::time::Duration;
 use std::time::SystemTime;
-use async_std::sync::Mutex;
-use async_std::sync::MutexGuard;
 use std::convert::TryFrom;
 use rand::Rng;
 use tide::Request;
+use ngrok::prelude::*;
 
 type ID = u32;
 type TIME = u64;
-type _State = Arc<Mutex<State>>;
-type MSG = String;
+type _State = Arc<RwLock<State>>;
+enum MSG {
+    S(String),
+    SKIP
+}
 type DICT = serde_json::Map<String, serde_json::Value>;
 
 fn current_time() -> TIME {
@@ -41,11 +46,18 @@ fn current_time() -> TIME {
 }
 
 macro_rules! ret_ok {
-    () => Ok("{ \"type\":\"ok\" }".into()),
-    ($s:expr) => Ok(format!("{{ \"type\":\"ok\", {} }}", $s).into())
+    () => { Ok("{ \"type\":\"ok\" }".into()) };
+    ($s:expr) => { Ok(format!("{{ \"type\":\"ok\", {} }}", $s).into()) }
 }
 fn ret_err<T, S : Into<String>>(code : u16, msg : S) -> Result<T, tide::Error> {
     Err(tide::Error::from_str(code, msg.into()))
+}
+
+fn _mpsc_send<S : Into<String>>(host : &ClientInfo, msg : S) -> Result<(), mpsc::SendError<MSG>> {
+    host.msgs.0.read().unwrap().send(MSG::S(msg.into()))
+}
+fn _mpsc_send_skip(host : &ClientInfo) -> Result<(), mpsc::SendError<MSG>> {
+    host.msgs.0.read().unwrap().send(MSG::SKIP)
 }
 
 async fn parse_req(req : &mut Request<_State>) -> Option<(ID, String, DICT, String)> {
@@ -70,7 +82,7 @@ fn get_bool<T>(obj : DICT, key : &str) -> Result<bool, Result<T, tide::Error>> {
         }
     }
 }
-fn get_str<T>(obj : DICT, key : &str) -> Result<String, Result<T, tide::Error>> {
+fn get_str<T>(obj : &DICT, key : &str) -> Result<String, Result<T, tide::Error>> {
     match obj.get(key) {
         None => Err(ret_err(400, "key not in body")),
         Some(v) => match v.as_str() {
@@ -79,7 +91,7 @@ fn get_str<T>(obj : DICT, key : &str) -> Result<String, Result<T, tide::Error>> 
         }
     }
 }
-fn get_num<T>(obj : DICT, key : &str) -> Result<u64, Result<T, tide::Error>> {
+fn get_num<T>(obj : &DICT, key : &str) -> Result<ID, Result<T, tide::Error>> {
     match obj.get(key) {
         None => Err(ret_err(400, "key not in body")),
         Some(v) => match v.as_number() {
@@ -102,7 +114,7 @@ struct State {
 struct ClientInfo {
     username: String,
     last_polled: TIME,
-    msgs: (mpsc::Sender<MSG>, mpsc::Receiver<MSG>)
+    msgs: (RwLock<mpsc::Sender<MSG>>, Mutex<mpsc::Receiver<MSG>>)
 }
 #[derive(Debug)]
 struct Lobby {
@@ -110,10 +122,23 @@ struct Lobby {
     client: Option<ID>
 }
 
-#[async_std::main]
+#[tokio::main]
 async fn main() -> tide::Result<()> {
+    /*let tunnel = ngrok::Session::builder()
+        .authtoken("2lKc8ZOXU0GcG0B6z96Y7iM78KR_7dAA5nT9gbfeHVZH5HXA9")
+        .connect()
+        .await.expect("could not connect to ngrok service!");
+    let endpoint = tunnel
+        .http_endpoint()
+        .domain("equipped-chamois-big.ngrok-free.app")
+        .forwards_to("localhost:8000")
+        .listen()
+        .await.expect("could not listen to ngrok endpoint!");
+
+    println!("ngrok listening on {} => {}", endpoint.forwards_to(), endpoint.url());*/
+
     let state = State{ i_client: 0, clients: HashMap::new(), lobbies: HashMap::new() };
-    let mut app = tide::with_state(Arc::new(Mutex::new(state)));
+    let mut app = tide::with_state(Arc::new(RwLock::new(state)));
     //call /hello first thing to register the client
     app.at("/hello").post(req_hello);
     //call /poll periodically. this will block until theres a message or timeout.
@@ -135,53 +160,50 @@ async fn main() -> tide::Result<()> {
 
 // curl -X POST -H "type:hello" -d "{ "\""username"\"":"\""foo"\"" }" localhost:8080/hello
 async fn req_hello(mut req: Request<_State>) -> tide::Result {
-    let (_ty, body, remote) = match parse_req(&mut req).await {
+    let (_ci, _ty, body, _remote) = match parse_req(&mut req).await {
         None => return ret_err(400, "malformed request type or body!"),
-        Some((_ty, body, remote)) => (_ty, body, remote)
+        Some((ci, _ty, body, remote)) => (ci, _ty, body, remote)
     };
     
-    let mut state = req.state().lock().await;
+    let mut state = req.state().write().unwrap();
     let ci = state.i_client;
     state.i_client += 1;
 
-    let username = match get_str(body, "username") { Ok(s) => s, Err(e) => return e };
+    let username = match get_str(&body, "username") { Ok(s) => s, Err(e) => return e };
     
     println!("added user {}", username);
 
-    state.clients.insert(ci, ClientInfo { username, last_polled: current_time(), msgs: mpsc::channel() });
+    let mpsc = mpsc::channel();
+
+    state.clients.insert(ci, ClientInfo { username, last_polled: current_time(), msgs: (RwLock::new(mpsc.0), Mutex::new(mpsc.1)) });
     ret_ok!(format!("\"id\":{}", ci))
 }
 
-fn _get_recver(ci : ID, state : &_State) {
-    let state = state.lock().await;
+async fn req_poll(req: Request<_State>) -> tide::Result {
+    let ci = req.header("id").expect("missing id header")[0].as_str().parse::<ID>().expect("id is not valid number!");
+    let state = req.state().read().unwrap();
     let client = state.clients.get(&ci).expect("client entry missing!");
-    
-    //release the lock while waiting for message
-    client.msgs.0.clone()
-}
-
-async fn req_poll(_req: Request<_State>) -> tide::Result {
-    let ci = req.header("id")?[0].as_str().parse::<ID>().expect("id is not valid number!");
-    let recver = _get_recver(ci, req.state()).await.unwrap();
-    let msg = recver.recv_timeout(Duration::from_secs(30)).await;
+    let msg = client.msgs.1.lock().unwrap().recv_timeout(Duration::from_secs(30));
     match msg {
-        Ok(s) => Ok(s.into())
-        Err(_) => ret_err(204, "no message");
+        Ok(s) => match s {
+            MSG::S(s) => Ok(s.into()),
+            MSG::SKIP => ret_err(204, "no message")
+        },
+        Err(_) => ret_err(204, "no message")
     }
 }
 
 async fn req_post(mut req: Request<_State>) -> tide::Result {
-    let (cid, ty, body, remote) = match parse_req(&mut req).await {
+    let (cid, ty, body, _remote) = match parse_req(&mut req).await {
         None => return ret_err(400, "malformed request type or body!"),
         Some(v) => v
     };
-    let state = req.state().lock().await;
 
-    let client = state.clients.get(&cid).expect("client entry missing!");
-    
     println!("post req {}: {}", cid, ty);
+
+    let state = req.state();
     
-    match ty.as_str() {
+    let ret = match ty.as_str() {
         "stop_poll" => _stop_poll(state, cid).await,
         "lobby_new" => _lobby_new(state, cid).await,
         "lobby_list" => _lobby_list(state, cid, body).await,
@@ -189,15 +211,20 @@ async fn req_post(mut req: Request<_State>) -> tide::Result {
         "lobby_join" => _lobby_join(state, cid, body).await,
         "join_accept" => _join_accept(state, cid, body).await,
         "client_joined" => _client_joined(state, cid, body).await,
-        _ => return ret_err(400, format!("unknown type {}", ty))
-    }
+        _ => ret_err(400, format!("unknown type {}", ty))
+    };
+
+    println!("{} => {:?}", ty, ret);
+
+    ret
 }
 
-async fn _stop_poll(state : MutexGuard<State>, cid : ID) -> tide::Result {
+async fn _stop_poll(state : &_State, cid : ID) -> tide::Result {
+    let state = state.read().unwrap();
     let host = state.clients.get(&cid).expect("id invalid");
     
     let msg = "{ \"type\":\"kill_poll\" }";
-    if host.msgs.1.send(msg).is_error() {
+    if _mpsc_send(host, msg).is_err() {
         return ret_err(500, "could not send message to poll");
     }
     
@@ -206,10 +233,11 @@ async fn _stop_poll(state : MutexGuard<State>, cid : ID) -> tide::Result {
 
 fn _gen_lobby_code() -> String {
     let mut rng = rand::thread_rng();
-    (0..4).map(|_| rng.gen_range(b'A', b'Z' + 1) as char).into_iter().collect()
+    (0..4).map(|_| rng.gen_range(b'A'..=b'Z') as char).into_iter().collect()
 }
 
-async fn _lobby_new(mut state : MutexGuard<'_, State>, cid : ID) -> tide::Result {
+async fn _lobby_new(state : &_State, cid : ID) -> tide::Result {
+    let mut state = state.write().unwrap();
     let mut lobby_code = _gen_lobby_code();
 
     while state.lobbies.contains_key(&lobby_code) {
@@ -221,11 +249,12 @@ async fn _lobby_new(mut state : MutexGuard<'_, State>, cid : ID) -> tide::Result
     ret_ok!(format!("\"lobby_code\":\"{}\"", lobby_code))
 }
 
-async fn _lobby_list(state : MutexGuard<'_, State>, _cid : ID, body : DICT) -> tide::Result {
+async fn _lobby_list(state : &_State, _cid : ID, body : DICT) -> tide::Result {
+    let state = state.read().unwrap();
     let show_all = match get_bool(body, "all") { Ok(s) => s, Err(e) => return e };
 
     let lbs = state.lobbies.iter()
-        .filter(|l| show_all || l.1.is_none());
+        .filter(|(_nm, lb)| show_all || lb.client.is_none());
     let res = lbs.map(|(k, v)| {
         let host = state.clients.get(&v.host).unwrap();
         format!("{{ \"lobby_code\":\"{}\", \"host\":\"{}\" }}", k, host.username)
@@ -234,61 +263,78 @@ async fn _lobby_list(state : MutexGuard<'_, State>, _cid : ID, body : DICT) -> t
     ret_ok!(format!("\"lobbies\":[{}]", res.collect::<Vec<String>>().join(", ")))
 }
 
-async fn _lobby_has(state : MutexGuard<'_, State>, cid : ID, body : DICT) -> tide::Result {
-    let lobby_code = match get_str(body, "lobby_code") { Ok(s) => s, Err(e) => return e };
+async fn _lobby_has(state : &_State, _cid : ID, body : DICT) -> tide::Result {
+    let state = state.read().unwrap();
+    let lobby_code = match get_str(&body, "lobby_code") { Ok(s) => s, Err(e) => return e };
     
     let lobby = match state.lobbies.get(&lobby_code) { Some(l) => l, None => 
         return ret_err(404, "lobby does not exist")
     };
-    let host = match state.clients.get(&lobby.host).expect("host client entry missing");
-    if lobby.is_some() {
+    let host = state.clients.get(&lobby.host).expect("host client entry missing");
+    if lobby.client.is_some() {
         return ret_err(403, "lobby is full")
     }
     
-    ret_ok!(format!("\"host_id\":{}", lobby.host, host.username))
+    ret_ok!(format!("\"host_id\":{}, \"host_name\":{}", lobby.host, host.username))
 }
 
-async fn _lobby_join(state : MutexGuard<'_, State>, cid : ID, body : DICT) -> tide::Result {
-    let lobby_code = match get_str(body, "lobby_code") { Ok(s) => s, Err(e) => return e };
-    let net_info = match get_str(body, "net_info") { Ok(s) => s, Err(e) => return e };
+async fn _lobby_join(state : &_State, cid : ID, body : DICT) -> tide::Result {
+    let state = state.read().unwrap();
+    let lobby_code = match get_str(&body, "lobby_code") { Ok(s) => s, Err(e) => return e };
+    let net_info = match get_str(&body, "net_info") { Ok(s) => s, Err(e) => return e };
     
     let lobby = match state.lobbies.get(&lobby_code) { Some(l) => l, None => 
         return ret_err(404, "lobby does not exist")
     };
-    if lobby.is_some() {
+    if lobby.client.is_some() {
         return ret_err(403, "lobby is full")
     }
     
     let host = state.clients.get(&lobby.host).expect("lobby host id invalid");
-    let cname = state.clients.get(&cid).expect("client entry missing").username;
+    let cname = &state.clients.get(&cid).expect("client entry missing").username;
     
     let msg = format!("{{ \"type\":\"join_request\", \"lobby_code\":\"{}\", \"req_id\":{}, \"req_name\":\"{}\" \"net_info\":{} }}", lobby_code, cid, cname, net_info);
-    if host.msgs.1.send(msg).is_error() {
+    if _mpsc_send(host, &msg).is_err() {
         return ret_err(500, "could not send message to host");
     }
     
     ret_ok!()
 }
 
-async fn _join_accept(state : MutexGuard<'_, State>, _cid : ID, body : DICT) -> tide::Result {
-    let req_cid = match get_num(body, "req_id") { Ok(s) => s, Err(e) => return e };
-    let net_info = match get_str(body, "net_info") { Ok(s) => s, Err(e) => return e };
+async fn _join_accept(state : &_State, _cid : ID, body : DICT) -> tide::Result {
+    let state = state.read().unwrap();
+    let req_cid = match get_num(&body, "req_id") { Ok(s) => s, Err(e) => return e };
+    let net_info = match get_str(&body, "net_info") { Ok(s) => s, Err(e) => return e };
     
     let requestor = state.clients.get(&req_cid).expect("requestor id invalid");
     
     let msg = format!("{{ \"type\":\"host_info\", \"net_info\":{} }}", net_info);
-    if requestor.msgs.1.send(msg).is_error() {
+    if _mpsc_send(requestor, &msg).is_err() {
         return ret_err(500, "could not send message to requestor");
     }
     
     ret_ok!()
 }
 
-async fn _client_joined(mut state : MutexGuard<'_, State>, _cid : ID, body : DICT) -> tide::Result {
-    let lobby_code = match get_str(body, "lobby_code") { Ok(s) => s, Err(e) => return e };
-    let client_id = match get_num(body, "client_id") { Ok(s) => s, Err(e) => return e };
+async fn _client_joined(state : &_State, cid : ID, body : DICT) -> tide::Result {
+    let mut state = match state.try_write() {
+        Ok(w) => w,
+        Err(_) => {
+            {
+                let state = state.read().unwrap();
+                let host = state.clients.get(&cid).expect("id invalid");
+                if _mpsc_send_skip(host).is_err() {
+                    return ret_err(500, "could not send message to poll");
+                }
+            }
+            state.write().unwrap()
+        }
+    };
+
+    let lobby_code = match get_str(&body, "lobby_code") { Ok(s) => s, Err(e) => return e };
+    let client_id = match get_num(&body, "client_id") { Ok(s) => s, Err(e) => return e };
     
-    let mut lobby = match state.lobbies.get_mut(&lobby_code) { Some(l) => l, None => 
+    let lobby = match state.lobbies.get_mut(&lobby_code) { Some(l) => l, None => 
         return ret_err(404, "lobby does not exist")
     };
     
@@ -297,12 +343,12 @@ async fn _client_joined(mut state : MutexGuard<'_, State>, _cid : ID, body : DIC
     ret_ok!()
 }
 
-async fn _lobby_leave(state : MutexGuard<'_, State>, _cid : ID, body : DICT) -> tide::Result {
+async fn _lobby_leave(state : &_State, _cid : ID, body : DICT) -> tide::Result {
     
     unimplemented!()
 }
 
-async fn _lobby_close(state : MutexGuard<'_, State>, _cid : ID, body : DICT) -> tide::Result {
+async fn _lobby_close(state : &_State, _cid : ID, body : DICT) -> tide::Result {
     
     unimplemented!()
 }

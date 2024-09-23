@@ -1,4 +1,8 @@
-class_name OnlineLobby
+class_name OnlineLobby extends Node
+
+enum STATE {
+	NO_INIT, MENU, LOBBY_WAIT, LOBBY_FULL, PRE_GAME, GAME, POST_GAME
+}
 
 class PeerNetInfo:
 	var sdp : String
@@ -24,12 +28,15 @@ class PeerNetInfo:
 
 class PlayerInfo:
 	var id : int,
-	var nm : String
+	var nm : String,
+	var rdy : bool
 	func _init(id, nm):
 		self.id = id
 		self.nm = nm
 
 class LobbyInfo:
+	signal on_p2
+	
 	var code : String,
 	var is_p2 : bool,
 	var p1 : PlayerInfo,
@@ -46,6 +53,7 @@ func dec_net(s):
 signal request_done
 #signal unhandled_event(obj : Dictionary)
 
+static var state = STATE.NO_INIT
 static var signals : OnlineLobby
 
 static var my_info : PlayerInfo
@@ -141,8 +149,7 @@ static func _poll():
 
 
 static func init(usrnm : String):
-	if signals:
-		return
+	assert(state == STATE.NO_INIT)
 	
 	http_poster = HTTPClient.new()
 	http_poller = HTTPClient.new()
@@ -168,9 +175,15 @@ static func init(usrnm : String):
 	signals = new()
 	signals.listeners["join_request"] = _on_join_req
 	
+	GameMaster.root_node.add_child(signals)
+	
+	state = STATE.MENU
+	
 	return true
 
 static func create():
+	assert(state == STATE.MENU)
+	
 	var res = await _post("/post", "lobby_new", { "id": my_info.id })
 	if res.code != 200:
 		print_debug("create lobby fail: ", res.body_raw)
@@ -182,9 +195,13 @@ static func create():
 	lobby.code = res["lobby_code"]
 	lobby.p1 = my_info
 	
+	state = STATE.LOBBY_WAIT
+	
 	return lobby
 
 static func join(code):
+	assert(state == STATE.MENU)
+	
 	var res = await _post("/post", "lobby_has", { "id": my_info.id, "lobby_code": code })
 	if res.code != 200:
 		print_debug("check lobby fail: ", res.body_raw)
@@ -312,6 +329,7 @@ static func _on_join_req(body : Dictionary):
 		print_debug("accept join fail: ", res.body_raw)
 	
 	lobby.p2 = PlayerInfo.new(req_id, req_name)
+	lobby.on_p2.emit(lobby.p2)
 
 static func start_polling_loop():
 	poll = true
@@ -333,3 +351,20 @@ static func start_polling_loop():
 				print_debug("polling returned error: ", res.code, JSON.stringify(res.body))
 				poll = false
 				return
+
+
+static func player_ready(b : bool):
+	if lobby and lobby.p2:
+		signals._on_ppl_rdy.rpc(b)
+
+@rpc("any_peer", "call_local")
+func _on_ppl_rdy(b):
+	var id = multiplayer.get_remote_sender_id()
+	if id == lobby.p1.id:
+		lobby.p1.rdy = b
+	else:
+		lobby.p2.rdy = b
+	
+	if lobby.p1.rdy and lobby.p2.rdy and not lobby.is_p2:
+		print_debug("starting game...")
+		pass

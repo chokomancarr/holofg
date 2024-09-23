@@ -22,6 +22,20 @@ class PeerNetInfo:
 		if sdp and ices.size() > 0:
 			return [ sdp, ices ]
 
+class PlayerInfo:
+	var id : int,
+	var nm : String
+	func _init(id, nm):
+		self.id = id
+		self.nm = nm
+
+class LobbyInfo:
+	var code : String,
+	var is_p2 : bool,
+	var p1 : PlayerInfo,
+	var p2 : PlayerInfo
+
+
 func enc_net(info):
 	return Marshalls.utf8_to_base64(info[0] + "\x01" + "\n".join(info[1]))
 func dec_net(s):
@@ -34,7 +48,7 @@ signal request_done
 
 static var signals : OnlineLobby
 
-static var client_id : int
+static var my_info : PlayerInfo
 
 static var http_poster : HTTPClient
 static var http_poller : HTTPClient
@@ -42,6 +56,8 @@ static var busy = false
 static var poll = false
 
 static var rtc : WebRTCMultiplayerPeer
+
+static var lobby : LobbyInfo
 
 static var listeners : Dictionary = {}
 static var unhandled_msgs : Dictionary = {}
@@ -143,35 +159,41 @@ static func init(usrnm : String):
 		print_debug("hello failed: ", res.code, body)
 		return false
 	
-	client_id = body["id"]
+	my_info = PlayerInfo.new(body["id"], usrnm)
+	
+	rtc = WebRTCMultiplayerPeer.new()
+	rtc.peer_connected.connect(_on_peer_conn)
+	rtc.peer_disconnected.connect(_on_peer_dconn)
 	
 	signals = new()
-	
-	signals.listeners["join_request"] = OnlineLobby::_on_join_req
+	signals.listeners["join_request"] = _on_join_req
 	
 	return true
 
 static func create():
-	var res = await _post("/post", "lobby_new", { "id": client_id })
+	var res = await _post("/post", "lobby_new", { "id": my_info.id })
 	if res.code != 200:
 		print_debug("create lobby fail: ", res.body_raw)
 		return null
 	
-	rtc = WebRTCMultiplayerPeer.new()
-	rtc.create_mesh(client_id)
+	rtc.create_mesh(my_info.id)
 	
-	return res["lobby_code"]
+	lobby = LobbyInfo.new()
+	lobby.code = res["lobby_code"]
+	lobby.p1 = my_info
+	
+	return lobby
 
 static func join(code):
-	var res = await _post("/post", "lobby_has", { "id": client_id, "lobby_code": code })
+	var res = await _post("/post", "lobby_has", { "id": my_info.id, "lobby_code": code })
 	if res.code != 200:
 		print_debug("check lobby fail: ", res.body_raw)
 		return false
 	
 	var host_id = res["host_id"]
+	var host_name = res["host_name"]
 	
-	rtc = WebRTCMultiplayerPeer.new()
-	rtc.create_mesh(client_id)
+	rtc.create_mesh(my_info.id)
 	
 	var peer := WebRTCPeerConnection.new()
 	assert(!peer.initialize(NetUtil.get_ice_servers()))
@@ -182,6 +204,8 @@ static func join(code):
 	
 	assert(!peer.create_offer())
 	
+	multiplayer.multiplayer_peer = mp
+	
 	var my_net_info = await peer_info.get_info()
 	if not my_net_info:
 		print_debug("could not generate peer sdp / ice!")
@@ -190,7 +214,7 @@ static func join(code):
 	assert(!peer.set_local_description("offer", my_net_info[0]))
 	
 	var res = await _post("/post", "lobby_join", {
-		"id": client_id, "lobby_code": code, "net_info": enc_net(my_net_info)
+		"id": my_info.id, "lobby_code": code, "net_info": enc_net(my_net_info)
 	})
 	if res.code != 200:
 		print_debug("join lobby fail: ", res.body_raw)
@@ -209,15 +233,41 @@ static func join(code):
 	
 	var net_info = dec_net(host_info["net_info"])
 	
+	_next_connd_peer = -1
+	
 	assert(!peer.set_remote_description("answer", net_info[0]))
 	for s in net_info[1].split("\n"):
 		peer.add_ice_candidate("0", 0, s)
 	
+	for i in range(11):
+		if _next_connd_peer > -1:
+			break
+		if i == 10:
+			print_debug("connection timeout!")
+			return false
+		await GameMaster.get_timer(0.5).timeout
+	
+	lobby = LobbyInfo.new()
+	lobby.code = lobby_code
+	lobby.p1 = PlayerInfo.new(host_id, host_name)
+	lobby.p2 = my_info
+	lobby.is_p2 = true
+	
 	return true
+
+static func _next_connd_peer = -1
+static func _on_peer_conn(i):
+	_next_connd_peer = i
+
+static func _on_peer_dconn(i):
+	pass
+
 
 static func _on_join_req(body : Dictionary):
 	var req_id = body["req_id"]
+	var req_name = body["req_name"]
 	var net_info = dec_net(body["net_info"])
+	var lobby_code = body["lobby_code"]
 	
 	var peer := WebRTCPeerConnection.new()
 	assert(!peer.initialize(NetUtil.get_ice_servers()))
@@ -229,6 +279,8 @@ static func _on_join_req(body : Dictionary):
 	for s in net_info[1]:
 		peer.add_ice_candidate("0", 0, s)
 	
+	multiplayer.multiplayer_peer = mp
+	
 	var my_net_info = await peer_info.get_info()
 	if not my_net_info:
 		print_debug("could not generate peer sdp / ice!")
@@ -236,13 +288,30 @@ static func _on_join_req(body : Dictionary):
 	
 	assert(!peer.set_local_description("answer", my_net_info[0]))
 	
+	_next_connd_peer = -1
+	
 	var res = await _post("/post", "join_accept", {
-		"id": client_id, "req_id": req_id, "net_info": enc_net(my_net_info)
+		"id": my_info.id, "req_id": req_id, "net_info": enc_net(my_net_info)
 	})
 	if res.code != 200:
 		print_debug("accept join fail: ", res.body_raw)
 		return
-
+	
+	for i in range(11):
+		if _next_connd_peer > -1:
+			break
+		if i == 10:
+			print_debug("connection timeout!")
+			return
+		await GameMaster.get_timer(0.5).timeout
+	
+	var res = await _post("/post", "client_joined", {
+		"id": my_info.id, "lobby_code": lobby_code, "my_info.id": req_id
+	})
+	if res.code != 200:
+		print_debug("accept join fail: ", res.body_raw)
+	
+	lobby.p2 = PlayerInfo.new(req_id, req_name)
 
 static func start_polling_loop():
 	poll = true

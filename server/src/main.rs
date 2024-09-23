@@ -240,11 +240,12 @@ async fn _lobby_has(state : MutexGuard<'_, State>, cid : ID, body : DICT) -> tid
     let lobby = match state.lobbies.get(&lobby_code) { Some(l) => l, None => 
         return ret_err(404, "lobby does not exist")
     };
+    let host = match state.clients.get(&lobby.host).expect("host client entry missing");
     if lobby.is_some() {
         return ret_err(403, "lobby is full")
     }
     
-    ret_ok!(format!("\"host_id\":{}", lobby.host))
+    ret_ok!(format!("\"host_id\":{}", lobby.host, host.username))
 }
 
 async fn _lobby_join(state : MutexGuard<'_, State>, cid : ID, body : DICT) -> tide::Result {
@@ -259,8 +260,9 @@ async fn _lobby_join(state : MutexGuard<'_, State>, cid : ID, body : DICT) -> ti
     }
     
     let host = state.clients.get(&lobby.host).expect("lobby host id invalid");
+    let cname = state.clients.get(&cid).expect("client entry missing").username;
     
-    let msg = format!("{{ \"type\":\"join_request\", \"req_id\":{}, \"net_info\":{} }}", cid, net_info);
+    let msg = format!("{{ \"type\":\"join_request\", \"lobby_code\":\"{}\", \"req_id\":{}, \"req_name\":\"{}\" \"net_info\":{} }}", lobby_code, cid, cname, net_info);
     if host.msgs.1.send(msg).is_error() {
         return ret_err(500, "could not send message to host");
     }

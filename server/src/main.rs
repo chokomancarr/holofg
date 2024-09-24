@@ -36,9 +36,14 @@ use std::convert::TryFrom;
 use rand::Rng;
 use threadpool::ThreadPool;
 
+const MAX_CLIENTS: usize = 20;
+const MAX_THREADS: usize = 6;
+const GC_KILL_T: u64 = 60;
+const GC_RATE: Duration = Duration::from_secs(GC_KILL_T);
+
 type ID = usize;
 type TIME = u64;
-type _State = Arc<RwLock<State>>;
+type _State = Arc<State>;
 enum MSG {
     S(String),
     SKIP
@@ -46,13 +51,10 @@ enum MSG {
 type DICT = serde_json::Map<String, serde_json::Value>;
 type RET = String;
 
-const MAX_CLIENTS : usize = 20;
-const MAX_THREADS : usize = 6;
-
 // ----------------------- TYPES
 
 struct State {
-    free_ids : RwLock<Vec<usize>>, //only used by hello
+    free_ids: RwLock<Vec<usize>>, //only used by hello
     clients: [RwLock<Option<Client>>; MAX_CLIENTS], //this will be hogged in /poll, so we structure like this
     lobbies: RwLock<HashMap<String, RwLock<Lobby>>> //nobody will hog this
 }
@@ -72,21 +74,21 @@ fn current_time() -> TIME {
     SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs()
 }
 
-fn http_ret<S : Into<String>>(code : u16, body : S) {
+fn http_ret<S: Into<String>>(code: u16, body: S) {
     format!("HTTP/1.1 {} UWU\nContent-Type: application/json\nContent-Length: {}\n\n{}",
         code, body.into().len(), &body
     )
 }
-fn http_ok<S : Into<String>>(body : S) { http_ret(200, body) }
+fn http_ok<S: Into<String>>(body: S) { http_ret(200, body) }
 
-fn _mpsc_send<S : Into<String>>(host : &Client, msg : S) {
+fn _mpsc_send<S: Into<String>>(host: &Client, msg: S) {
     host.msgs.0.read().unwrap().send(MSG::S(msg.into()))
 }
-fn _mpsc_send_skip(host : &Client) {
+fn _mpsc_send_skip(host: &Client) {
     host.msgs.0.read().unwrap().send(MSG::SKIP)
 }
 
-fn get_bool<T>(obj : &DICT, key : &str) -> Result<bool, RET> {
+fn get_bool<T>(obj: &DICT, key: &str) -> Result<bool, RET> {
     match obj.get(key) {
         None => Err(http_ret(400, "key not in body")),
         Some(v) => match v.as_bool() {
@@ -95,7 +97,7 @@ fn get_bool<T>(obj : &DICT, key : &str) -> Result<bool, RET> {
         }
     }
 }
-fn get_str<T>(obj : &DICT, key : &str) -> Result<String, RET> {
+fn get_str<T>(obj: &DICT, key: &str) -> Result<String, RET> {
     match obj.get(key) {
         None => Err(http_ret(400, "key not in body")),
         Some(v) => match v.as_str() {
@@ -104,7 +106,7 @@ fn get_str<T>(obj : &DICT, key : &str) -> Result<String, RET> {
         }
     }
 }
-fn get_num<T>(obj : &DICT, key : &str) -> Result<i64, RET> {
+fn get_num<T>(obj: &DICT, key: &str) -> Result<i64, RET> {
     match obj.get(key) {
         None => Err(http_ret(400, "key not in body")),
         Some(v) => match v.as_number() {
@@ -117,7 +119,7 @@ fn get_num<T>(obj : &DICT, key : &str) -> Result<i64, RET> {
     }
 }
 
-fn get_client<'c, 'b:'c, 'a:'b>(ci: ID, state : &'a State) -> (RwLockReadGuard<'b, Client>, &'c Client) {
+fn get_client<'c, 'b:'c, 'a:'b>(ci: ID, state: &'a State) -> (RwLockReadGuard<'b, Client>, &'c Client) {
     let lock = state.clients[ci].read().unwrap()
     let client = lock.as_ref().expect("host entry missing");
     (lock, client)
@@ -131,7 +133,7 @@ fn main() {
         clients: std::array::from_fn(|_| RwLock::new(None)),
         lobbies: RwLock::new(HashMap::new())
     };
-    let state = Arc::new(RwLock::new(state));
+    let state = Arc::new(state);
 
     let thread_pool = ThreadPool::new(MAX_THREADS);
 
@@ -145,17 +147,88 @@ fn main() {
 
     println!("listening on {:?}", &local_addr);
 
+    let gc = {
+        let state = state.clone();
+        std::thread::spawn(move || {
+            garbage_collector(state);
+        })
+    }
+
     for stream in listener.incoming() {
         let stream = stream.unwrap();
         let state = state.clone();
 
         thread_pool.execute(move || {
-            handle_connection(stream, state);
+            let _ = handle_connection(stream, state);
         });
     }
 }
 
-fn handle_connection(mut stream : TcpStream, state : _State) {
+fn garbage_collector(state: _State) {
+    loop {
+        std::thread::sleep(GC_RATE);
+        let now = current_time();
+        for ci, cl in state.clients.iter().enumerate() {
+            let t = {
+                let cl = cl.read().unwrap();
+                cl.as_ref().map_or(None, |v| Some(v.last_polled))
+            };
+            if let Some(t) = t {
+                if (now - t) > GC_KILL_T {
+                    remove_client(state.clone(), ci);
+                }
+            }
+        }
+    }
+}
+
+fn remove_client(state: _State, ci : ID) {
+    *state.clients[ci].write().unwrap() = None
+    
+    //remove active lobbies, but when will this happen?
+    //if its a full lobby, someone would have already told us about the disconnection
+    //...unless both drops at the same time or its an empty lobby
+    //in which case we can drop the lobby without sending info to the client
+    let finder = {
+        let lobbies = state.lobbies.read().unwrap();
+        lobbies.iter().filter_map(|k, &v|
+            if v.host == ci { Some(k.clone()) } else { None }
+        ).next()
+    };
+    if let Some(key) = finder {
+        lobbies.write().unwrap().remove(&key);
+    }
+    
+    /*let finder = {
+        let lobbies = state.lobbies.read().unwrap();
+        lobbies.iter().filter_map(|k, &v|
+            if v.host == ci { return Some((k.clone(), true, v.client.clone())); }
+            elif Some(c) = v.client {
+                if c == ci { return Some((k.clone(), false, Some(v.host))); }
+            }
+            None
+        ).next()
+    };
+    if let Some((key, host, ci2)) = finder {
+        if host {
+            if let Some(ci2) = ci2 {
+                let mut dict = DICT::new();
+                dict.insert("lobby_code", key);
+                req_host_left(ci2, state, DICT::new());
+            }
+            else {
+                lobbies.write().unwrap().remove(&key);
+            }
+        }
+        else {
+            let mut dict = DICT::new();
+            dict.insert("lobby_code", key);
+            req_client_left(ci2.unwrap(), state, DICT::new());
+        }
+    }*/
+}
+
+fn handle_connection(mut stream: TcpStream, state: _State) -> Result<()> {
     let (path, method, client_id, body) = {
         let buf_reader = BufReader::new(&mut stream);
         let mut lines = buf_reader.lines().map(|l| l.unwrap());
@@ -220,17 +293,15 @@ fn handle_connection(mut stream : TcpStream, state : _State) {
         http_ret(400, "malformed body")
     }
     
+    //these can fail if the user disconnects midway
     let buf = ret.to_bytes();
-    stream.write_all(&buf).expect("could not write response");
-    stream.flush().expect("flushing tcpstream failed");
+    stream.write_all(&buf)?;
+    stream.flush()?;
 }
 
 // curl -X POST -H "type:hello" -d "{ "\""username"\"":"\""foo"\"" }" localhost:8080/hello
 fn req_hello(state: _State, body: DICT) -> RET {
     let username = match get_str(&body, "username") { Ok(s) => s, Err(e) => return e };
-    
-    println!("locking state");
-    let state = state.read().unwrap();
 
     let next_id = {
         println!("locking free_ids");
@@ -258,7 +329,11 @@ fn req_hello(state: _State, body: DICT) -> RET {
 }
 
 fn req_poll(ci: ID, state: _State) -> RET {
-    let state = state.read().unwrap();
+    {
+        let host = state.clients[ci].write().unwrap();
+        let host = host.as_ref().expect("client not registered");
+        host.last_polled = current_time();
+    }
     let (_, client) = get_client(ci, state);
     //let client = state.clients[ci].read().unwrap();
     //let client = client.as_ref().expect("client not registered");
@@ -273,7 +348,6 @@ fn req_poll(ci: ID, state: _State) -> RET {
 }
 
 async fn req_stop_poll(ci: ID, state: _State) -> RET {
-    let state = state.read().unwrap();
     let host = state.clients[ci].read().unwrap();
     let host = host.as_ref().expect("client not registered");
 
@@ -284,8 +358,6 @@ async fn req_stop_poll(ci: ID, state: _State) -> RET {
 }
 
 fn req_lobby_new(ci: ID, state: _State) -> RET {
-    let mut state = state.read().unwrap();
-    
     let lobbies = state.lobbies.write().unwrap();
 
     let mut rng = rand::thread_rng();
@@ -303,8 +375,7 @@ fn req_lobby_new(ci: ID, state: _State) -> RET {
     ret
 }
 
-fn req_lobby_list(ci: ID, state: _State, body : DICT) -> RET {
-    let state = state.read().unwrap();
+fn req_lobby_list(ci: ID, state: _State, body: DICT) -> RET {
     let show_all = match get_bool(body, "all") { Ok(s) => s, Err(e) => return e };
 
     let lobbies = state.lobbies.read().unwrap();
@@ -319,8 +390,7 @@ fn req_lobby_list(ci: ID, state: _State, body : DICT) -> RET {
     http_ok(format!("{{\"lobbies\":[{}]}}", res.collect::<Vec<String>>().join(", ")))
 }
 
-fn req_lobby_has(ci: ID, state: _State, body : DICT) -> RET {
-    let state = state.read().unwrap();
+fn req_lobby_has(ci: ID, state: _State, body: DICT) -> RET {
     let lobby_code = match get_str(&body, "lobby_code") { Ok(s) => s, Err(e) => return e };
     
     let lobbies = state.lobbies.read().unwrap();
@@ -337,8 +407,7 @@ fn req_lobby_has(ci: ID, state: _State, body : DICT) -> RET {
     http_ok(format!("{{\"host_id\":{}, \"host_name\":{}}}", lobby.host, host.username))
 }
 
-fn req_lobby_join(state : &_State, cid : ID, body : DICT) -> RET {
-    let state = state.read().unwrap();
+fn req_lobby_join(state: &_State, cid: ID, body: DICT) -> RET {
     let lobby_code = match get_str(&body, "lobby_code") { Ok(s) => s, Err(e) => return e };
     let net_info = match get_str(&body, "net_info") { Ok(s) => s, Err(e) => return e };
     
@@ -362,13 +431,12 @@ fn req_lobby_join(state : &_State, cid : ID, body : DICT) -> RET {
     http_ok("{}")
 }
 
-async fn req_join_accept(ci: ID, state: _State, body : DICT) -> RET {
-    let state = state.read().unwrap();
+fn req_join_accept(ci: ID, state: _State, body: DICT) -> RET {
     let req_cid = match get_num(&body, "req_id") { Ok(s) => s, Err(e) => return e };
     let net_info = match get_str(&body, "net_info") { Ok(s) => s, Err(e) => return e };
     
     let requestor = state.clients[req_cid].read().unwrap();
-    let requestor = requestor.read().expect("requestor id invalid");
+    let requestor = requestor.as_ref().expect("requestor id invalid");
     
     let msg = format!("{{ \"type\":\"host_info\", \"net_info\":{} }}", net_info);
     _mpsc_send(requestor, msg);
@@ -376,9 +444,7 @@ async fn req_join_accept(ci: ID, state: _State, body : DICT) -> RET {
     http_ok("{}")
 }
 
-async fn req_client_joined(ci: ID, state: _State, body : DICT) -> RET {
-    let state = state.read().unwrap();
-
+fn req_client_joined(ci: ID, state: _State, body: DICT) -> RET {
     let lobby_code = match get_str(&body, "lobby_code") { Ok(s) => s, Err(e) => return e };
     let client_id = match get_num(&body, "client_id") { Ok(s) => s, Err(e) => return e };
     
@@ -391,13 +457,36 @@ async fn req_client_joined(ci: ID, state: _State, body : DICT) -> RET {
     
     http_ok("{}")
 }
-/*
-async fn _lobby_leave(state : &_State, _cid : ID, body : DICT) -> tide::Result {
+
+fn req_client_left(ci: ID, state: _State, body: DICT) -> RET {
+    let lobby_code = match get_str(&body, "lobby_code") { Ok(s) => s, Err(e) => return e };
     
-    unimplemented!()
+    let mut lobbies = state.lobbies.write().unwrap();
+    let lobby = match lobbies.get_mut(&lobby_code) { Some(l) => l, None => 
+        return http_ret(404, "lobby does not exist");
+    };
+    
+    lobby.client = None;
+    
+    http_ok("{}")
 }
 
-async fn _lobby_close(state : &_State, _cid : ID, body : DICT) -> tide::Result {
+fn req_host_left(ci: ID, state: _State, body: DICT) -> RET {
+    let lobby_code = match get_str(&body, "lobby_code") { Ok(s) => s, Err(e) => return e };
     
-    unimplemented!()
-}*/
+    let mut lobbies = state.lobbies.write().unwrap();
+    let lobby = match lobbies.get_mut(&lobby_code) { Some(l) => l, None => 
+        return http_ret(404, "lobby does not exist");
+    };
+    
+    lobby.host = ci;
+    lobby.client = None;
+    
+    //let client = state.clients[ci].read().unwrap();
+    //let client = requestor.as_ref().expect("client entry missing");
+    
+    //let msg = "{{ \"type\":\"become_host\" }}";
+    //_mpsc_send(requestor, msg);
+    
+    http_ok("{}")
+}

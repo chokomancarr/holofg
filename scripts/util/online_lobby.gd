@@ -1,7 +1,7 @@
 class_name OnlineLobby extends Node
 
 enum STATE {
-	NO_INIT, MENU, LOBBY_WAIT, LOBBY_FULL, PRE_GAME, GAME, POST_GAME
+	NO_INIT, MENU, LOBBY, PRE_GAME, GAME, POST_GAME
 }
 
 class PeerNetInfo:
@@ -91,11 +91,14 @@ static func _init_http(client : HTTPClient, block):
 				print_debug("connect to host failed with error ", st)
 				return false
 
-static func _post(url : String, ty : String, body : Dictionary):
+static func _post(url : String, body : Dictionary):
 	while busy:
 		await signals.request_done
 	busy = true
-	var headers = PackedStringArray(["ngrok-skip-browser-warning: 69420", "type: " + ty, "id: " + str(my_info.id if my_info else 0)])
+	var headers = PackedStringArray([
+		"ngrok-skip-browser-warning: 69420",
+		"client_id: " + str(my_info.id if my_info else 0)
+	])
 	http_poster.request(HTTPClient.METHOD_POST, url, headers, JSON.stringify(body))
 	
 	var st = http_poster.get_status()
@@ -128,7 +131,10 @@ static func _post(url : String, ty : String, body : Dictionary):
 	}
 
 static func _poll():
-	var headers = PackedStringArray(["ngrok-skip-browser-warning: 69420", "id: " + str(my_info.id)])
+	var headers = PackedStringArray([
+		"ngrok-skip-browser-warning: 69420",
+		"client_id: " + str(my_info.id)
+	])
 	http_poller.request(HTTPClient.METHOD_GET, "/poll", headers)
 	
 	var st = http_poller.get_status()
@@ -175,7 +181,7 @@ static func init(usrnm : String):
 	res = await _init_http(http_poller, false)
 	if !res: return false
 	
-	res = await _post("/hello", "hello", { "username": usrnm })
+	res = await _post("/hello", { "username": usrnm })
 	var body = res.body
 	if res.code != 200:
 		print_debug("hello failed: ", res.code, res.body_raw)
@@ -196,7 +202,7 @@ static func init(usrnm : String):
 static func create():
 	assert(state == STATE.MENU)
 	
-	var res = await _post("/post", "lobby_new", {})
+	var res = await _post("/lobby_new", {})
 	if res.code != 200:
 		print_debug("create lobby fail: ", res.body_raw)
 		return null
@@ -207,14 +213,14 @@ static func create():
 	lobby.code = res.body["lobby_code"]
 	lobby.p1 = my_info
 	
-	state = STATE.LOBBY_WAIT
+	state = STATE.LOBBY
 	
 	return lobby
 
 static func join(code):
 	assert(state == STATE.MENU)
 	
-	var res = await _post("/post", "lobby_has", { "lobby_code": code })
+	var res = await _post("/lobby_has", { "lobby_code": code })
 	if res.code != 200:
 		print_debug("check lobby fail: ", res.body_raw)
 		return null
@@ -242,7 +248,7 @@ static func join(code):
 	
 	assert(!peer.set_local_description("offer", my_net_info[0]))
 	
-	res = await _post("/post", "lobby_join", {
+	res = await _post("/lobby_join", {
 		"lobby_code": code, "net_info": enc_net(my_net_info)
 	})
 	if res.code != 200:
@@ -282,15 +288,30 @@ static func join(code):
 	lobby.p2 = my_info
 	lobby.is_p2 = true
 	
+	state = STATE.LOBBY
+	
 	return lobby
 
 static var _next_connd_peer = -1
 static func _on_peer_conn(i):
 	_next_connd_peer = i
+	print_debug("player connected: ID ", i)
 
 static func _on_peer_dconn(i):
-	pass
-
+	if state == STATE.LOBBY:
+		if lobby.is_p2:
+			lobby.is_p2 = false
+			lobby.p1 = my_info
+			print_debug("player 1 (ID %d) disconnected, you are now host" % i)
+		else:
+			print_debug("player 2 (ID %d) disconnected" % i)
+		lobby.p2 = null
+		var res = await _post("/host_left" if lobby.is_p2 else "/client_left", {
+			"lobby_code": lobby.code
+		})
+		if res.code != 200:
+			print_debug("failed to inform disconnect")
+			return
 
 static func _on_join_req(body : Dictionary):
 	var req_id = body["req_id"]
@@ -319,7 +340,7 @@ static func _on_join_req(body : Dictionary):
 	
 	_next_connd_peer = -1
 	
-	var res = await _post("/post", "join_accept", {
+	var res = await _post("/join_accept", {
 		"req_id": req_id, "net_info": enc_net(my_net_info)
 	})
 	if res.code != 200:
@@ -334,7 +355,7 @@ static func _on_join_req(body : Dictionary):
 			return
 		await GameMaster.get_timer(0.5).timeout
 	
-	res = await _post("/post", "client_joined", {
+	res = await _post("/client_joined", {
 		"lobby_code": lobby_code, "my_info.id": req_id
 	})
 	if res.code != 200:
@@ -368,8 +389,16 @@ static func start_polling_loop():
 				poll = false
 				return
 
+static func leave_lobby():
+	assert(state == STATE.LOBBY)
+	
+	rpc.close()
+	
+	state = STATE.MENU
+	pass
 
 static func player_ready(b : bool):
+	assert(state == STATE.LOBBY)
 	if lobby and lobby.p2:
 		signals._on_ppl_rdy.rpc(b)
 

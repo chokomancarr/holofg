@@ -1,5 +1,7 @@
 class_name OnlineLobby extends Node
 
+static var debug_network = true
+
 enum STATE {
 	NO_INIT, MENU, LOBBY, PRE_GAME, GAME, POST_GAME
 }
@@ -7,24 +9,25 @@ enum STATE {
 class PeerNetInfo:
 	var sdp : String
 	var ices = []
+	var peer : WebRTCPeerConnection
 
 	func _init(peer : WebRTCPeerConnection):
 		var me = self
+		self.peer = peer
 		peer.session_description_created.connect(func (type: String, sdp: String):
 			me.sdp = sdp
 		)
 		
 		peer.ice_candidate_created.connect(func (media: String, index: int, name: String):
-			me.ices.push_back(name)
+			me.ices.push_back([media, str(index), name])
 		)
 	
 	func get_info():
-		for i in range(30):
-			if sdp and ices.size() >= 3:
+		while true:
+			if sdp and peer.get_gathering_state() == WebRTCPeerConnection.GATHERING_STATE_COMPLETE:
+				print_debug("using sdp:\n", sdp, "\nusing ice:\n", ices)
 				return [ sdp, ices ]
 			await GameMaster.get_timer(0.1).timeout
-		if sdp and ices.size() > 0:
-			return [ sdp, ices ]
 
 class PlayerInfo:
 	var id : int
@@ -44,10 +47,10 @@ class LobbyInfo:
 
 
 static func enc_net(info):
-	return Marshalls.utf8_to_base64(info[0] + char(1) + "\n".join(info[1]))
+	return Marshalls.utf8_to_base64(info[0] + char(1) + "\n".join(info[1].map(func (v): return char(2).join(v))))
 static func dec_net(s):
 	var res = Marshalls.base64_to_utf8(s).split(char(1))
-	return [res[0], res[1].split("\n")]
+	return [res[0], Array(res[1].split("\n")).map(func (v): return v.split(char(2)))]
 
 
 signal request_done
@@ -112,7 +115,7 @@ static func _post(url : String, body : Dictionary):
 	
 	var code = http_poster.get_response_code()
 	var response = PackedByteArray()
-	while true:
+	while http_poster.get_status() == HTTPClient.STATUS_BODY:
 		var chunk = http_poster.read_response_body_chunk()
 		if chunk.is_empty():
 			break
@@ -138,7 +141,6 @@ static func _poll():
 		"Client_id: " + str(my_info.id - 1)
 	])
 	http_poller.request(HTTPClient.METHOD_GET, "/poll", headers)
-	
 	var st = http_poller.get_status()
 	while st == HTTPClient.STATUS_REQUESTING:
 		await GameMaster.get_timer(0.1).timeout
@@ -152,13 +154,15 @@ static func _poll():
 	
 	var code = http_poller.get_response_code()
 	var response = PackedByteArray()
-	while true:
+	while http_poller.get_status() == HTTPClient.STATUS_BODY:
 		var chunk = http_poller.read_response_body_chunk()
 		if chunk.is_empty():
 			break
 		response.append_array(chunk)
 	
 	var sres = response.get_string_from_utf8()
+	#http_poller.get_response_headers_as_dictionary().get("Content-type")
+	#just let it fail if is not json
 	var json = JSON.parse_string(sres)
 	
 	return {
@@ -276,9 +280,9 @@ static func join(code):
 	
 	assert(!peer.set_remote_description("answer", net_info[0]))
 	for s in net_info[1]:
-		peer.add_ice_candidate("0", 0, s)
+		peer.add_ice_candidate(s[0], int(s[1]), s[2])
 	
-	for i in range(11):
+	for i in range(21):
 		if _next_connd_peer > -1:
 			break
 		if i == 10:
@@ -331,7 +335,7 @@ static func _on_join_req(body : Dictionary):
 	assert(!rtc.add_peer(peer, req_id))
 	assert(!peer.set_remote_description("offer", net_info[0]))
 	for s in net_info[1]:
-		peer.add_ice_candidate("0", 0, s)
+		peer.add_ice_candidate(s[0], int(s[1]), s[2])
 	
 	signals.multiplayer.multiplayer_peer = rtc
 	
@@ -373,7 +377,6 @@ static func start_polling_loop():
 	while poll:
 		var res = await _poll()
 		if not res:
-			print_debug("polling returned error (", res.code, "): ", res.body_raw)
 			poll = false
 			return
 		if res.code == 504:
@@ -390,7 +393,7 @@ static func start_polling_loop():
 					unhandled_msgs[ty] = res.body
 					
 			else:
-				print_debug("polling returned error: ", res.code, JSON.stringify(res.body))
+				print_debug("polling returned error (", res.code, "): ", res.body_raw)
 				poll = false
 				return
 

@@ -4,3 +4,4 @@
 export/
 server/target/
 Cargo.lock
+~*.dll

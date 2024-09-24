@@ -9,6 +9,11 @@
 			],
 			"group": "build",
 			"label": "rust: cargo build"
+		},
+		{
+			"label": "copy to server",
+			"command": "scp",
+			"args": ["target/arm-unknown-linux-gnueabihf/debug/fg-server", "pi.atrium:~"]
 		}
 	]
 }

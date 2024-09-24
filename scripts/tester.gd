@@ -14,6 +14,7 @@ func _ready():
 	($"Control/vb/online_bts/srv/Button" as Button).pressed.connect(_on_make_srv)
 	($"Control/vb/online_bts/clt/Button" as Button).pressed.connect(_on_join_srv)
 	($"Control/vb/lobby/Button" as Button).pressed.connect(_on_ready)
+	($"Control/vb/chat/CButton" as Button).pressed.connect(_on_send_chat)
 
 func _on_connect_mm():
 	logg("connecting to mm server...", 0)
@@ -23,6 +24,9 @@ func _on_connect_mm():
 		$"Control/vb/online_bts".visible = true
 		logg("connected to server!")
 		
+		OnlineLobby.signals.on_chat_msg.connect(func (msg):
+			logg("received message: " + msg)
+		)
 		OnlineLobby.start_polling_loop()
 		pass
 	else:
@@ -49,6 +53,7 @@ func _on_p2(p2):
 	logg("p2 connected!")
 	($"Control/vb/lobby/p2" as Label).text = p2.nm
 	($"Control/vb/lobby/Button" as Button).disabled = false
+	$"Control/vb/chat".visible = true
 
 func _on_join_srv():
 	logg("joining lobby...")
@@ -62,6 +67,7 @@ func _on_join_srv():
 		($"Control/vb/lobby/p2" as Label).text = usrnm
 		($"Control/vb/lobby/lobbycode" as Label).text = lobby.code
 		($"Control/vb/lobby/Button" as Button).disabled = false
+		$"Control/vb/chat".visible = true
 		logg("...success!")
 	else:
 		logg("...failed!")
@@ -72,3 +78,9 @@ func _on_ready():
 	rdy = !rdy
 	$"Control/vb/lobby/Button".text = "Un-ready" if rdy else "Ready"
 	OnlineLobby.player_ready(rdy)
+
+func _on_send_chat():
+	var msg = $"Control/vb/chat/TextEdit".text
+	$"Control/vb/chat/TextEdit".text = ""
+	logg("sent message: " + msg)
+	OnlineLobby.send_chat(msg)

@@ -128,3 +128,18 @@ layout_mode = 2
 layout_mode = 2
 disabled = true
 text = "ready"
+
+[node name="chat" type="HBoxContainer" parent="Node/Control/vb"]
+visible = false
+layout_mode = 2
+
+[node name="TextEdit" type="TextEdit" parent="Node/Control/vb/chat"]
+custom_minimum_size = Vector2(0, 36.26)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "say something..."
+
+[node name="CButton" type="Button" parent="Node/Control/vb/chat"]
+custom_minimum_size = Vector2(65.5, 0)
+layout_mode = 2
+text = "chat"

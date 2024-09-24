@@ -97,7 +97,7 @@ static func _post(url : String, body : Dictionary):
 	busy = true
 	var headers = PackedStringArray([
 		"ngrok-skip-browser-warning: 69420",
-		"client_id: " + str(my_info.id if my_info else 0)
+		"Client_id: " + str((my_info.id - 1) if my_info else 0)
 	])
 	http_poster.request(HTTPClient.METHOD_POST, url, headers, JSON.stringify(body))
 	
@@ -121,6 +121,8 @@ static func _post(url : String, body : Dictionary):
 	var sres = response.get_string_from_utf8()
 	var json = JSON.parse_string(sres)
 	
+	print_debug("post success (", code, "): ", sres)
+	
 	busy = false
 	signals.request_done.emit()
 	
@@ -133,7 +135,7 @@ static func _post(url : String, body : Dictionary):
 static func _poll():
 	var headers = PackedStringArray([
 		"ngrok-skip-browser-warning: 69420",
-		"client_id: " + str(my_info.id)
+		"Client_id: " + str(my_info.id - 1)
 	])
 	http_poller.request(HTTPClient.METHOD_GET, "/poll", headers)
 	
@@ -170,7 +172,7 @@ static func init(usrnm : String):
 	assert(state == STATE.NO_INIT)
 	
 	signals = new()
-	signals.listeners["join_request"] = OnlineLobby._on_join_req
+	listeners["join_request"] = OnlineLobby._on_join_req
 	
 	http_poster = HTTPClient.new()
 	http_poller = HTTPClient.new()
@@ -187,7 +189,7 @@ static func init(usrnm : String):
 		print_debug("hello failed: ", res.code, res.body_raw)
 		return false
 	
-	my_info = PlayerInfo.new(body["id"], usrnm)
+	my_info = PlayerInfo.new(body["id"] + 1, usrnm)
 	
 	rtc = WebRTCMultiplayerPeer.new()
 	rtc.peer_connected.connect(OnlineLobby._on_peer_conn)
@@ -196,6 +198,8 @@ static func init(usrnm : String):
 	GameMaster.root_node.add_child(signals)
 	
 	state = STATE.MENU
+	
+	print_debug(listeners.get("join_request"))
 	
 	return true
 
@@ -225,8 +229,8 @@ static func join(code):
 		print_debug("check lobby fail: ", res.body_raw)
 		return null
 	
-	var host_id = res["host_id"]
-	var host_name = res["host_name"]
+	var host_id = res.body["host_id"]
+	var host_name = res.body["host_name"]
 	
 	rtc.create_mesh(my_info.id)
 	
@@ -271,7 +275,7 @@ static func join(code):
 	_next_connd_peer = -1
 	
 	assert(!peer.set_remote_description("answer", net_info[0]))
-	for s in net_info[1].split("\n"):
+	for s in net_info[1]:
 		peer.add_ice_candidate("0", 0, s)
 	
 	for i in range(11):
@@ -356,10 +360,10 @@ static func _on_join_req(body : Dictionary):
 		await GameMaster.get_timer(0.5).timeout
 	
 	res = await _post("/client_joined", {
-		"lobby_code": lobby_code, "my_info.id": req_id
+		"lobby_code": lobby_code, "client_id": req_id
 	})
 	if res.code != 200:
-		print_debug("accept join fail: ", res.body_raw)
+		print_debug("client joined fail: ", res.body_raw)
 	
 	lobby.p2 = PlayerInfo.new(req_id, req_name)
 	lobby.on_p2.emit(lobby.p2)
@@ -369,13 +373,14 @@ static func start_polling_loop():
 	while poll:
 		var res = await _poll()
 		if not res:
-			print_debug("polling returned error: ", res.code, JSON.stringify(res.body))
+			print_debug("polling returned error (", res.code, "): ", res.body_raw)
 			poll = false
 			return
 		if res.code == 504:
 			await GameMaster.get_timer(0.5).timeout
 		else:
 			if res.code == 200:
+				print_debug("poll msg: ", res.body_raw)
 				var ty = res.body.get("type")
 				var lis = listeners.get(ty)
 				if lis:
@@ -392,7 +397,7 @@ static func start_polling_loop():
 static func leave_lobby():
 	assert(state == STATE.LOBBY)
 	
-	rpc.close()
+	rtc.close()
 	
 	state = STATE.MENU
 	pass
@@ -413,3 +418,12 @@ func _on_ppl_rdy(b):
 	if lobby.p1.rdy and lobby.p2.rdy and not lobby.is_p2:
 		print_debug("starting game...")
 		pass
+
+static func send_chat(msg):
+	signals._recv_chat.rpc(msg)
+
+signal on_chat_msg(msg : String)
+
+@rpc("any_peer")
+func _recv_chat(msg):
+	signals.on_chat_msg.emit(msg)

@@ -17,6 +17,12 @@ static var cmd_fwd : IN.InputCommand = (func ():
 
 var fwd : bool
 
+func clone():
+	return ObjUtil.clone(self, _clone(new()),
+		[ "fwd" ],
+		[]
+	)
+
 static func try_next(state : PlayerState):
 	if cmd_fwd.check(state.input_history):
 		return new(true)

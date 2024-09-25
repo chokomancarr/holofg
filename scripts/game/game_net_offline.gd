@@ -10,9 +10,6 @@ func _ready():
 func start():
 	pass
 
-func get_input_state(is_p1):
-	return p1_inputs.step() if is_p1 else p2_inputs.step()
-
 func get_game_state():
 	_step_game_state(GameMaster.game_state, p1_inputs.step(), p2_inputs.step())
 	return GameMaster.game_state

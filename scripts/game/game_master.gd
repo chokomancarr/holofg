@@ -34,6 +34,7 @@ func new_match(p1 : int, p2 : int, ty : _GameNetBase.TY):
 	)
 	net_master = _GameNetBase.spawn(ty)
 	add_child(net_master)
+	net_master.init()
 	
 	var par = get_node("/root/main/%ppl_spawn")
 	

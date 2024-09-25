@@ -5,6 +5,12 @@ const _STATE_NAME = "airnormal"
 var jump_traj : DT.OffsetInfo
 var jump_traj_off : int
 
+func clone():
+	return ObjUtil.clone(self, _clone(new()),
+		[ "jump_traj", "jump_traj_off" ],
+		[]
+	)
+
 static func try_next(state : PlayerState, sliceback : int, allow : ST.CancelInfo, jdir: int):
 	var jx = "%d." % [ jdir + 7 ]
 	var j8 = "8."

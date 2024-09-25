@@ -8,6 +8,12 @@ class InputHistory:
 	var his : Array[InputState]
 	var dirs : Array
 	
+	func clone():
+		var res = new()
+		res.his = his.duplicate().map(func (st): return st.clone())
+		res.dirs = dirs.duplicate()
+		return res
+	
 	func _init():
 		his.push_front(InputState.new())
 		dirs.push_front({ V: 5, NF: 1 })
@@ -62,7 +68,9 @@ class InputState:
 	func clone():
 		var res = new()
 		res.val = val
+		res.val_new = val_new
 		res.nf = nf
+		res.new_bt = new_bt
 		res.processed = processed
 		return res
 	

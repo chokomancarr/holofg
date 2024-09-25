@@ -209,39 +209,10 @@ fn remove_client(state: _State, ci : ID) {
     if let Some(key) = finder {
         state.lobbies.write().remove(&key);
     }
-    
-    /*let finder = {
-        let lobbies = state.lobbies.read();
-        lobbies.iter().filter_map(|k, &v|
-            if v.host == ci { return Some((k.clone(), true, v.client.clone())); }
-            elif Some(c) = v.client {
-                if c == ci { return Some((k.clone(), false, Some(v.host))); }
-            }
-            None
-        ).next()
-    };
-    if let Some((key, host, ci2)) = finder {
-        if host {
-            if let Some(ci2) = ci2 {
-                let mut dict = DICT::new();
-                dict.insert("lobby_code", key);
-                req_host_left(ci2, state, DICT::new());
-            }
-            else {
-                lobbies.write().remove(&key);
-            }
-        }
-        else {
-            let mut dict = DICT::new();
-            dict.insert("lobby_code", key);
-            req_client_left(ci2.unwrap(), state, DICT::new());
-        }
-    }*/
 }
 
 fn handle_connection(mut stream: TcpStream, state: _State) -> std::io::Result<()> {
     let mut buf_reader = BufReader::new(&mut stream);
-    //let mut lines = buf_reader.lines().map(|l| l.unwrap());
  
     const LF : u8 = b'\n';
 
@@ -252,7 +223,6 @@ fn handle_connection(mut stream: TcpStream, state: _State) -> std::io::Result<()
             $buf.clear();
             $reader.read_until(LF, &mut $buf).unwrap();
             let res = std::str::from_utf8(&$buf).unwrap().trim();
-            //println!("{}", res);
             res.to_owned()
         }}
     }
@@ -281,7 +251,6 @@ fn handle_connection(mut stream: TcpStream, state: _State) -> std::io::Result<()
     };
     
     let body = if body_length > 0 {
-        //println!("reading {} bytes body", body_length);
         buf.resize(body_length, 0);
         buf_reader.read_exact(&mut buf).expect("could not read body");
         let body = serde_json::from_slice::<serde_json::Value>(&buf);
@@ -312,6 +281,8 @@ fn handle_connection(mut stream: TcpStream, state: _State) -> std::io::Result<()
                 "lobby_join" => req_lobby_join(client_id, state, body),
                 "join_accept" => req_join_accept(client_id, state, body),
                 "client_joined" => req_client_joined(client_id, state, body),
+                "client_left" => req_client_left(client_id, state, body),
+                "host_left" => req_host_left(client_id, state, body),
                 _ => http_ret(400, format!("unsupported POST url {}", path))
             }
         } else {

@@ -12,6 +12,12 @@ var NF_RECOVERY = 30
 
 var parried_nf = -1
 
+func clone():
+	return ObjUtil.clone(self, _clone(new()),
+		[ "in_recovery", "do_in_recovery", "rec_df", "NF_RECOVERY", "parried_nf" ],
+		[]
+	)
+
 static func try_next(state : PlayerState):
 	var his = state.input_history.his[0]
 	if his.bt(IN.BT.p):

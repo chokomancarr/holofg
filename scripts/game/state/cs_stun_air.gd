@@ -7,6 +7,12 @@ var ty : ST.STUN_AIR_TY
 
 const _G = 10
 
+func clone():
+	return ObjUtil.clone(self, _clone(new()),
+		[ "vel", "ty" ],
+		[]
+	)
+
 func _init(p : PlayerState, ty : ST.STUN_AIR_TY):
 	state_t = 1
 	self.ty = ty

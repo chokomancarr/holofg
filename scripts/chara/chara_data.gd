@@ -36,6 +36,12 @@ class OffsetInfo:
 	var vals = []
 	var hash : int
 	
+	func clone():
+		var res = new()
+		res.vals = vals.duplicate()
+		res.hash = hash
+		return res
+	
 	static func from_json(o, nf):
 		return from_keys(o.offsets, nf) if o.offsets_use_keyframes else from_vals(o.offsets, nf)
 	

@@ -3,6 +3,12 @@ class_name CsGrab extends _CsAttBase
 const _STATE_NAME = "grab"
 var base_name : String
 
+func clone():
+	return ObjUtil.clone(self, _clone(new()),
+		[ "base_name" ],
+		[]
+	)
+
 static func try_next(state : PlayerState, sliceback : int):
 	return _check_inputs(state, sliceback, func (st, n):
 		for nrm in st.names(true):

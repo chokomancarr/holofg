@@ -8,6 +8,12 @@ var freeze_canbuffer := false
 var countdown: int = -1#99 * 60 + 59
 var wall = Vector2i(0, 10000)
 
+func clone():
+	return ObjUtil.clone(self, new(),
+		[ "freeze_t", "freeze_n", "freeze_canbuffer", "countdown", "wall" ],
+		[ "p1", "p2" ]
+	)
+
 static func from_players(p1, p2):
 	var res = new()
 	res.p1 = p1
@@ -39,7 +45,6 @@ func get_anim_timescale():
 
 func get_anim_framediff():
 	return (freeze_t * 1.0 / freeze_n) if is_frozen() else 0.0
-
 
 func dict4hash():
 	return {

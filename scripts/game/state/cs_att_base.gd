@@ -5,6 +5,12 @@ var current_att : int
 var att_processed : bool
 var att_part : ST.ATTACK_PART
 
+func _clone(res):
+	return ObjUtil.clone(self, super._clone(res),
+		[ "move", "current_att", "att_processed", "att_part" ],
+		[]
+	)
+
 func step(state : PlayerState):
 	_step()
 	state.boxes = []

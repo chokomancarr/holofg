@@ -7,6 +7,12 @@ var offsets : DT.OffsetInfo
 
 var aerial : bool
  
+func clone():
+	return ObjUtil.clone(self, _clone(new()),
+		[ "dir", "offsets", "aerial" ],
+		[]
+	)
+
 static var _jump_offsets = (func ():
 	var _jumpcurve = []
 	var _v = 1

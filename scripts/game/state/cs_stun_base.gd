@@ -8,6 +8,12 @@ var last_att_ty : ST.ATTACK_TY
 
 var next_scaling := 0
 
+func _clone(res):
+	return ObjUtil.clone(self, super._clone(res),
+		[ "combo_scaling", "total_dmg", "last_dmg", "last_att_ty", "next_scaling" ],
+		[]
+	)
+
 func apply_scaling(old : _CsStunBase, hit : ST.AttInfo_Hit):
 	var scl = old.next_scaling if old else 0
 	combo_scaling = ((old.combo_scaling if old else 10000) * (10000 - scl)) / 10000

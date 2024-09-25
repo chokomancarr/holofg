@@ -13,12 +13,12 @@ static func spawn(ty):
 		TY.TRAINING:
 			return GameNet_Training.new()
 		TY.ONLINE:
-			pass
+			return GameNet_Rollback.new()
 
-func start():
+func init():
 	pass
 
-func get_input_state(is_p1):
+func start():
 	pass
 
 func get_game_state():

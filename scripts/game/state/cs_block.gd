@@ -5,6 +5,12 @@ var n_stun : int
 
 var offsets : DT.OffsetInfo
 
+func clone():
+	return ObjUtil.clone(self, _clone(new()),
+		[ "n_stun", "offsets" ],
+		[]
+	)
+
 func _init(p : PlayerState, info : ST.AttInfo_Hit):
 	state_t = 1
 	anim_name = "block_%s" % [

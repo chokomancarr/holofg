@@ -16,6 +16,12 @@ var req_freeze : int = 0
 
 var bounds_off : Vector2i
 
+func _clone(res):
+	return ObjUtil.clone(self, res,
+		[ "state_t", "next_offset", "anim_name", "use_pos_flip", "airborne", "block_state", "attack_ty", "push_wall", "req_freeze", "bounds_off" ],
+		[]
+	)
+
 static func _check_inputs(state, sliceback, callback):
 	var his = state.input_history
 	var n = 0

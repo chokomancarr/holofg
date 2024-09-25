@@ -30,11 +30,13 @@ class PeerNetInfo:
 			await GameMaster.get_timer(0.1).timeout
 
 class PlayerInfo:
-	var id : int
+	var mm_id : int
+	var mp_id : int = -1
 	var nm : String
 	var rdy : bool
+	var input_source : InputMan.PlayerInput
 	func _init(id, nm):
-		self.id = id
+		self.mm_id = id
 		self.nm = nm
 
 class LobbyInfo:
@@ -100,7 +102,7 @@ static func _post(url : String, body : Dictionary):
 	busy = true
 	var headers = PackedStringArray([
 		"ngrok-skip-browser-warning: 69420",
-		"Client_id: " + str((my_info.id - 1) if my_info else 0)
+		"Client_id: " + str((my_info.mm_id - 1) if my_info else 0)
 	])
 	http_poster.request(HTTPClient.METHOD_POST, url, headers, JSON.stringify(body))
 	
@@ -138,7 +140,7 @@ static func _post(url : String, body : Dictionary):
 static func _poll():
 	var headers = PackedStringArray([
 		"ngrok-skip-browser-warning: 69420",
-		"Client_id: " + str(my_info.id - 1)
+		"Client_id: " + str(my_info.mm_id - 1)
 	])
 	http_poller.request(HTTPClient.METHOD_GET, "/poll", headers)
 	var st = http_poller.get_status()
@@ -194,6 +196,7 @@ static func init(usrnm : String):
 		return false
 	
 	my_info = PlayerInfo.new(body["id"] + 1, usrnm)
+	my_info.input_source = InputMan.get_player_input(0)
 	
 	rtc = WebRTCMultiplayerPeer.new()
 	rtc.peer_connected.connect(OnlineLobby._on_peer_conn)
@@ -215,7 +218,7 @@ static func create():
 		print_debug("create lobby fail: ", res.body_raw)
 		return null
 	
-	rtc.create_mesh(my_info.id)
+	rtc.create_mesh(my_info.mm_id)
 	
 	lobby = LobbyInfo.new()
 	lobby.code = res.body["lobby_code"]
@@ -236,12 +239,13 @@ static func join(code):
 	var host_id = res.body["host_id"]
 	var host_name = res.body["host_name"]
 	
-	rtc.create_mesh(my_info.id)
+	rtc.create_mesh(my_info.mm_id)
 	
 	var peer := WebRTCPeerConnection.new()
 	assert(!peer.initialize(NetUtil.get_ice_servers()))
 	
-	assert(!rtc.add_peer(peer, host_id))
+	#assert(!rtc.add_peer(peer, host_id))
+	assert(!rtc.add_peer(peer, 1))
 	
 	var peer_info = PeerNetInfo.new(peer)
 	
@@ -293,6 +297,7 @@ static func join(code):
 	lobby = LobbyInfo.new()
 	lobby.code = code
 	lobby.p1 = PlayerInfo.new(host_id, host_name)
+	lobby.p1.mp_id = 1
 	lobby.p2 = my_info
 	lobby.is_p2 = true
 	
@@ -332,7 +337,7 @@ static func _on_join_req(body : Dictionary):
 	
 	var peer_info = PeerNetInfo.new(peer)
 	
-	assert(!rtc.add_peer(peer, req_id))
+	assert(!rtc.add_peer(peer, 2))
 	assert(!peer.set_remote_description("offer", net_info[0]))
 	for s in net_info[1]:
 		peer.add_ice_candidate(s[0], int(s[1]), s[2])
@@ -370,6 +375,7 @@ static func _on_join_req(body : Dictionary):
 		print_debug("client joined fail: ", res.body_raw)
 	
 	lobby.p2 = PlayerInfo.new(req_id, req_name)
+	lobby.p2.mp_id = 2
 	lobby.on_p2.emit(lobby.p2)
 
 static func start_polling_loop():
@@ -413,14 +419,23 @@ static func player_ready(b : bool):
 @rpc("any_peer", "call_local")
 func _on_ppl_rdy(b):
 	var id = multiplayer.get_remote_sender_id()
-	if id == lobby.p1.id:
+	if id == lobby.p1.mp_id:
 		lobby.p1.rdy = b
 	else:
 		lobby.p2.rdy = b
 	
 	if lobby.p1.rdy and lobby.p2.rdy and not lobby.is_p2:
-		print_debug("starting game...")
-		pass
+		print_debug("starting game... 3")
+		await GameMaster.get_timer(1.0).timeout
+		print_debug("starting game... 2")
+		await GameMaster.get_timer(1.0).timeout
+		print_debug("starting game... 1")
+		await GameMaster.get_timer(1.0).timeout
+		_start_game.rpc()
+
+@rpc("authority", "call_local")
+func _start_game():
+	GameMaster.new_match(2, 2, _GameNetBase.TY.ONLINE)
 
 static func send_chat(msg):
 	signals._recv_chat.rpc(msg)

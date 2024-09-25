@@ -7,6 +7,11 @@ var offsets = DT.OffsetInfo.from_keys([
 	[0, [-80, 0]], [7, [-10, 0]], [10, [0, 0]]
 ], 40)
 
+func clone():
+	return ObjUtil.clone(self, _clone(new()),
+		[], []
+	)
+
 func _init():
 	anim_name = "g_tech"
 

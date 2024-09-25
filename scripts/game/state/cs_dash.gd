@@ -5,6 +5,12 @@ const _STATE_NAME = "dash"
 var fwd = true
 var move : DT.MoveInfo
 
+func clone():
+	return ObjUtil.clone(self, _clone(new()),
+		[ "fwd, move" ],
+		[]
+	)
+
 static var move_fwd : DT.MoveInfo = (func ():
 	var dash = DT.MoveInfo.new()
 	dash.name = "66"

@@ -4,6 +4,12 @@ const _STATE_NAME = "walk"
 
 var fwd = true
 
+func clone():
+	return ObjUtil.clone(self, _clone(new()),
+		[ "fwd" ],
+		[]
+	)
+
 static func try_next(state : PlayerState):
 	var d = state.input_history.last_dir()
 	if d == 4 or d == 6:

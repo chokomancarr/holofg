@@ -4,6 +4,12 @@ const _STATE_NAME = "landrecovery"
 
 var n_recovery : int
 
+func clone():
+	return ObjUtil.clone(self, _clone(new()),
+		[ "n_recovery" ],
+		[]
+	)
+
 func _init(n):
 	self.n_recovery = n
 	anim_name = "8_recovery"

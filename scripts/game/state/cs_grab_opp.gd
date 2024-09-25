@@ -3,6 +3,12 @@ class_name CsGrabOpp extends _CsBase
 const _STATE_NAME = "stun_anim"
 var info : ST.AttInfo_Grab
 
+func clone():
+	return ObjUtil.clone(self, _clone(new()),
+		[ "info" ],
+		[]
+	)
+
 func _init(opp : PlayerState, info : ST.AttInfo_Grab):
 	anim_name = "opp/opp_" + opp.state.anim_name
 	self.info = info

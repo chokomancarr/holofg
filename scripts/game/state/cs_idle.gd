@@ -8,6 +8,12 @@ var first = true
 
 static var _override_block_ty := ST.BLOCK_TY.NONE
 
+func clone():
+	return ObjUtil.clone(self, _clone(new()),
+		[ "standing", "first" ],
+		[]
+	)
+
 func _init():
 	anim_name = "5"
 	use_pos_flip = true

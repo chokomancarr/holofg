@@ -62,7 +62,7 @@ func get_frame_meter_color():
 
 func dict4hash():
 	return [
-		move, current_att, att_processed, att_part, dict4hash2()
+		move.uid, current_att, att_processed, att_part, dict4hash2()
 	]
 
 func dict4hash2():

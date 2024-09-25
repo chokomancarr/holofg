@@ -1464,6 +1464,8 @@ func _on_received_input_tick(peer_id: int, serialized_msg: PackedByteArray) -> v
 				continue
 
 			var remote_input = _message_serializer.unserialize_input(all_remote_input[remote_tick])
+			#MODIFIED: why doesnt this line exist?????
+			_calculate_data_hash(remote_input)
 
 			var input_frame := _get_or_create_input_frame(remote_tick)
 			if input_frame == null:

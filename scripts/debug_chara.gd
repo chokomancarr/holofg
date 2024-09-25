@@ -10,11 +10,11 @@ var ui_cam_scl = 2.0
 @export var show_hitbox = true
 
 func _ready():
-	_begin.call_deferred()
+	if not OnlineLobby.lobby:
+		_begin.call_deferred()
 
 func _begin():
 	GameMaster.new_match(2, 2, _GameNetBase.TY.TRAINING)
-	#print_debug(await NetUtil.get_my_ip())
 
 func _physics_process(delta):
 	var game_state = GameMaster.game_state

@@ -1,6 +1,6 @@
 class_name CsAirNormal extends _CsAttBase
 
-const _STATE_NAME = "airnormal"
+const _STATE_NAME = "airnormal"	
 
 var jump_traj : DT.OffsetInfo
 var jump_traj_off : int
@@ -47,5 +47,5 @@ func check_next(state : PlayerState):
 
 func dict4hash():
 	return [ _STATE_NAME,
-		jump_traj, jump_traj_off
+		jump_traj.hashed(), jump_traj_off
 	]

@@ -9,10 +9,11 @@ func clone():
 		[]
 	)
 
-func _init(opp : PlayerState, info : ST.AttInfo_Grab):
-	anim_name = "opp/opp_" + opp.state.anim_name
-	self.info = info
-	state_t = opp.state.state_t
+func _init(opp : PlayerState = null, info : ST.AttInfo_Grab = null):
+	if opp:
+		anim_name = "opp/opp_" + opp.state.anim_name
+		self.info = info
+		state_t = opp.state.state_t
 
 func check_next(state : PlayerState):
 	if state_t == info.opp_nf:

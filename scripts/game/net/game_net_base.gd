@@ -16,13 +16,13 @@ static func spawn(ty):
 			return GameNet_Rollback.new()
 
 func init():
-	pass
+	assert(0, "unimplemented!")
 
 func start():
-	pass
+	assert(0, "unimplemented!")
 
 func get_game_state():
-	pass
+	assert(0, "unimplemented!")
 
 func _step_game_state(state : GameState, p1_inputs, p2_inputs):
 	var p1 = state.p1.add_inputs(p1_inputs)

@@ -16,17 +16,27 @@ enum InputMessageKey {
 }
 
 func serialize_input(input: Dictionary) -> PackedByteArray:
+	var k : String = input.keys()[0]
+	var v : int = input[k].v
+	var res = k.to_ascii_buffer()
+	res.append(0)
+	res.resize(k.length() + 9)
+	res.encode_u64(k.length() + 1, v)
 	#return var_to_bytes(input)
-	var res := PackedByteArray()
-	res.resize(8)
-	res.encode_u64(0, input["v"])
+	#var res := PackedByteArray()
+	#res.resize(8)
+	#res.encode_u64(0, input["v"])
 	return res
 
 func unserialize_input(serialized: PackedByteArray) -> Dictionary:
+	var split = serialized.find(0)
+	var k = serialized.get_string_from_ascii()
+	var v = serialized.decode_u64(split + 1)
+	return { k: { "v": v } }
 	#return bytes_to_var(serialized)
-	return {
-		"v": serialized.decode_u64(0)
-	}
+	#return {
+	#	"v": serialized.decode_u64(0)
+	#}
 
 func serialize_message(msg: Dictionary) -> PackedByteArray:
 	var buffer := StreamPeerBuffer.new()

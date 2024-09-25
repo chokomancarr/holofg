@@ -15,6 +15,7 @@ class CharaInfo:
 	var grabs: Dictionary
 
 class MoveInfo:
+	var uid: int
 	var name: String
 	var alias_name: String
 	var cmd: IN.InputCommand
@@ -34,12 +35,12 @@ class MoveInfo:
 
 class OffsetInfo:
 	var vals = []
-	var hash : int
+	var _hash : int
 	
 	func clone():
 		var res = new()
 		res.vals = vals.duplicate()
-		res.hash = hash
+		res._hash = _hash
 		return res
 	
 	static func from_json(o, nf):
@@ -67,14 +68,14 @@ class OffsetInfo:
 		var v = vals.back()
 		for _i in range(n - vals.size()):
 			vals.push_back(Vector2i(v))
-		hash = vals.hash()
+		_hash = vals.hash()
 		return self
 	
 	func eval(i):
 		return vals[i]
 	
 	func hashed():
-		return hash
+		return _hash
 
 static func load_chara(chara_id):
 	var data = (load("res://database/chara_data_%d.json" % chara_id) as JSON).data
@@ -103,10 +104,10 @@ static func load_chara(chara_id):
 	for nr in data.moves.normals:
 		res.moves_nr[nr] = _parse_move(nr, data.frames)
 	
-	for tr in data.moves.targets:
-		var move = _parse_move(tr, data.frames)
+	for ta in data.moves.targets:
+		var move = _parse_move(ta, data.frames)
 		#move.name = move.name.rsplit(".")[-1]
-		res.moves_tr[tr] = move
+		res.moves_tr[ta] = move
 	
 	for jn in data.moves.jump_normals:
 		var move = _parse_move(jn, data.frames)
@@ -119,10 +120,13 @@ static func load_chara(chara_id):
 	
 	return res
 
+static var _move_uid = 0
 static func _parse_move(nm : String, frames : Dictionary):
 	if not frames.has(nm):
 		assert(false, "missing frame data for " + nm + "!")
 	var move = MoveInfo.new()
+	move.uid = _move_uid
+	_move_uid += 1
 	var src = frames[nm]
 	move.name = (src.anim_name if src.has("anim_name") else nm).replace(".", "_")
 	move.cmd = IN.InputCommand.from_string(nm)

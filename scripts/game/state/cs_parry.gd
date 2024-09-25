@@ -13,7 +13,7 @@ var NF_RECOVERY = 30
 var parried_nf = -1
 
 func clone():
-	return ObjUtil.clone(self, _clone(new()),
+	return ObjUtil.clone(self, _clone(new(self.state_t + 1)),
 		[ "in_recovery", "do_in_recovery", "rec_df", "NF_RECOVERY", "parried_nf" ],
 		[]
 	)

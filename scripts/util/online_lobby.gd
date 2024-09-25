@@ -102,7 +102,7 @@ static func _post(url : String, body : Dictionary):
 	busy = true
 	var headers = PackedStringArray([
 		"ngrok-skip-browser-warning: 69420",
-		"Client_id: " + str((my_info.mm_id - 1) if my_info else 0)
+		"Client_id: " + str(my_info.mm_id if my_info else 0)
 	])
 	http_poster.request(HTTPClient.METHOD_POST, url, headers, JSON.stringify(body))
 	
@@ -140,7 +140,7 @@ static func _post(url : String, body : Dictionary):
 static func _poll():
 	var headers = PackedStringArray([
 		"ngrok-skip-browser-warning: 69420",
-		"Client_id: " + str(my_info.mm_id - 1)
+		"Client_id: " + str(my_info.mm_id)
 	])
 	http_poller.request(HTTPClient.METHOD_GET, "/poll", headers)
 	var st = http_poller.get_status()
@@ -195,14 +195,17 @@ static func init(usrnm : String):
 		print_debug("hello failed: ", res.code, res.body_raw)
 		return false
 	
-	my_info = PlayerInfo.new(body["id"] + 1, usrnm)
+	my_info = PlayerInfo.new(body["id"], usrnm)
 	my_info.input_source = InputMan.get_player_input(0)
 	
 	rtc = WebRTCMultiplayerPeer.new()
-	rtc.peer_connected.connect(OnlineLobby._on_peer_conn)
-	rtc.peer_disconnected.connect(OnlineLobby._on_peer_dconn)
+	#rtc.peer_connected.connect(signals._on_peer_conn)
+	#rtc.peer_disconnected.connect(signals._on_peer_dconn)
 	
 	GameMaster.root_node.add_child(signals)
+	
+	signals.multiplayer.peer_connected.connect(signals._on_peer_conn)
+	signals.multiplayer.peer_disconnected.connect(signals._on_peer_dconn)
 	
 	state = STATE.MENU
 	
@@ -218,7 +221,8 @@ static func create():
 		print_debug("create lobby fail: ", res.body_raw)
 		return null
 	
-	rtc.create_mesh(my_info.mm_id)
+	my_info.mp_id = 1
+	rtc.create_mesh(1)
 	
 	lobby = LobbyInfo.new()
 	lobby.code = res.body["lobby_code"]
@@ -239,12 +243,12 @@ static func join(code):
 	var host_id = res.body["host_id"]
 	var host_name = res.body["host_name"]
 	
-	rtc.create_mesh(my_info.mm_id)
+	my_info.mp_id = 2
+	rtc.create_mesh(2)
 	
 	var peer := WebRTCPeerConnection.new()
 	assert(!peer.initialize(NetUtil.get_ice_servers()))
 	
-	#assert(!rtc.add_peer(peer, host_id))
 	assert(!rtc.add_peer(peer, 1))
 	
 	var peer_info = PeerNetInfo.new(peer)
@@ -306,11 +310,12 @@ static func join(code):
 	return lobby
 
 static var _next_connd_peer = -1
-static func _on_peer_conn(i):
+func _on_peer_conn(i):
 	_next_connd_peer = i
 	print_debug("player connected: ID ", i)
+	print_debug("current peers: ", multiplayer.get_peers())
 
-static func _on_peer_dconn(i):
+func _on_peer_dconn(i):
 	if state == STATE.LOBBY:
 		if lobby.is_p2:
 			lobby.is_p2 = false
@@ -319,7 +324,7 @@ static func _on_peer_dconn(i):
 		else:
 			print_debug("player 2 (ID %d) disconnected" % i)
 		lobby.p2 = null
-		var res = await _post("/host_left" if lobby.is_p2 else "/client_left", {
+		var res = await OnlineLobby._post("/host_left" if lobby.is_p2 else "/client_left", {
 			"lobby_code": lobby.code
 		})
 		if res.code != 200:
@@ -416,9 +421,15 @@ static func player_ready(b : bool):
 	if lobby and lobby.p2:
 		signals._on_ppl_rdy.rpc(b)
 
+static func game_loaded():
+	if lobby:
+		assert(state == STATE.PRE_GAME)
+		signals._on_game_loaded.rpc()
+
 @rpc("any_peer", "call_local")
 func _on_ppl_rdy(b):
 	var id = multiplayer.get_remote_sender_id()
+	print_debug("player ", id, " ready: ", b)
 	if id == lobby.p1.mp_id:
 		lobby.p1.rdy = b
 	else:
@@ -435,7 +446,24 @@ func _on_ppl_rdy(b):
 
 @rpc("authority", "call_local")
 func _start_game():
+	state = STATE.PRE_GAME
+	_n_game_loaded = 0
+	SceneMan.load_scene(SceneMan.GAME)
 	GameMaster.new_match(2, 2, _GameNetBase.TY.ONLINE)
+
+var _n_game_loaded = 0
+
+@rpc("any_peer", "call_local")
+func _on_game_loaded():
+	var p = multiplayer.get_remote_sender_id()
+	print_debug("player ", p, " loaded")
+	_n_game_loaded += 1
+	
+	if _n_game_loaded == 2:
+		state = STATE.GAME
+		if not lobby.is_p2:
+			print_debug("(host) everyone loaded, starting sync")
+			GameMaster.net_master.start()
 
 static func send_chat(msg):
 	signals._recv_chat.rpc(msg)

@@ -18,7 +18,7 @@ static var cmd_fwd : IN.InputCommand = (func ():
 var fwd : bool
 
 func clone():
-	return ObjUtil.clone(self, _clone(new()),
+	return ObjUtil.clone(self, _clone(new(fwd)),
 		[ "fwd" ],
 		[]
 	)

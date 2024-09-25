@@ -21,11 +21,11 @@ func init():
 	
 	multiplayer.multiplayer_peer = OnlineLobby.rtc
 	
-	SyncManager.sync_started.connect(_on_sync_started)
-	SyncManager.sync_stopped.connect(_on_sync_stopped)
-	SyncManager.sync_lost.connect(_on_sync_lost)
-	SyncManager.sync_regained.connect(_on_sync_regained)
-	SyncManager.sync_error.connect(_on_sync_error)
+	SyncManager.sync_started.connect(on_sync_started)
+	SyncManager.sync_stopped.connect(on_sync_stopped)
+	SyncManager.sync_lost.connect(on_sync_lost)
+	SyncManager.sync_regained.connect(on_sync_regained)
+	SyncManager.sync_error.connect(on_sync_error)
 	
 	if lobby.is_p2:
 		SyncManager.add_peer(lobby.p1.mp_id)
@@ -35,16 +35,19 @@ func init():
 	add_to_group("network_sync")
 
 func start():
+	print_debug("starting rollback manager")
 	SyncManager.start()
 
 func get_game_state():
 	return rb_state
 
-
 func on_sync_started():
+	SyncManager.start_logging("user://matchlog_p%d.log" % (2 if OnlineLobby.lobby.is_p2 else 1))
 	print_debug("sync started")
+	SyncDebugger.create_debug_overlay()
 
 func on_sync_stopped():
+	SyncManager.stop_logging()
 	pass
 
 func on_sync_lost():
@@ -53,13 +56,13 @@ func on_sync_lost():
 func on_sync_regained():
 	pass
 
-func on_sync_error():
-	print_debug("fatal sync error")
+func on_sync_error(msg):
+	print_debug("fatal sync error: ", msg)
 	SyncManager.clear_peers()
 	multiplayer.multiplayer_peer.close()
 
-func network_process(_dict : Dictionary):
-	_step_game_state(rb_state, p1_inputs.inputs, p2_inputs.inputs)
+func _network_process(_dict : Dictionary):
+	_step_game_state(rb_state, p1_inputs.current_input, p2_inputs.current_input)
 
 func _save_state() -> Dictionary:
 	return { "gs": rb_state.clone() }

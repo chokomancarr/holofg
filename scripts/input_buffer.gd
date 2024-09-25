@@ -10,8 +10,8 @@ class InputHistory:
 	
 	func clone():
 		var res = new()
-		res.his = his.duplicate().map(func (st): return st.clone())
-		res.dirs = dirs.duplicate()
+		res.his.assign(his.duplicate().map(func (st): return st.clone()))
+		res.dirs = dirs.duplicate(true)
 		return res
 	
 	func _init():
@@ -131,7 +131,10 @@ class InputState:
 	func serialize4input() -> Dictionary:
 		return { "v" : val }
 	static func deserialize4input(d : Dictionary):
-		return new(d["v"])
+		if d.is_empty():
+			return new()
+		else:
+			return new(d["v"])
 	
 	func hashed():
 		return [

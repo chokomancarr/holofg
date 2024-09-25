@@ -2,7 +2,7 @@ extends Node
 
 static var root_node : Node
 
-static func get_timer(t):
+func get_timer(t):
 	return root_node.get_tree().create_timer(t, true, false, true)
 
 var p1_chara_info : DT.CharaInfo = null
@@ -52,6 +52,8 @@ func new_match(p1 : int, p2 : int, ty : _GameNetBase.TY):
 	ANIM.register(p2, ps2.anim)
 	ANIM.post_register(p1, ps2.anim)
 	ANIM.post_register(p2, ps1.anim)
+	
+	OnlineLobby.game_loaded()
 
 func reset():
 	game_state = null

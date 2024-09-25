@@ -8,7 +8,7 @@ var offsets : DT.OffsetInfo
 var aerial : bool
  
 func clone():
-	return ObjUtil.clone(self, _clone(new()),
+	return ObjUtil.clone(self, _clone(new(dir)),
 		[ "dir", "offsets", "aerial" ],
 		[]
 	)
@@ -69,5 +69,5 @@ func get_frame_meter_color():
 
 func dict4hash():
 	return [ _STATE_NAME,
-		dir, offsets.hash
+		dir, offsets.hashed()
 	]

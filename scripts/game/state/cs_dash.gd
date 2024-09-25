@@ -6,8 +6,8 @@ var fwd = true
 var move : DT.MoveInfo
 
 func clone():
-	return ObjUtil.clone(self, _clone(new()),
-		[ "fwd, move" ],
+	return ObjUtil.clone(self, _clone(new(fwd)),
+		[ "fwd", "move" ],
 		[]
 	)
 
@@ -40,10 +40,11 @@ static func try_next(state : PlayerState):
 	elif move_rev.cmd.check(state.input_history):
 		return new(false)
 
-func _init(fwd):
-	self.fwd = fwd
-	anim_name = "66" if fwd else "44"
-	move = move_fwd if fwd else move_rev
+func _init(fwd, skip = false):
+	if not skip:
+		self.fwd = fwd
+		anim_name = "66" if fwd else "44"
+		move = move_fwd if fwd else move_rev
 
 func check_next(state : PlayerState):
 	if state_t == move.n_frames:

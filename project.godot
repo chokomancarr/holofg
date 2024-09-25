@@ -11,16 +11,18 @@ config_version=5
 [application]
 
 config/name="fg"
-run/main_scene="res://lobby.tscn"
+run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
-GameMaster="*res://scripts/game/game_master.gd"
 SyncManager="*res://addons/godot-rollback-netcode/SyncManager.gd"
 NetUtil="*res://scripts/util/net_util.gd"
+SceneMan="*res://scripts/game/scene_man.gd"
+GameMaster="*res://scripts/game/game_master.gd"
 InputMan="*res://scripts/util/input_man.gd"
+SyncDebugger="*res://addons/godot-rollback-netcode/SyncDebugger.gd"
 
 [debug]
 

@@ -5,7 +5,7 @@ const _STATE_NAME = "landrecovery"
 var n_recovery : int
 
 func clone():
-	return ObjUtil.clone(self, _clone(new()),
+	return ObjUtil.clone(self, _clone(new(n_recovery)),
 		[ "n_recovery" ],
 		[]
 	)

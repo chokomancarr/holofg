@@ -24,7 +24,7 @@ static func step(game_state : GameState):
 				#game_state.p2.state = CsGrabTech.new()
 				#return
 
-	var apply_hit = func (p : PlayerState, opp : PlayerState, hit : ST._AttInfoBase, o):
+	var apply_hit = func (p : PlayerState, opp : PlayerState, hit : ST._AttInfoBase):
 		var counter_ty = p.state.query_stun()
 		if (hit.ty & ST.ATTACK_TY._HIT_BIT) > 0:
 			if p.state.airborne:
@@ -72,9 +72,9 @@ static func step(game_state : GameState):
 							p.state.push_wall = true
 
 	if o.hit1:
-		apply_hit.call(p2, p1, o.hit1, o)
+		apply_hit.call(p2, p1, o.hit1)
 	if o.hit2:
-		apply_hit.call(p1, p2, o.hit2, o)
+		apply_hit.call(p1, p2, o.hit2)
 	
 	if o.freeze > 0:
 		game_state.freeze(o.freeze, true)

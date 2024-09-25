@@ -15,6 +15,9 @@ func _ready():
 	p1_inputs = InputMan.get_player_input(0)
 	p2_inputs = InputMan.DummyInput.new()
 
+func init():
+	pass
+
 func start():
 	pass
 

@@ -13,16 +13,17 @@ func clone():
 		[]
 	)
 
-func _init(p : PlayerState, ty : ST.STUN_AIR_TY):
-	state_t = 1
-	self.ty = ty
-	match ty:
-		ST.STUN_AIR_TY.RESET:
-			anim_name = "stun_air_reset"
-			vel = Vector2i(-10, 120)
-		ST.STUN_AIR_TY.JUGGLE:
-			anim_name = "stun_air_juggle"
-			vel = Vector2i(-20, 150)
+func _init(p : PlayerState = null, ty : ST.STUN_AIR_TY = ST.STUN_AIR_TY.RESET):
+	if p:
+		state_t = 1
+		self.ty = ty
+		match ty:
+			ST.STUN_AIR_TY.RESET:
+				anim_name = "stun_air_reset"
+				vel = Vector2i(-10, 120)
+			ST.STUN_AIR_TY.JUGGLE:
+				anim_name = "stun_air_juggle"
+				vel = Vector2i(-20, 150)
 	
 func check_next(state : PlayerState):
 	if state.pos.y == 0 and vel.y < 0:

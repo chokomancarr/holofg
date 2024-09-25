@@ -15,6 +15,10 @@ func _ready():
 	($"Control/vb/online_bts/clt/Button" as Button).pressed.connect(_on_join_srv)
 	($"Control/vb/lobby/Button" as Button).pressed.connect(_on_ready)
 	($"Control/vb/chat/CButton" as Button).pressed.connect(_on_send_chat)
+	($"Control/vb/train" as Button).pressed.connect(_on_training_mode)
+	
+func _on_training_mode():
+	SceneMan.load_scene(SceneMan.GAME)
 
 func _on_connect_mm():
 	logg("connecting to mm server...", 0)

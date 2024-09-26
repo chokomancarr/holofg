@@ -10,7 +10,29 @@ extends Control
 	%"game_ui_sp1_p2", %"game_ui_sp2_p2", %"game_ui_sp3_p2"
 ] as Array[Range]
 
+@onready var netinfo : Control = $"/root/main/ui/top_cc/vb/hb0"
 @onready var debug_info = %"game_ui_debug_info" as Label
+
+var _next_nettinfo_upd = 0
+func _ready():
+	call_deferred("post_rdy")
+
+func post_rdy():
+	if not GameMaster.net_master is GameNet_Rollback:
+		netinfo.modulate = Color.TRANSPARENT
+
+func _physics_process(_dt):
+	if GameMaster.net_master is GameNet_Rollback:
+		_next_nettinfo_upd -= 1
+		if _next_nettinfo_upd < 0:
+			_next_nettinfo_upd = 30
+			
+			var peer = SyncManager.peers.values()[0] as SyncManager.Peer
+			netinfo.get_node("ping").text = "P: " + str(peer.rtt)
+			netinfo.get_node("rollback").text = "R: " + str(SyncManager.max_performed_rollback_ticks)
+			netinfo.get_node("loss").text = "L: idk"
+			
+			SyncManager.max_performed_rollback_ticks = 0
 
 func _process(dt):
 	var gst = GameMaster.game_state as GameState

@@ -15,16 +15,17 @@ func clone():
 		[]
 	)
 
-func _init(pst : PlayerState, info : SummonInfo):
-	_info = info
-	pos = pst.pos + _info.init_pos
+func _init(pst : PlayerState = null, info : DT.SummonInfo = null):
+	if pst:
+		_info = info
+		pos = pst.pos + _info.init_pos
 
 func step():
 	state_t += 1
 	last_tick = (state_t == _info.lifetime)
 	next_offset = _info.velocity
 	if _info.offsets:
-		next_offset += _info.offsets.eval()
+		next_offset += _info.offsets.eval(state_t - 1)
 
 func dict4hash():
 	return [

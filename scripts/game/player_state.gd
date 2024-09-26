@@ -22,8 +22,10 @@ var state: _CsBase
 func clone() -> PlayerState:
 	return ObjUtil.clone(self, new(),
 		[ "_info", "bar_health", "bar_super", "pos", "bounded_pos", "pos_is_p2", "action_is_p2", "dist_to_opp" ],
-		[ "input_history", "summons", "state" ],
-		func (a, b): b.boxes = a.boxes.duplicate()
+		[ "input_history", "state" ],
+		func (a, b):
+			b.summons.assign(a.summons.map(func (s): return s.clone()))
+			b.boxes = a.boxes.duplicate()
 	)
 
 static func create(info : DT.CharaInfo, is_p1 : bool) -> PlayerState:

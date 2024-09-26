@@ -28,8 +28,14 @@ func _on_connect_mm():
 		$"Control/vb/online_bts".visible = true
 		logg("connected to server!")
 		
+		OnlineLobby.signals.on_ppl_rdy.connect(func (id, r):
+			logg("player %d is %sready" % [id, "" if r else "not "])
+		)
 		OnlineLobby.signals.on_chat_msg.connect(func (msg):
 			logg("received message: " + msg)
+		)
+		OnlineLobby.signals.on_broadcast.connect(func (msg):
+			logg(msg)
 		)
 		OnlineLobby.start_polling_loop()
 		pass

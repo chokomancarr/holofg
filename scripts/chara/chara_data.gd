@@ -14,6 +14,8 @@ class CharaInfo:
 	var moves_j_nr: Dictionary
 	var grabs: Dictionary
 	var summons: Dictionary
+	
+	var _summon_data : JSON
 
 class MoveInfo:
 	var uid: int
@@ -119,29 +121,29 @@ static func load_chara(chara_id):
 		res.dash_off_fwd = OffsetInfo.from_json(dash, res.dash_nf_fwd)
 	
 	for sp in data.moves.specials:
-		res.moves_sp.push_back(_parse_move(sp, data.frames))
+		res.moves_sp.push_back(_parse_move(sp, data.frames, res))
 	
 	for nr in data.moves.normals:
-		res.moves_nr[nr] = _parse_move(nr, data.frames)
+		res.moves_nr[nr] = _parse_move(nr, data.frames, res)
 	
 	for ta in data.moves.targets:
-		var move = _parse_move(ta, data.frames)
+		var move = _parse_move(ta, data.frames, res)
 		#move.name = move.name.rsplit(".")[-1]
 		res.moves_tr[ta] = move
 	
 	for jn in data.moves.jump_normals:
-		var move = _parse_move(jn, data.frames)
+		var move = _parse_move(jn, data.frames, res)
 		move.override_offsets = false
 		move.land_recovery = data.frames[jn].land_recovery
 		res.moves_j_nr[jn] = move
 	
 	for gb in data.moves.grabs:
-		res.grabs[gb] = _parse_move(gb, data.frames)
+		res.grabs[gb] = _parse_move(gb, data.frames, res)
 	
 	return res
 
 static var _move_uid = 0
-static func _parse_move(nm : String, frames : Dictionary):
+static func _parse_move(nm : String, frames : Dictionary, cinfo : CharaInfo):
 	if not frames.has(nm):
 		assert(false, "missing frame data for " + nm + "!")
 	var move = MoveInfo.new()
@@ -173,7 +175,7 @@ static func _parse_move(nm : String, frames : Dictionary):
 		move.offsets = OffsetInfo.from_json(src.offsets, move.n_frames)
 	if att_info_ty and src.has("att_info"):
 		for h in src.att_info:
-			move.att_info.push_back(_parse_att_info(h))
+			move.att_info.push_back(_parse_att_info(h, att_info_ty, nm))
 	#if src.has("opp_info"):
 		#var h = src.opp_info
 		#var hres = ST.OppAnimInfo.new()
@@ -185,15 +187,16 @@ static func _parse_move(nm : String, frames : Dictionary):
 		for s in src.summons:
 			var sres = SummonFrameInfo.new()
 			sres.frame = s.f
-			sres.summon = _get_summon(s.name)
+			sres.summon = _get_summon(cinfo, s.name)
 			move.summons.push_back(sres)
 	
 	if src.has("whiff"):
-		move.whiff = _parse_move("whiff", src)
+		move.whiff = _parse_move("whiff", src, cinfo)
 	
 	return move
 
-func _parse_att_info(h : Dictionary, ty : ST.BOX_TY):
+static func _parse_att_info(h : Dictionary, ty : ST.BOX_TY, nm : String):
+	var hres
 	match ty:
 		ST.BOX_TY.HIT:
 			hres = ST.AttInfo_Hit.new()
@@ -219,9 +222,10 @@ func _parse_att_info(h : Dictionary, ty : ST.BOX_TY):
 				hres.bounds_offset = OffsetInfo.from_json(h.bounds_offset, hres.opp_nf)
 		_:
 			pass
+	return hres
 
 static var _summon_uid = 0
-func _get_summon(cinfo : CharaInfo, nm : String):
+static func _get_summon(cinfo : CharaInfo, nm : String):
 	if cinfo.summons.has(nm):
 		return cinfo.summons[nm]
 	
@@ -235,7 +239,7 @@ func _get_summon(cinfo : CharaInfo, nm : String):
 	if o.has("offsets"): res.offsets = OffsetInfo.from_json(o.offsets, res.lifetime)
 	if o.has("n_hits"): res.n_hits = o.n_hits
 	if o.has("hit_rate"): res.hit_rate = o.hit_rate
-	res.att_info = _parse_att_info(o.hit_info, ST.BOX_TY.HIT)
+	res.att_info = _parse_att_info(o.hit_info, ST.BOX_TY.HIT, "0h")
 	if o.has("boxes"):
 		for b in o.boxes:
 			res.boxes.push_back(parse_box(b))

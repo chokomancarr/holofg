@@ -19,8 +19,7 @@ func serialize(value):
 	if value is GameState:
 		return value.dict4hash()
 	elif value is Dictionary:
-		return serialize(value)
-		#return serialize_dictionary(value)
+		return serialize_dictionary(value)
 	elif value is Array:
 		return serialize_array(value)
 	elif value is Resource:
@@ -33,13 +32,13 @@ func serialize(value):
 func serialize_dictionary(value: Dictionary) -> Dictionary:
 	var serialized := {}
 	for key in value:
-		serialized[key] = serialize2(value[key])
+		serialized[key] = serialize(value[key])
 	return serialized
 
 func serialize_array(value: Array):
 	var serialized := []
 	for item in value:
-		serialized.append(serialize2(item))
+		serialized.append(serialize(item))
 	return serialized
 
 func serialize_resource(value: Resource):

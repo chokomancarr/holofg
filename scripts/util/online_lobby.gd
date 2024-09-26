@@ -426,6 +426,8 @@ static func game_loaded():
 		assert(state == STATE.PRE_GAME)
 		signals._on_game_loaded.rpc()
 
+signal on_ppl_rdy(id, b)
+
 @rpc("any_peer", "call_local")
 func _on_ppl_rdy(b):
 	var id = multiplayer.get_remote_sender_id()
@@ -435,12 +437,14 @@ func _on_ppl_rdy(b):
 	else:
 		lobby.p2.rdy = b
 	
+	on_ppl_rdy.emit(id, b)
+	
 	if lobby.p1.rdy and lobby.p2.rdy and not lobby.is_p2:
-		print_debug("starting game... 3")
+		broadcast("starting game... 3")
 		await GameMaster.get_timer(1.0).timeout
-		print_debug("starting game... 2")
+		broadcast("starting game... 2")
 		await GameMaster.get_timer(1.0).timeout
-		print_debug("starting game... 1")
+		broadcast("starting game... 1")
 		await GameMaster.get_timer(1.0).timeout
 		_start_game.rpc()
 
@@ -473,3 +477,12 @@ signal on_chat_msg(msg : String)
 @rpc("any_peer")
 func _recv_chat(msg):
 	signals.on_chat_msg.emit(msg)
+
+static func broadcast(msg):
+	signals._broadcasted.rpc(msg)
+
+signal on_broadcast(msg : String)
+
+@rpc("any_peer", "call_local")
+func _broadcasted(msg):
+	signals.on_broadcast.emit(msg)

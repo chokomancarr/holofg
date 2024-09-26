@@ -48,7 +48,7 @@ func on_sync_started():
 
 func on_sync_stopped():
 	SyncManager.stop_logging()
-	pass
+	SceneMan.load_scene(SceneMan.MAIN_MENU)
 
 func on_sync_lost():
 	pass

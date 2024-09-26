@@ -128,6 +128,24 @@ func get_player_input(i):
 	var res = PlayerInput.new()
 	res.device = available_devices[i]
 	res.action_map = ActionMap.default_pad() if res.device.is_gamepad else ActionMap.default_kb()
+	
+	if not res.device.is_gamepad:
+		var folder = "D:/godot/fg"
+		if not OS.has_feature("editor"):
+			folder = OS.get_executable_path().get_base_dir()
+		print_debug(folder)
+		var cfgs = FileAccess.open(folder + "/input_cfg.json", FileAccess.READ)
+		if cfgs:
+			var cfg = JSON.parse_string(cfgs.get_as_text())
+			
+			if cfg:
+				for s in cfg:
+					var c = OS.find_keycode_from_string(cfg[s])
+					if c > 0:
+						res.action_map[s] = c
+					else:
+						print_debug("unknown remap value ", cfg[s])
+	
 	return res
 
 const JOY_AXIS_BIT = 1 << 30

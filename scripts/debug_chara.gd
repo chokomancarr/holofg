@@ -97,6 +97,7 @@ func _tr(vec, sz):
 	return vec
 
 func _unhandled_input(e):
-	if e is InputEventKey and e.is_pressed():
-		if e.keycode == KEY_F4:
-			GameMaster.new_match(2, 2, _GameNetBase.TY.TRAINING)
+	if not OnlineLobby.lobby:
+		if e is InputEventKey and e.is_pressed():
+			if e.keycode == KEY_F4:
+				GameMaster.new_match(2, 2, _GameNetBase.TY.TRAINING)

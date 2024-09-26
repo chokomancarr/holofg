@@ -203,6 +203,9 @@ var debug_process_msecs := 10.0
 var debug_check_message_serializer_roundtrip := false
 var debug_check_local_state_consistency := false
 
+#MODIFIED
+var max_performed_rollback_ticks := 0
+
 # In seconds, because we don't want it to be dependent on the network tick.
 var _ping_frequency := 1.0
 var ping_frequency: float:
@@ -1132,6 +1135,9 @@ func _physics_process(_delta: float) -> void:
 		if _logger:
 			_logger.data['rollback_ticks'] = _rollback_ticks
 			_logger.start_timing('rollback')
+		
+		#MODIFIED: log this to show to player
+		max_performed_rollback_ticks = maxi(max_performed_rollback_ticks, _rollback_ticks)
 
 		var original_tick = _current_tick
 

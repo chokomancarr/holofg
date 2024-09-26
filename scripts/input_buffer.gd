@@ -98,7 +98,7 @@ class InputState:
 		return res
 	
 	func name(neutral, n = false):
-		var res = ("2" if dir() < 4 else "5") if neutral else str(dir())
+		var res = ("2" if dir() < 4 else "5") if neutral else str(dir_flipped())
 		if l(n): res += "l"
 		if m(n): res += "m"
 		if h(n): res += "h"
@@ -115,7 +115,7 @@ class InputState:
 		if m(n): btt.push_back("m")
 		if l(n): btt.push_back("l")
 		
-		var d = dir()
+		var d = dir_flipped()
 		
 		var res = []
 		for bt in btt:

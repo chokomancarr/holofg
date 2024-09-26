@@ -14,3 +14,4 @@ static func create(sig : String) -> _SmBase:
 
 static func reg(s, cls):
 	_get_singleton()._list[s] = cls
+

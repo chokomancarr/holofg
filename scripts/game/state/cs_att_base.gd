@@ -16,6 +16,7 @@ func step(state : PlayerState):
 	state.boxes = []
 	var found_att = false
 	var has_att = false
+	att_part = ST.ATTACK_PART.STARTUP
 	for b in move.boxes:
 		var is_grab = b.ty == ST.BOX_TY.GRAB
 		var is_att = b.ty == ST.BOX_TY.HIT || is_grab
@@ -28,17 +29,19 @@ func step(state : PlayerState):
 				current_att = b.hit_i
 				attack_ty = query_hit().ty
 		elif is_att and not found_att:
-			if b.frame_start > state_t:
-				att_part = ST.ATTACK_PART.STARTUP
-			else:
+			if b.frame_start < state_t:
 				att_part = ST.ATTACK_PART.RECOVERY
 			found_att = true
 	if not has_att:
 		att_processed = false
 	
-	if move.spawn_info.size() > 0:
-		att_part = ST.ATTACK_PART.STARTUP if move.spawn_info.all(func (s): return s.frame >= state_t) else ST.ATTACK_PART.RECOVERY
-
+	if move.summons.size() > 0:
+		for s in move.summons:
+			if s.frame < state_t:
+				att_part = ST.ATTACK_PART.RECOVERY
+			elif s.frame == state_t:
+				state.summons.push_back(SummonState.new(state, s.summon))
+	
 	if move.offsets:
 		next_offset = move.offsets.eval(state_t - 1)
 

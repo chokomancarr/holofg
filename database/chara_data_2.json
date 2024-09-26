@@ -170,6 +170,7 @@
 			}]
 		},
 		"623l": {
+			"alias": "6s",
 			"n_frames": 40,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
@@ -214,8 +215,8 @@
 			"boxes": [
 				{"frame_start": 0,"frame_end": 40,"ty": "HURT","rect": [-200, 0, 400, 1000]}
 			],
-			"spawns": [
-				{ "f": 12, "sig": "TOWA_236L" }
+			"summons": [
+				{ "f": 12, "name": "236l" }
 			]
 		},
 		"8.5l": {

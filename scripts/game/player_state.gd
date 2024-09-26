@@ -13,7 +13,7 @@ var action_is_p2: bool
 
 var dist_to_opp: Vector2i
 
-var summons: _SmBase
+var summons: Array[SummonState]
 
 var boxes: Array[ST.BoxInfo] = []
 
@@ -22,7 +22,7 @@ var state: _CsBase
 func clone() -> PlayerState:
 	return ObjUtil.clone(self, new(),
 		[ "_info", "bar_health", "bar_super", "pos", "bounded_pos", "pos_is_p2", "action_is_p2", "dist_to_opp" ],
-		[ "input_history", "state" ],
+		[ "input_history", "summons", "state" ],
 		func (a, b): b.boxes = a.boxes.duplicate()
 	)
 
@@ -77,7 +77,7 @@ func dict4hash():
 		pos_is_p2,
 		action_is_p2,
 		dist_to_opp,
-		#summons,
+		summons.map(func (s): return s.dict4hash()),
 		boxes.map(func (b : ST.BoxInfo): return b.hashed()),
 		state._dict4hash()
 	]

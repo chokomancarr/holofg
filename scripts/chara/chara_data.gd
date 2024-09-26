@@ -13,6 +13,7 @@ class CharaInfo:
 	var moves_tr: Dictionary
 	var moves_j_nr: Dictionary
 	var grabs: Dictionary
+	var summons: Dictionary
 
 class MoveInfo:
 	var uid: int
@@ -23,15 +24,30 @@ class MoveInfo:
 	var can_rapid: bool
 	var boxes: Array[ST.BoxInfoFrame]
 	var att_info: Array[ST._AttInfoBase]
-	var spawn_info: Array[ST.SpawnInfo]
+	var summons: Array[SummonFrameInfo]
 	var offsets : OffsetInfo
 	var can_hold : bool = false
 	var is_jump: bool = false
 	var override_offsets : bool = true
 	var land_recovery : int = 0
 	var force_att_part := ST.ATTACK_PART.NONE
-	
 	var whiff: MoveInfo
+
+class SummonFrameInfo:
+	var frame: int
+	var summon: SummonInfo
+
+class SummonInfo:
+	var uid : int
+	var scene : String
+	var n_hits : int = 1
+	var hit_rate : int = 0
+	var init_pos : Vector2i
+	var velocity : Vector2i = Vector2i(0, 0)
+	var lifetime : int = 1000
+	var offsets : DT.OffsetInfo = null
+	var att_info : ST.AttInfo_Hit
+	var boxes : Array[ST.BoxInfo]
 
 class OffsetInfo:
 	var vals = []
@@ -78,12 +94,16 @@ class OffsetInfo:
 		return _hash
 
 static func load_chara(chara_id):
+	var res = CharaInfo.new()
+	
 	var data = (load("res://database/chara_data_%d.json" % chara_id) as JSON).data
 	data.moves.normals.append_array([ "5l", "5m", "5h", "2l", "2m", "2h" ])
 	data.moves.jump_normals.append_array([ "8.5l", "8.5m", "8.5h" ])
 	data.moves.grabs.append_array([ "5g" ])
 	
-	var res = CharaInfo.new()
+	var _summon_data = load("res://database/chara_summons_%d.json" % chara_id) as JSON
+	if _summon_data:
+		res._summon_data = _summon_data
 	
 	res.max_health = data.max_health
 	
@@ -153,33 +173,7 @@ static func _parse_move(nm : String, frames : Dictionary):
 		move.offsets = OffsetInfo.from_json(src.offsets, move.n_frames)
 	if att_info_ty and src.has("att_info"):
 		for h in src.att_info:
-			var hres
-			match att_info_ty:
-				ST.BOX_TY.HIT:
-					hres = ST.AttInfo_Hit.new()
-					hres.n_freeze = h.n_freeze if h.has("n_freeze") else 10
-					hres.stun_block = h.stun[0]
-					hres.stun_hit = h.stun[1]
-					if h.has("ty"): hres.ty = ST.ATTACK_TY.get(h.ty)
-					if h.has("knock_ty"): hres.knock_ty = ST.KNOCK_TY.get(h.knock_ty)
-					if h.has("cancel"): hres.cancels = ST.CancelInfo.from_json(h.cancel)
-					else: hres.cancels = ST.CancelInfo.new()
-					hres.cancels.normal_lmh = "lmh".find(nm[-1]) + 1
-					if h.has("push"): hres.push_hit = h.push
-					if h.has("minspace"): hres.min_space = h.minspace
-					if h.has("dir"): hres.dir = ST.STUN_DIR.get(h.dir)
-					if h.has("dmg"): hres.dmg = h.dmg
-				ST.BOX_TY.GRAB:
-					hres = ST.AttInfo_Grab.new()
-					hres.ty = h.ty if h.has("ty") else ST.ATTACK_TY.GRAB
-					hres.opp_nf = h.n_frames
-					hres.fix_dist = h.fix_dist if h.has("fix_dist") else 10000000
-					hres.end_dpos = h.end_dpos
-					if h.has("bounds_offset"):
-						hres.bounds_offset = OffsetInfo.from_json(h.bounds_offset, hres.opp_nf)
-				_:
-					pass
-			move.att_info.push_back(hres)
+			move.att_info.push_back(_parse_att_info(h))
 	#if src.has("opp_info"):
 		#var h = src.opp_info
 		#var hres = ST.OppAnimInfo.new()
@@ -187,17 +181,67 @@ static func _parse_move(nm : String, frames : Dictionary):
 		#hres.fix_dist = h.fix_dist if h.has("fix_dist") else 10000000
 		#hres.end_dpos = h.end_dpos
 		#move.opp_info = hres
-	if src.has("spawns"):
-		for s in src.spawns:
-			var sres = ST.SpawnInfo.new()
+	if src.has("summons"):
+		for s in src.summons:
+			var sres = SummonFrameInfo.new()
 			sres.frame = s.f
-			sres.sig = s.sig
-			move.spawn_info.push_back(sres)
+			sres.summon = _get_summon(s.name)
+			move.summons.push_back(sres)
 	
 	if src.has("whiff"):
 		move.whiff = _parse_move("whiff", src)
 	
 	return move
+
+func _parse_att_info(h : Dictionary, ty : ST.BOX_TY):
+	match ty:
+		ST.BOX_TY.HIT:
+			hres = ST.AttInfo_Hit.new()
+			hres.n_freeze = h.n_freeze if h.has("n_freeze") else 10
+			hres.stun_block = h.stun[0]
+			hres.stun_hit = h.stun[1]
+			if h.has("ty"): hres.ty = ST.ATTACK_TY.get(h.ty)
+			if h.has("knock_ty"): hres.knock_ty = ST.KNOCK_TY.get(h.knock_ty)
+			if h.has("cancel"): hres.cancels = ST.CancelInfo.from_json(h.cancel)
+			else: hres.cancels = ST.CancelInfo.new()
+			hres.cancels.normal_lmh = "lmh".find(nm[-1]) + 1
+			if h.has("push"): hres.push_hit = h.push
+			if h.has("minspace"): hres.min_space = h.minspace
+			if h.has("dir"): hres.dir = ST.STUN_DIR.get(h.dir)
+			if h.has("dmg"): hres.dmg = h.dmg
+		ST.BOX_TY.GRAB:
+			hres = ST.AttInfo_Grab.new()
+			hres.ty = h.ty if h.has("ty") else ST.ATTACK_TY.GRAB
+			hres.opp_nf = h.n_frames
+			hres.fix_dist = h.fix_dist if h.has("fix_dist") else 10000000
+			hres.end_dpos = h.end_dpos
+			if h.has("bounds_offset"):
+				hres.bounds_offset = OffsetInfo.from_json(h.bounds_offset, hres.opp_nf)
+		_:
+			pass
+
+static var _summon_uid = 0
+func _get_summon(cinfo : CharaInfo, nm : String):
+	if cinfo.summons.has(nm):
+		return cinfo.summons[nm]
+	
+	var o = cinfo._summon_data[nm]
+	var res = SummonInfo.new()
+	res.uid = _summon_uid
+	res.scene = o.scene
+	if o.has("lifetime"): res.lifetime = o.lifetime
+	if o.has("init_pos"): res.init_pos = o.init_pos
+	if o.has("velocity"): res.velocity = o.velocity
+	if o.has("offsets"): res.offsets = OffsetInfo.from_json(o.offsets, res.lifetime)
+	if o.has("n_hits"): res.n_hits = o.n_hits
+	if o.has("hit_rate"): res.hit_rate = o.hit_rate
+	res.att_info = _parse_att_info(o.hit_info, ST.BOX_TY.HIT)
+	if o.has("boxes"):
+		for b in o.boxes:
+			res.boxes.push_back(parse_box(b))
+	
+	cinfo.summons[nm] = res
+	return res
 
 static func parse_box(d):
 	return ST.BoxInfo.new(ST.BOX_TY.get(d.ty), Rect2i(d.rect[0],d.rect[1],d.rect[2],d.rect[3]))

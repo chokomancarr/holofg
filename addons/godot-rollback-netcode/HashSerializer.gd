@@ -4,23 +4,21 @@ static func is_type(obj: Object):
 	return obj.has_method("serialize") \
 		and obj.has_method("unserialize")
 
-func serialize(v : Dictionary):
-	if v.has("gs"):
-		assert(v.gs is GameState, "unexpected non-GameState in gs for hash.serialize!")
-		return (v.gs as GameState).dict4hash()
-	else:
-		return serialize_dictionary(v)
+#func serialize(v : Dictionary):
+#	if v.has("gs"):
+#		assert(v.gs is GameState, "unexpected non-GameState in gs for hash.serialize!")
+#		return (v.gs as GameState).dict4hash()
+#	else:
+#		return serialize_dictionary(v)
 
 func unserialize(v : Dictionary):
 	#only used for input state
 	return v
-	#var res = {}
-	#for k in v.keys():
-	#	res[k] = { "v": v[k] }
-	#return res
 
-func serialize2(value):
-	if value is Dictionary:
+func serialize(value):
+	if value is GameState:
+		return value.dict4hash()
+	elif value is Dictionary:
 		return serialize(value)
 		#return serialize_dictionary(value)
 	elif value is Array:
@@ -87,60 +85,3 @@ func serialize_other(value):
 		}
 
 	return value
-
-func unserialize2(value):
-	if value is Dictionary:
-		if not value.has('_'):
-			return unserialize_dictionary(value)
-
-		if value['_'] == 'resource':
-			return unserialize_resource(value)
-		elif value['_'] in ['Vector2', 'Vector3', 'Transform2D', 'Transform3D']:
-			return unserialize_other(value)
-
-		return unserialize_object(value)
-	elif value is Array:
-		return unserialize_array(value)
-	return value
-
-func unserialize_dictionary(value: Dictionary):
-	var unserialized := {}
-	for key in value:
-		unserialized[key] = unserialize(value[key])
-	return unserialized
-
-func unserialize_array(value: Array):
-	var unserialized := []
-	for item in value:
-		unserialized.append(unserialize(item))
-	return unserialized
-
-func unserialize_resource(value: Dictionary):
-	return load(value['path'])
-
-func unserialize_object(value: Dictionary):
-	if value['_'] == 'object':
-		return value['string']
-	return null
-
-func unserialize_other(value: Dictionary):
-	match value['_']:
-		'Vector2':
-			return Vector2(value.x, value.y)
-		'Vector3':
-			return Vector3(value.x, value.y, value.z)
-		'Transform2D':
-			return Transform2D(
-				Vector2(value.x.x, value.x.y),
-				Vector2(value.y.x, value.y.y),
-				Vector2(value.origin.x, value.origin.y)
-			)
-		'Transform3D':
-			return Transform3D(
-				Vector3(value.x.x, value.x.y, value.x.z),
-				Vector3(value.y.x, value.y.y, value.y.z),
-				Vector3(value.z.x, value.z.y, value.z.z),
-				Vector3(value.origin.x, value.origin.y, value.origin.z)
-			)
-
-	return null

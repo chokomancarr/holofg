@@ -110,13 +110,6 @@ class CancelInfo:
 	func can_anr(s : String):
 		return everything || _normal_strengths[normal_lmh].contains(s[-1])
 
-class SpawnInfo:
-	var frame: int
-	var sig: String
-
-
-
-
 enum STATE_TY {
 	IDLE_5 = 0x0001,
 	WALK_FWD_6 = 0x0011, WALK_BACK_4 = 0x0021,
@@ -131,7 +124,7 @@ static var STATE_CROUCH_BIT = 0x0002
 static var STATE_BLOCK_BIT = 0x0100
 
 enum BOX_TY {
-	HIT = 1, HURT = 2, GRAB = 3, COLLISION = 4
+	HIT = 1, HURT = 2, GRAB = 3, COLLISION = 4, CLASH = 5
 }
 
 static func get_box_color(ty : BOX_TY):

@@ -170,6 +170,7 @@ grow_vertical = 2
 script = ExtResource("4_pqnyw")
 
 [node name="top_cc" type="CenterContainer" parent="ui"]
+visible = false
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 1
 anchors_preset = 10
@@ -260,6 +261,7 @@ layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
 theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+max_value = 1000.0
 step = 1.0
 value = 50.0
 fill_mode = 1
@@ -272,6 +274,7 @@ layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
 theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+max_value = 1000.0
 step = 1.0
 value = 50.0
 fill_mode = 1
@@ -284,6 +287,7 @@ layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
 theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+max_value = 1000.0
 step = 1.0
 value = 50.0
 fill_mode = 1
@@ -300,6 +304,7 @@ layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
 theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+max_value = 1000.0
 step = 1.0
 value = 50.0
 show_percentage = false
@@ -311,6 +316,7 @@ layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
 theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+max_value = 1000.0
 step = 1.0
 value = 50.0
 show_percentage = false
@@ -322,6 +328,7 @@ layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/background = SubResource("StyleBoxFlat_oi1b7")
 theme_override_styles/fill = SubResource("StyleBoxFlat_otrjq")
+max_value = 1000.0
 step = 1.0
 value = 50.0
 show_percentage = false
@@ -396,6 +403,32 @@ horizontal_alignment = 1
 [node name="ty2" type="Label" parent="ui/cen_cc/gc"]
 layout_mode = 2
 text = "-"
+
+[node name="ann_cc" type="CenterContainer" parent="ui"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ready" type="Label" parent="ui/ann_cc"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 91
+text = "READY"
+
+[node name="fight" type="Label" parent="ui/ann_cc"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 91
+text = "FIGHT!"
+
+[node name="ko" type="Label" parent="ui/ann_cc"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 91
+text = "KO"
 
 [node name="ppl_spawn" type="Node" parent="."]
 unique_name_in_owner = true

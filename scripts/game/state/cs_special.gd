@@ -8,17 +8,17 @@ func clone():
 	)
 
 static func try_next(state : PlayerState, sliceback : int, allow : ST.CancelInfo):
-	return _check_inputs(state, sliceback, func (st, n):
+	return _check_inputs(state, sliceback, func (st, n, dd):
 		var alias = st.names()
 		for move in state._info.moves_sp:
-			if alias.has(move.alias_name):
+			if alias.has(move.alias_name) or move.cmd.check(st, dd):
 				var res = new()
 				res.move = move
 				res.anim_name = move.name
 				
 				st.processed = true
 				return res
-	)
+	, true)
 
 func check_next(state : PlayerState):
 	var next = null

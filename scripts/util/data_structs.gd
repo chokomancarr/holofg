@@ -18,8 +18,8 @@ class BoxInfo:
 	
 	var hit_i: int = 0
 	
-	func get_rect(f):
-		return rect_flip if f else rect
+	func get_rect(p2):
+		return rect_flip if p2 else rect
 	
 	func _init(ty, rect):
 		self.ty = ty
@@ -46,6 +46,8 @@ class BoxInfoFrame extends BoxInfo:
 class _AttInfoBase:
 	var ty := ATTACK_TY.HIGH
 	var dmg := 1000
+	var gauge := 100
+	var detached := false
 
 class AttInfo_Hit extends _AttInfoBase:
 	var n_freeze: int
@@ -124,7 +126,7 @@ static var STATE_CROUCH_BIT = 0x0002
 static var STATE_BLOCK_BIT = 0x0100
 
 enum BOX_TY {
-	HIT = 1, HURT = 2, GRAB = 3, COLLISION = 4, CLASH = 5
+	HIT = 1, HURT = 2, GRAB = 3, PUSH = 4, CLASH = 5
 }
 
 static func get_box_color(ty : BOX_TY):
@@ -132,7 +134,8 @@ static func get_box_color(ty : BOX_TY):
 		BOX_TY.HIT:	return Color.DARK_RED
 		BOX_TY.HURT: return Color.FOREST_GREEN
 		BOX_TY.GRAB: return Color.DODGER_BLUE
-		BOX_TY.COLLISION: return Color(Color.DARK_GRAY, 0.3)
+		BOX_TY.PUSH: return Color(Color.DARK_GRAY, 0.3)
+		BOX_TY.CLASH: return Color.DARK_GOLDENROD
 		_: return Color.BLACK
 
 enum ATTACK_PART {

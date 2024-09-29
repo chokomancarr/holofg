@@ -1,20 +1,21 @@
 {
-	"_info": "towa",
 	"236l": {
-		"scene": "towa_236",
+		"scene": "236",
 		"boxes": [
-			 { "ty": "CLASH", "rect": [-100, -100, 200, 200] },
+			 { "ty": "CLASH", "rect": [-100, -200, 200, 400] },
 			 { "ty": "HIT", "rect": [-50, -50, 100, 100] }
 		],
 		"init_pos": [400, 500],
-		"velocity": [200, 0],
+		"velocity": [50, 0],
 		"n_hits": 1,
 		"hit_rate": 0,
 		"lifetime": 60,
 		"att_info": {
 			"stun": [ 8, 12 ],
 			"dir": "BODY",
-			"dmg": 500
+			"dmg": 500,
+			"push": 200,
+			"minspace": 700,
 		}
 	}
 }

@@ -182,16 +182,18 @@ class InputCommand:
 		else:
 			return _DIR_ALLOWED[cmd].has(dir)
 
-	func check(history : InputHistory):
-		if bt != BT.ANY and history.his[0].bts() != bt: return false
+	func check(st : IN.InputState, dirs : Array):
+		if st.bts() > 0:
+			pass
+		if bt != BT.ANY and st.bts() != bt: return false
 		var ff = 0
 		var ci = 0
 		var cn = command.size()
 		if cn == 0:
-			return command_str == history.his[0].name(false) or command_str == history.his[0].name(true)
+			return command_str == st.name(false) or command_str == st.name(true)
 		var cmd = command[0]
 		var is_opt = false
-		for h in history.dirs:
+		for h in dirs:
 			var dir = h.v
 			if ff == 0 and dir == 5:
 				if h.nf > t_dir2bt:

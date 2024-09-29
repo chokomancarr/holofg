@@ -1,5 +1,6 @@
 class_name CsTeleport extends _CsNeutralBase
 
+const NF_TP = 4
 const NF_FWD = 34
 const NF_ATT = 20
 const TP_DIST = 2000
@@ -7,6 +8,8 @@ const TP_MIN_DIST = 300
 const TP_BEHIND_FROM = 500
 
 const _STATE_NAME = "teleport"
+
+const COST = 500
 
 static var cmd_fwd : IN.InputCommand = (func ():
 	var cmd = IN.InputCommand.from_string("66")
@@ -24,7 +27,7 @@ func clone():
 	)
 
 static func try_next(state : PlayerState):
-	if cmd_fwd.check(state.input_history):
+	if state.bar_super > 0 and cmd_fwd.check(state.input_history.his[0], state.input_history.dirs):
 		return new(true)
 
 func _init(fwd):
@@ -39,9 +42,11 @@ func check_next(state : PlayerState):
 
 func step(state : PlayerState):
 	_step()
-	if state_t == 4:
+	if state_t == 1:
+		state.bar_super -= COST
+	elif state_t == NF_TP:
 		req_freeze = 5
-	elif state_t == 5:
+	elif state_t == NF_TP + 1:
 		use_pos_flip = true
 		var do = absi(state.dist_to_opp.x)
 		if do < TP_BEHIND_FROM:

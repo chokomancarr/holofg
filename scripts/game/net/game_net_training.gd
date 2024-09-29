@@ -14,6 +14,7 @@ var block_cd := 0
 func _ready():
 	p1_inputs = InputMan.get_player_input(0)
 	p2_inputs = InputMan.DummyInput.new()
+	GameMaster.game_state.start_intro()
 
 func init():
 	pass
@@ -38,7 +39,7 @@ func get_game_state():
 			var s2 = GameMaster.game_state.p2
 			if s2.state is _CsStunBase:
 				if s2.state.check_next(s2) is CsIdle:
-					block_cd = 60
+					block_cd = 30
 			else:
 				if block_cd > 0:
 					block_cd -= 1
@@ -57,7 +58,7 @@ func _unhandled_key_input(e: InputEvent):
 			if not recording and not playback:
 				const blks = [ ST.BLOCK_TY.NONE, ST.BLOCK_TY.HIGH, ST.BLOCK_TY.LOW, ST.BLOCK_TY.ALL, ST.BLOCK_TY.NONE ]
 				block_ty = blks[blks.find(block_ty) + 1]
-		elif e.keycode == KEY_N:
+		elif e.keycode == KEY_M:
 			block_usecd = !block_usecd
 
 func _start_recording():
@@ -78,7 +79,7 @@ func _stop_playback():
 func _get_debug_text():
 	var res = ""
 	
-	res += "%s : switch block [B]\n%s : block after hit [N]\n" % [ ST.BLOCK_TY.find_key(block_ty), "Y" if block_usecd else "N" ]
+	res += "%s : switch block [B]\n%s : block after hit [M]\n" % [ ST.BLOCK_TY.find_key(block_ty), "Y" if block_usecd else "N" ]
 	
 	if recording:
 		res += "%d :recording\nF10 to stop" % [ dummy_recorder.n ]

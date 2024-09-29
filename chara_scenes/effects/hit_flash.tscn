@@ -1,0 +1,58 @@
+[gd_scene load_steps=9 format=3 uid="uid://dweh3x18q65r1"]
+
+[ext_resource type="Texture2D" uid="uid://bcvolurl45p24" path="res://effects/dmg_flash_tmp_1.png" id="1_4akdl"]
+[ext_resource type="Script" path="res://scripts/rend/eff_ctrl.gd" id="1_hmf8u"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oqrtk"]
+atlas = ExtResource("1_4akdl")
+region = Rect2(0, 0, 348, 170)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ro0e2"]
+atlas = ExtResource("1_4akdl")
+region = Rect2(0, 170, 348, 170)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0tciy"]
+atlas = ExtResource("1_4akdl")
+region = Rect2(0, 340, 348, 170)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rldv7"]
+atlas = ExtResource("1_4akdl")
+region = Rect2(0, 510, 348, 170)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0hlru"]
+atlas = ExtResource("1_4akdl")
+region = Rect2(0, 680, 348, 170)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fushi"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oqrtk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ro0e2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0tciy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rldv7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0hlru")
+}],
+"loop": false,
+"name": &"default",
+"speed": 20.0
+}]
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_hmf8u")
+follow_rotation = false
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.283, -0.036, 0)
+no_depth_test = true
+sprite_frames = SubResource("SpriteFrames_fushi")
+frame = 4
+frame_progress = 1.0

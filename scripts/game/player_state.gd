@@ -4,10 +4,17 @@ var _info: DT.CharaInfo
 
 var input_history : IN.InputHistory
 
-var bar_health: int
-var bar_super: int
+var bar_health: int:
+	set(v):
+		bar_health = mini(maxi(v, 0), _info.max_health)
+var bar_super: int:
+	set(v):
+		bar_super = mini(maxi(v, 0), 3000)
+
 var pos: Vector2i
 var bounded_pos: Vector2i
+
+var is_p2: bool
 var pos_is_p2: bool
 var action_is_p2: bool
 
@@ -15,13 +22,15 @@ var dist_to_opp: Vector2i
 
 var summons: Array[SummonState]
 
+var summon_uid : int
+
 var boxes: Array[ST.BoxInfo] = []
 
 var state: _CsBase
 
 func clone() -> PlayerState:
 	return ObjUtil.clone(self, new(),
-		[ "_info", "bar_health", "bar_super", "pos", "bounded_pos", "pos_is_p2", "action_is_p2", "dist_to_opp" ],
+		[ "_info", "bar_health", "bar_super", "pos", "bounded_pos", "is_p2", "pos_is_p2", "action_is_p2", "dist_to_opp", "summon_uid" ],
 		[ "input_history", "state" ],
 		func (a, b):
 			b.summons.assign(a.summons.map(func (s): return s.clone()))
@@ -61,6 +70,8 @@ func prestep():
 		if state.use_pos_flip:
 			action_is_p2 = pos_is_p2
 		tar_state = state.check_next(self)
+	
+	summons = summons.filter(func (s : SummonState): return not s.last_tick)
 
 func step():
 	state.step(self)
@@ -68,6 +79,12 @@ func step():
 		state.next_offset.x *= -1
 	pos += state.next_offset
 	bounded_pos = pos + (state.bounds_off if action_is_p2 else -state.bounds_off)
+	
+	for s in summons:
+		s.step()
+		if s.is_p2:
+			s.next_offset.x *= -1
+		s.pos += s.next_offset
 
 func dict4hash():
 	return [
@@ -76,10 +93,12 @@ func dict4hash():
 		bar_super,
 		pos,
 		bounded_pos,
+		is_p2,
 		pos_is_p2,
 		action_is_p2,
 		dist_to_opp,
 		summons.map(func (s): return s.dict4hash()),
+		summon_uid,
 		boxes.map(func (b : ST.BoxInfo): return b.hashed()),
 		state._dict4hash()
 	]

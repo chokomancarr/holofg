@@ -40,7 +40,8 @@ func step(state : PlayerState):
 			if s.frame < state_t:
 				att_part = ST.ATTACK_PART.RECOVERY
 			elif s.frame == state_t:
-				state.summons.push_back(SummonState.new(state, s.summon))
+				state.summons.push_back(SummonState.new(state, s.summon, state.summon_uid))
+				state.summon_uid += 1
 	
 	if move.offsets:
 		next_offset = move.offsets.eval(state_t - 1)

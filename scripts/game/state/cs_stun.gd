@@ -11,7 +11,7 @@ func clone():
 		[]
 	)
 
-func _init(p : PlayerState = null, info : ST.AttInfo_Hit = null):
+func _init(p : PlayerState = null, info : ST.AttInfo_Hit = null, no_offset = false):
 	if p:
 		state_t = 1
 		anim_name = "stun_%s_%s" % [
@@ -21,7 +21,7 @@ func _init(p : PlayerState = null, info : ST.AttInfo_Hit = null):
 		
 		push_wall = true
 	
-		if info.push_hit != 0 || info.min_space > 0:
+		if not no_offset and (info.push_hit != 0 || info.min_space > 0):
 			var pushmin = maxi(info.min_space - absi(p.dist_to_opp.x), 0)
 			var p1 = floori(info.push_hit / (2 * n_stun))
 			var p0 = info.push_hit - p1 * n_stun

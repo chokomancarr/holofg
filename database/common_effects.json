@@ -1,0 +1,21 @@
+{
+	"parry": [
+		{
+			"scene": "eff_common_parry",
+			"anchor": "HIP"
+		}
+	],
+	"tp_startup": [
+		{
+			"scene": "eff_common_tp_0",
+			"anchor": "HIP"
+		}
+	],
+	"tp_6": [
+		{
+			"scene": "eff_common_tp_1",
+			"anchor": "HIP",
+			"f_start": 5
+		}
+	]
+}

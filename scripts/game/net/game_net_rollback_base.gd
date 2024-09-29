@@ -33,6 +33,8 @@ func init():
 		SyncManager.add_peer(lobby.p2.mp_id)
 	
 	add_to_group("network_sync")
+	
+	GameMaster.game_state.start_game_inf() #TODO: change to actual game
 
 func start():
 	print_debug("starting rollback manager")

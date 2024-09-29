@@ -10,6 +10,12 @@ extends Control
 	%"game_ui_sp1_p2", %"game_ui_sp2_p2", %"game_ui_sp3_p2"
 ] as Array[Range]
 
+@onready var ann_ovl := [
+	$"ann_cc/ready",
+	$"ann_cc/fight",
+	$"ann_cc/ko"
+] as Array[Control]
+
 @onready var netinfo : Control = $"/root/main/ui/top_cc/vb/hb0"
 @onready var debug_info = %"game_ui_debug_info" as Label
 
@@ -37,18 +43,41 @@ func _physics_process(_dt):
 func _process(dt):
 	var gst = GameMaster.game_state as GameState
 	if gst:
-		if gst.countdown > -1:
-			time.text = str(gst.countdown / 60).pad_zeros(2)
-		else:
-			time.text = "∞"
-		hpbar_p1.value = gst.p1.bar_health
-		hpbar_p1.max_value = gst.p1._info.max_health
-		hpbar_p2.value = gst.p2.bar_health
-		hpbar_p2.max_value = gst.p2._info.max_health
-		
-		for i in range(3):
-			spbars_p1[i].value = gst.p1.bar_super - i * 100
-			spbars_p2[i].value = gst.p2.bar_super - i * 100
+		match gst.state:
+			GameState.MATCH_STATE.INTRO:
+				$"top_cc".visible = false
+			GameState.MATCH_STATE.PREGAME:
+				$"top_cc".visible = true
+				ann_ovl[0].visible = gst.countdown >= 60
+				ann_ovl[1].visible = gst.countdown < 60
+				
+				hpbar_p1.value = 100
+				hpbar_p1.max_value = 100
+				hpbar_p2.value = 100
+				hpbar_p2.max_value = 100
+			
+				for i in range(3):
+					spbars_p1[i].value = gst.p1.bar_super - i * 1000
+					spbars_p2[i].value = gst.p2.bar_super - i * 1000
+			
+			GameState.MATCH_STATE.GAME, GameState.MATCH_STATE.CINEMATIC:
+				if gst.countdown < 5:
+					for n in ann_ovl:
+						n.visible = false
+				if gst.countdown > -1:
+					time.text = str(gst.countdown / 60).pad_zeros(2)
+				else:
+					time.text = "∞"
+				hpbar_p1.value = gst.p1.bar_health
+				hpbar_p1.max_value = gst.p1._info.max_health
+				hpbar_p2.value = gst.p2.bar_health
+				hpbar_p2.max_value = gst.p2._info.max_health
+			
+				for i in range(3):
+					spbars_p1[i].value = gst.p1.bar_super - i * 1000
+					spbars_p2[i].value = gst.p2.bar_super - i * 1000
+			GameState.MATCH_STATE.POST_GAME:
+				ann_ovl[2].visible = true
 	
 	var upd_hit_stat = func (p : _CsBase, i, j):
 		if p is _CsStunBase:

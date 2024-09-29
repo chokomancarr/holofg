@@ -15,7 +15,8 @@ func clone():
 
 func _init(p : PlayerState = null, ty : ST.STUN_AIR_TY = ST.STUN_AIR_TY.RESET):
 	if p:
-		state_t = 1
+		state_t = 1 
+		airborne = true
 		self.ty = ty
 		match ty:
 			ST.STUN_AIR_TY.RESET:

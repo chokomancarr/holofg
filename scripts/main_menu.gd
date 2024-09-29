@@ -17,6 +17,9 @@ func _ready():
 	($"Control/vb/chat/CButton" as Button).pressed.connect(_on_send_chat)
 	($"Control/vb/train" as Button).pressed.connect(_on_training_mode)
 	
+	OnlineLobby.lobby = null
+	GameMaster.reset_net_master()
+	
 func _on_training_mode():
 	SceneMan.load_scene(SceneMan.GAME)
 

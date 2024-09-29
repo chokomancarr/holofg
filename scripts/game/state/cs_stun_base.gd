@@ -8,6 +8,8 @@ var last_att_ty : ST.ATTACK_TY
 
 var next_scaling := 0
 
+var eff_pos : Vector2i
+
 func _clone(res):
 	return ObjUtil.clone(self, super._clone(res),
 		[ "combo_scaling", "total_dmg", "last_dmg", "last_att_ty", "next_scaling" ],

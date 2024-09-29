@@ -2,6 +2,9 @@ class_name CsParry extends _CsBase
 
 const NF_MIN = 10
 
+const START_COST = 50
+const HOLD_COST = 2
+
 const _STATE_NAME = "parry"
 
 var in_recovery = false
@@ -20,7 +23,7 @@ func clone():
 
 static func try_next(state : PlayerState):
 	var his = state.input_history.his[0]
-	if his.bt(IN.BT.p):
+	if his.bt(IN.BT.p) and state.bar_super > 0:
 		return new(his.nf)
 
 func _init(n):
@@ -43,7 +46,8 @@ func step(state : PlayerState):
 			state_t = 1000000
 	else:
 		if not in_recovery:
-			if not state.input_history.his[0].bt(IN.BT.p):
+			state.bar_super -= START_COST if state_t == 1 else HOLD_COST
+			if state.bar_super == 0 or not state.input_history.his[0].bt(IN.BT.p):
 				in_recovery = true
 				rec_df = state_t
 				#if parried_nf == 0:

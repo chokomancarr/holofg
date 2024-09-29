@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://h4hpledwq2fo"]
+
+[ext_resource type="Script" path="res://scripts/rend/summon_rend.gd" id="1_6iju7"]
+[ext_resource type="PackedScene" uid="uid://xtkfix2ga60k" path="res://models/chara/2/sm_2_towa_236l.blend" id="2_qui5r"]
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_6iju7")
+
+[node name="sm_2_towa_236l" parent="." instance=ExtResource("2_qui5r")]

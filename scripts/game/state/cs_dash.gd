@@ -35,9 +35,9 @@ static func try_next(state : PlayerState):
 	if state.input_history.his[0].nf > 1:
 		return null
 	
-	if move_fwd.cmd.check(state.input_history):
+	if move_fwd.cmd.check(state.input_history.his[0], state.input_history.dirs):
 		return new(true)
-	elif move_rev.cmd.check(state.input_history):
+	elif move_rev.cmd.check(state.input_history.his[0], state.input_history.dirs):
 		return new(false)
 
 func _init(fwd, skip = false):

@@ -64,7 +64,11 @@ func _draw_debug_chara(chara : PlayerState, p):
 	var ww = GameMaster.game_state.wall
 	var ctr = (ww.x + ww.y) / 2
 	
-	var n = chara.boxes.size()
+	var boxes = chara.boxes.map(func (b): return [ chara.pos, b.get_rect(chara.action_is_p2), b.ty ])
+	for sm in chara.summons:
+		boxes.append_array(sm._info.boxes.map(func (b): return [ sm.pos, b.get_rect(sm.is_p2), b.ty ]))
+	
+	var n = boxes.size()
 	var bve = _boxview_elems[p]
 	var n2 = bve.size()
 	#var sz = get_viewport().size
@@ -79,14 +83,16 @@ func _draw_debug_chara(chara : PlayerState, p):
 			box_ui.add_child(panel)
 			n2 = n
 	for i in range(n):
-		var b = chara.boxes[i]
-		var rect = b.get_rect(chara.action_is_p2)
+		var bb = boxes[i]
+		var pos = bb[0]
+		var rect = bb[1]
 		var pt = bve[i]
 		pt[0].visible = true
-		pt[0].position = _tr(ST.coord2world(rect.position + chara.pos + Vector2i(5000-ctr, rect.size.y), sz), sz)
+		pt[0].position = _tr(ST.coord2world(rect.position + pos + Vector2i(5000-ctr, rect.size.y), sz), sz)
 		pt[0].size = ST.cmag2world(rect.size, sz) * ui_cam_scl
-		pt[1].border_color = ST.get_box_color(b.ty)
+		pt[1].border_color = ST.get_box_color(bb[2])
 		pt[1].bg_color = Color(pt[1].border_color, 0.3)
+	
 	for i in range(n2 - n):
 		bve[n + i][0].visible = false
 

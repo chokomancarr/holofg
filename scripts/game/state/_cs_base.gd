@@ -22,17 +22,30 @@ func _clone(res):
 		[]
 	)
 
-static func _check_inputs(state, sliceback, callback):
+static func _check_inputs(state : PlayerState, sliceback, callback, d = false):
 	var his = state.input_history
+	var dirs = his.dirs.duplicate(true) as Array if d else null
 	var n = 0
 	var move : DT.MoveInfo
 	for st : IN.InputState in his.his:
 		n += st.nf
+		var m = st.nf
+		while d:
+			var lst = dirs.pop_front()
+			var f = lst.nf
+			if f <= m:
+				m -= f
+				if m == 0:
+					break
+			else:
+				lst.nf -= m
+				dirs.push_front(lst)
+				break
 		if st.processed or n > sliceback:
 			return null
 		if not st.new_bt:
 			continue
-		var res = callback.call(st, n)
+		var res = callback.call(st, n, dirs) if d else callback.call(st, n)
 		if res:
 			return res
 

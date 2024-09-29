@@ -8,7 +8,7 @@
 	"moves": {
 		"supers": [ ],
 		"specials": [
-			"214l"
+			"214l", "236l"
 		],
 		"normals": [ "4h" ],
 		"targets": [ "5l.5l", "5m.5m" ],
@@ -187,6 +187,7 @@
 			},
 			"boxes": [
 				{"frame_start": 0,"frame_end": 50,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 5,"frame_end": 45,"ty": "HURT","rect": [200, 0, 300, 600]},
 				{"frame_start": 13,"frame_end": 15,"ty": "HIT","att_info": 0,"rect": [150, 250, 450, 250]},
 				{"frame_start": 20,"frame_end": 22,"ty": "HIT","att_info": 0,"rect": [150, 250, 450, 250]},
 				{"frame_start": 27,"frame_end": 29,"ty": "HIT","att_info": 1,"rect": [150, 250, 450, 250]}
@@ -202,7 +203,6 @@
 				{
 					"n_freeze": 5,
 					"stun": [ 18, 26 ],
-					"push": 100,
 					"minspace": 700,
 					"dir": "BODY",
 					"dmg": 500
@@ -213,7 +213,8 @@
 			"alias": "5s",
 			"n_frames" : 40,
 			"boxes": [
-				{"frame_start": 0,"frame_end": 40,"ty": "HURT","rect": [-200, 0, 400, 1000]}
+				{"frame_start": 0,"frame_end": 40,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 0,"frame_end": 35,"ty": "HURT","rect": [200, 0, 200, 800]}
 			],
 			"summons": [
 				{ "f": 12, "name": "236l" }

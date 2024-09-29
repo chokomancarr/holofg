@@ -9,6 +9,7 @@ class CharaInfo:
 	var walk_sp_rev: int
 	var dash_off_fwd: OffsetInfo
 	var dash_nf_fwd: int
+	var moves_su_1: MoveInfo
 	var moves_sp: Array[MoveInfo]
 	var moves_nr: Dictionary
 	var moves_tr: Dictionary
@@ -121,6 +122,9 @@ static func load_chara(chara_id):
 	if dash:
 		res.dash_nf_fwd = dash.n_frames
 		res.dash_off_fwd = OffsetInfo.from_json(dash, res.dash_nf_fwd)
+	
+	if data.frames.has("214s"):
+		res.moves_su_1 = _parse_move("214s", data.frames, res)
 	
 	for sp in data.moves.specials:
 		res.moves_sp.push_back(_parse_move(sp, data.frames, res))

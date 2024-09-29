@@ -65,7 +65,8 @@ func process(pst : PlayerState):
 		var e = effects_all[i] as EffectInfo
 		if e.t_range.x <= pst.state.state_t and e.t_range.y > pst.state.state_t:
 			if not effects[i]:
-				var scn = e.scene.instantiate()
+				var scn = e.scene.instantiate() as EffCtrl
+				scn.pi = 2 if pst.is_p2 else 1
 				chara_rend.anchors[e.anchor].add_child(scn)
 				effects[i] = scn
 		elif effects[i]:

@@ -48,24 +48,25 @@ func _step_game_state(state : GameState, p1_inputs, p2_inputs):
 				state.countdown -= 1
 				if state.countdown == 0:
 					state.state = GameState.MATCH_STATE.OVER
-			p1.prestep()
-			p2.prestep()
 			
 			var flip_p2 = (p1.pos.x > p2.pos.x)
 			p1.pos_is_p2 = flip_p2
 			p2.pos_is_p2 = !flip_p2
 			
-			p1.step()
-			p2.step()
+			p1.prestep()
+			p2.prestep()
 			
 			var freeze = maxi(p1.state.req_freeze, p2.state.req_freeze)
 			if freeze > 0:
-				state.freeze(freeze)
-	
-			GameCollider.step(state)
-			
-			if state.p1.bar_health == 0 or state.p2.bar_health == 0:
-				state.state = GameState.MATCH_STATE.OVER
+				state.freeze(freeze, 1 if p1.state.req_freeze_exclusive else 2 if p2.state.req_freeze_exclusive else 3)
+			else:
+				p1.step()
+				p2.step()
+		
+				GameCollider.step(state)
+				
+				if state.p1.bar_health == 0 or state.p2.bar_health == 0:
+					state.state = GameState.MATCH_STATE.OVER
 			
 		GameState.MATCH_STATE.ATT_FREEZE:
 			state.freeze_t += 1

@@ -6,7 +6,6 @@
 		"dash": [20, 20]
 	},
 	"moves": {
-		"supers": [ ],
 		"specials": [
 			"214l", "236l"
 		],
@@ -288,6 +287,22 @@
 					{"frame_start": 4,"frame_end": 7,"ty": "GRAB","rect": [200, 0, 200, 1000]}
 				]
 			}
+		},
+		"214s": {
+			"n_frames": 60,
+			"boxes": [
+				{"frame_start": 9,"frame_end": 13,"ty": "HIT","att_info": 0,"rect": [100, 200, 500, 500]}
+			],
+			"offsets": {
+				"offsets_use_keyframes": true,
+				"offsets": [ [0, [ 30, 0 ]], [20, [ 15, 0 ]], [30, [ 0, 0 ]] ]
+			},
+			"att_info": [
+				{
+					"stun": [ 30, 70 ],
+					"dmg": 2000
+				}
+			]
 		}
 	}
 }

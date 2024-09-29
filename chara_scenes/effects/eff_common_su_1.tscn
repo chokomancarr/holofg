@@ -1,0 +1,49 @@
+[gd_scene load_steps=8 format=3 uid="uid://djmrisljafevs"]
+
+[ext_resource type="Script" path="res://scripts/rend/eff_ctrl.gd" id="1_f1dcx"]
+[ext_resource type="Texture2D" uid="uid://6g6qelckxvrr" path="res://effects/super_startup_flash_tmp_1.png" id="2_52dto"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cixe8"]
+atlas = ExtResource("2_52dto")
+region = Rect2(0, 0, 400, 400)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6vytk"]
+atlas = ExtResource("2_52dto")
+region = Rect2(400, 0, 400, 400)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vh1gq"]
+atlas = ExtResource("2_52dto")
+region = Rect2(0, 400, 400, 400)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d38cr"]
+atlas = ExtResource("2_52dto")
+region = Rect2(400, 400, 400, 400)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_kgaey"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cixe8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6vytk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vh1gq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d38cr")
+}],
+"loop": false,
+"name": &"default",
+"speed": 20.0
+}]
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_f1dcx")
+follow_rotation = false
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.102795, 0.0881098, 0)
+no_depth_test = true
+sprite_frames = SubResource("SpriteFrames_kgaey")

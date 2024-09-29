@@ -13,6 +13,7 @@ var attack_ty : ST.ATTACK_TY
 var push_wall : bool
 
 var req_freeze : int = 0
+var req_freeze_exclusive = false
 
 var bounds_off : Vector2i
 
@@ -64,7 +65,6 @@ func step(state : PlayerState):
 func _step():
 	state_t += 1
 	next_offset = Vector2i.ZERO
-	req_freeze = 0
 	attack_ty = ST.ATTACK_TY.NONE
 
 func get_anim_frame(df):

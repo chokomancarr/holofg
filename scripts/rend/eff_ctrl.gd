@@ -23,6 +23,9 @@ func _process(_dt):
 	if GameMaster.game_state.state == GameState.MATCH_STATE.ATT_FREEZE:
 		pause = !(GameMaster.game_state.freeze_canbuffer & pi)
 	
+	#if not follow_rotation:
+	#	global_rotation = Vector3.ZERO
+	
 	for p in parts:
 		p.process_mode = Node.PROCESS_MODE_DISABLED if pause else Node.PROCESS_MODE_INHERIT
 		p.speed_scale = Engine.physics_ticks_per_second / 60.0

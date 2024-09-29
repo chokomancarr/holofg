@@ -17,5 +17,12 @@
 			"anchor": "HIP",
 			"f_start": 5
 		}
+	],
+	"super_1_startup": [
+		{
+			"scene": "eff_common_su_1",
+			"anchor": "HIP",
+			"f_start": 1
+		}
 	]
 }

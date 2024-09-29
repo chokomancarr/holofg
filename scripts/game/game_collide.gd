@@ -116,7 +116,7 @@ static func step(game_state : GameState):
 		apply_hit.call(p1, p2, o.hit2, o.push2, o.pos2)
 	
 	if o.freeze > 0:
-		game_state.freeze(o.freeze, true)
+		game_state.freeze(o.freeze)
 
 static func _proc_push(game_state : GameState):
 	var p1 = game_state.p1

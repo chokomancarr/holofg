@@ -58,6 +58,7 @@ func add_inputs(inputs : IN.InputState) -> PlayerState:
 
 func prestep():
 	var n = 0
+	state.req_freeze = 0
 	var tar_state = state.check_next(self)
 	if state.use_pos_flip:
 		action_is_p2 = pos_is_p2

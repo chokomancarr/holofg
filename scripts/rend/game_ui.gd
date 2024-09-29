@@ -60,7 +60,7 @@ func _process(dt):
 					spbars_p1[i].value = gst.p1.bar_super - i * 1000
 					spbars_p2[i].value = gst.p2.bar_super - i * 1000
 			
-			GameState.MATCH_STATE.GAME, GameState.MATCH_STATE.CINEMATIC:
+			GameState.MATCH_STATE.GAME, GameState.MATCH_STATE.ATT_FREEZE, GameState.MATCH_STATE.CINEMATIC:
 				if gst.countdown < 5:
 					for n in ann_ovl:
 						n.visible = false

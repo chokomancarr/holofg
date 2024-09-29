@@ -35,7 +35,10 @@ func _init(fwd):
 	anim_name = "tp_startup"
 
 func check_next(state : PlayerState):
-	if state_t == NF_FWD:
+	if state_t == NF_TP - 1:
+		req_freeze = 5
+		state_t += 1
+	elif state_t == NF_FWD:
 		return CsIdle.new()
 	elif state_t >= NF_ATT:
 		return check_actions(state, NF_ATT if state_t == NF_ATT else 1, true)
@@ -44,8 +47,6 @@ func step(state : PlayerState):
 	_step()
 	if state_t == 1:
 		state.bar_super -= COST
-	elif state_t == NF_TP:
-		req_freeze = 5
 	elif state_t == NF_TP + 1:
 		use_pos_flip = true
 		var do = absi(state.dist_to_opp.x)

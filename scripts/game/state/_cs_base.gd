@@ -15,6 +15,8 @@ var push_wall : bool
 var req_freeze : int = 0
 var req_freeze_exclusive = false
 
+var req_cinematic : ST.CinematicInfo
+
 var bounds_off : Vector2i
 
 func _clone(res):

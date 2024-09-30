@@ -10,6 +10,7 @@ class CharaInfo:
 	var dash_off_fwd: OffsetInfo
 	var dash_nf_fwd: int
 	var moves_su_1: MoveInfo
+	var moves_su_2: MoveInfo
 	var moves_sp: Array[MoveInfo]
 	var moves_nr: Dictionary
 	var moves_tr: Dictionary
@@ -126,6 +127,9 @@ static func load_chara(chara_id):
 	if data.frames.has("214s"):
 		res.moves_su_1 = _parse_move("214s", data.frames, res)
 	
+	if data.frames.has("236s"):
+		res.moves_su_2 = _parse_move("236s", data.frames, res)
+	
 	for sp in data.moves.specials:
 		res.moves_sp.push_back(_parse_move(sp, data.frames, res))
 	
@@ -182,13 +186,6 @@ static func _parse_move(nm : String, frames : Dictionary, cinfo : CharaInfo):
 	if att_info_ty and src.has("att_info"):
 		for h in src.att_info:
 			move.att_info.push_back(_parse_att_info(h, att_info_ty, nm))
-	#if src.has("opp_info"):
-		#var h = src.opp_info
-		#var hres = ST.OppAnimInfo.new()
-		#hres.nf = h.n_frames
-		#hres.fix_dist = h.fix_dist if h.has("fix_dist") else 10000000
-		#hres.end_dpos = h.end_dpos
-		#move.opp_info = hres
 	if src.has("summons"):
 		for s in src.summons:
 			var sres = SummonFrameInfo.new()
@@ -226,6 +223,18 @@ static func _parse_att_info(h : Dictionary, ty : ST.BOX_TY, nm : String):
 			hres.end_dpos = h.end_dpos
 			if h.has("bounds_offset"):
 				hres.bounds_offset = OffsetInfo.from_json(h.bounds_offset, hres.opp_nf)
+		ST.BOX_TY.HIT_SUPER:
+			hres = ST.AttInfo_Super.new()
+			hres.n_cinematic_start = h.n_cinematic_start
+			hres.n_cinematic_hit : h.n_cinematic_hit
+			
+			hres.end_dpos = Vector2i(h.end_dpos[0], h.end_dpos[1])
+			hres.end_dpos_opp = Vector2i(h.end_dpos_opp[0], h.end_dpos_opp[1])
+			hres.n_end : h.n_end
+			hres.n_end_opp : h.n_end_opp
+			if h.has("end_opp_offset):
+				hres.end_opp_offset : OffsetInfo.from_json(h.end_opp_offset, hres.n_end_opp)
+			hres.end_opp_use_anim : h.end_opp_use_anim
 		_:
 			pass
 	return hres

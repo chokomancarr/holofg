@@ -1,8 +1,7 @@
-class_name CsSuper1 extends _CsAttBase
+class_name CsSuper2 extends _CsAttBase
 
-const _STATE_NAME = "super_1"
-
-var in_superfreeze = true
+const _STATE_NAME = "super_2"
+var move : DT.MoveInfo
 
 func clone():
 	return ObjUtil.clone(self, _clone(new()),
@@ -11,14 +10,19 @@ func clone():
 
 static func try_next(state : PlayerState, sliceback : int):
 	return _check_inputs(state, sliceback, func (st, n, dd):
-		var move = state._info.moves_su_1
+		var move = state._info.moves_su_2
 		if move:
 			if move.cmd.check(st, dd):
 				var res = new()
 				res.move = move
-				res.anim_name = "super_1_startup"
-				res.req_freeze = 60
-				res.req_freeze_exclusive = true
+				res.anim_name = "super_2"
+				
+				var cin = CinematicInfo.new()
+				cin.is_p2 = state.is_p2
+				cin.show_opp = false
+				cin.anim_name = "super_2_startup"
+				cin.n_frames = move.n_cinematic_start
+				res.req_cinematic = cin
 				
 				st.processed = true
 				return res

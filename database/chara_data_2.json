@@ -303,6 +303,32 @@
 					"dmg": 2000
 				}
 			]
+		},
+		"236s": {
+			"n_frames": 120,
+			"boxes": [
+				{"frame_start": 9,"frame_end": 13,"ty": "HIT_SUPER","att_info": 0,"rect": [100, 200, 500, 500]}
+			],
+			"offsets": {
+				"offsets_use_keyframes": true,
+				"offsets": [ [0, [ 20, 0 ]], [10, [ 10, 0 ]], [20, [ 0, 0 ]] ]
+			},
+			"att_info": [
+				{
+					"dmg": 4000,
+					"n_cinematic_start": 100,
+					"n_cinematic_hit": 300,
+					"end_dpos": [ 0, 0 ],
+					"end_dpos_opp": [ 2000, 0 ],
+					"n_end": 30,
+					"n_end_opp": 60,
+					"end_opp_offset": {
+						"offsets_use_keyframes": true,
+						"offsets": [ [0, [ 0, 0 ]] ]
+					},
+					"end_opp_use_anim": false
+				}
+			]
 		}
 	}
 }

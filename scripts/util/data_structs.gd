@@ -43,6 +43,13 @@ class BoxInfoFrame extends BoxInfo:
 		self.frame_start = st
 		self.frame_end = ed
 
+class CinematicInfo:
+	var move : AttInfo_Super
+	var is_p2 : bool
+	var show_opp : bool
+	var anim_name : String
+	var anim_name_opp : String
+
 class _AttInfoBase:
 	var ty := ATTACK_TY.HIGH
 	var dmg := 1000
@@ -66,6 +73,17 @@ class AttInfo_Grab extends _AttInfoBase:
 	var end_dpos : int
 	var can_tech : bool
 	var bounds_offset : DT.OffsetInfo
+
+class AttInfo_Super extends _AttInfoBase:
+	var n_cinematic_start : int
+	var n_cinematic_hit : int
+	
+	var end_dpos : Vector2i
+	var end_dpos_opp : Vector2i
+	var n_end : int
+	var n_end_opp : int
+	var end_opp_offset : DT.OffsetInfo
+	var end_opp_use_anim : bool
 
 class CancelInfo:
 	var everything: bool = false
@@ -126,12 +144,14 @@ static var STATE_CROUCH_BIT = 0x0002
 static var STATE_BLOCK_BIT = 0x0100
 
 enum BOX_TY {
-	HIT = 1, HURT = 2, GRAB = 3, PUSH = 4, CLASH = 5
+	HIT = 1, HURT = 2, GRAB = 3, PUSH = 4, CLASH = 5,
+	HIT_SUPER = 11
 }
 
 static func get_box_color(ty : BOX_TY):
 	match ty:
-		BOX_TY.HIT:	return Color.DARK_RED
+		BOX_TY.HIT: return Color.DARK_RED
+		BOX_TY.HIT_SUPER: return Color.DARK_RED
 		BOX_TY.HURT: return Color.FOREST_GREEN
 		BOX_TY.GRAB: return Color.DODGER_BLUE
 		BOX_TY.PUSH: return Color(Color.DARK_GRAY, 0.3)
@@ -142,7 +162,7 @@ enum ATTACK_PART {
 	STARTUP, ACTIVE, RECOVERY, NONE
 }
 enum ATTACK_TY {
-	NONE = 0, HIGH = 0x1000, MID = 0x1001, LOW = 0x1010, AIR = 0x1004, GRAB = 0x0100, AIR_GRAB = 0x0101, CMD_GRAB = 0x0102,
+	NONE = 0, HIGH = 0x1000, MID = 0x1001, LOW = 0x1010, AIR = 0x1004, HIGH_SUPER = 0x1100, GRAB = 0x0100, AIR_GRAB = 0x0101, CMD_GRAB = 0x0102,
 	_HIT_BIT = 0x1000, _GRAB_BIT = 0x0100
 }
 enum STUN_TY {

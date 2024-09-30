@@ -32,6 +32,15 @@ func _step_game_state(state : GameState, p1_inputs, p2_inputs):
 	if state.freeze_n > 0 and state.freeze_t == state.freeze_n:
 		state.freeze_n = 0
 		state.state = GameState.MATCH_STATE.GAME
+	elif state.state == GameState.MATCH_STATE.CINEMATIC:
+		if state.cinematic_t == state.cinematic_info.n_frames:
+			var mv = state.cinematic_info.att_info
+			if mv:
+				var ip2 = state.cinematic_info.is_p2
+				var p = state.p2 if ip2 else state.p1
+				state.p1.state = CsSuperEnd.new(p, mv, ip2)
+				state.p2.state = CsSuperEnd.new(p, mv, !ip2)
+			state.state = GameState.MATCH_STATE.GAME
 	
 	match state.state:
 		GameState.MATCH_STATE.INTRO:
@@ -53,12 +62,18 @@ func _step_game_state(state : GameState, p1_inputs, p2_inputs):
 			p1.pos_is_p2 = flip_p2
 			p2.pos_is_p2 = !flip_p2
 			
+			p1.can_super = true
 			p1.prestep()
+			p2.can_super = not p1.state.req_cinematic
 			p2.prestep()
 			
 			var freeze = maxi(p1.state.req_freeze, p2.state.req_freeze)
 			if freeze > 0:
 				state.freeze(freeze, 1 if p1.state.req_freeze_exclusive else 2 if p2.state.req_freeze_exclusive else 3)
+			elif (p1.state.req_cinematic):
+				state.cinematic(p1.state.req_cinematic)
+			elif (p2.state.req_cinematic):
+				state.cinematic(p2.state.req_cinematic)
 			else:
 				p1.step()
 				p2.step()
@@ -71,9 +86,7 @@ func _step_game_state(state : GameState, p1_inputs, p2_inputs):
 		GameState.MATCH_STATE.ATT_FREEZE:
 			state.freeze_t += 1
 		GameState.MATCH_STATE.CINEMATIC:
-			state.freeze_t -= 1
-			if state.freeze_t == 0:
-				state.state = GameState.MATCH_STATE.GAME
+			state.cinematic_t += 1
 		GameState.MATCH_STATE.OVER:
 			pass
 		GameState.MATCH_STATE.POST_GAME:

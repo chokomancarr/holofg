@@ -67,12 +67,20 @@ static func step(game_state : GameState):
 						(p.state as CsParry).parried_nf = (hit as ST.AttInfo_Hit).stun_block
 						_inc_gauge.call(p, opp, hit.gauge, GAUGE_PARRY)
 					_:
-						var sto = p.state as _CsStunBase
-						p.state = CsStun.new(p, hit as ST.AttInfo_Hit)
-						p.state.eff_pos = eff_pos
-						var dmg = (p.state as _CsStunBase).apply_scaling(sto, hit as ST.AttInfo_Hit)
-						p.bar_health = maxi(p.bar_health - dmg, 0)
-						_inc_gauge.call(p, opp, hit.gauge, GAUGE_HIT)
+						if hit.ty == ST.ATTACK_TY.HIGH_SUPER:
+							var cin = ST.CinematicInfo.new()
+							cin.is_p2 = opp.is_p2
+							cin.show_opp = true
+							cin.anim_name = "super_2_cinematic"
+							cin.n_frames = opp.move.n_cinematic_hit
+							game_state.cinematic(cin)
+						else:
+							var sto = p.state as _CsStunBase
+							p.state = CsStun.new(p, hit as ST.AttInfo_Hit)
+							p.state.eff_pos = eff_pos
+							var dmg = (p.state as _CsStunBase).apply_scaling(sto, hit as ST.AttInfo_Hit)
+							p.bar_health = maxi(p.bar_health - dmg, 0)
+							_inc_gauge.call(p, opp, hit.gauge, GAUGE_HIT)
 			
 			o.freeze = maxi(o.freeze, hit.n_freeze)
 		elif hit.ty == ST.ATTACK_TY.GRAB:
@@ -100,6 +108,10 @@ static func step(game_state : GameState):
 		if o.hit1.ty == ST.ATTACK_TY.CMD_GRAB:
 			o.hit2 = null #cmd grab always win
 		elif o.hit2.ty == ST.ATTACK_TY.CMD_GRAB:
+			o.hit1 = null
+		if o.hit1.ty == ST.ATTACK_TY.HIGH_SUPER:
+			o.hit2 = null #super wins next
+		elif o.hit2.ty == ST.ATTACK_TY.HIGH_SUPER:
 			o.hit1 = null
 		elif (o.hit1.ty & ST.ATTACK_TY._HIT_BIT) > 0 and (o.hit1.ty & ST.ATTACK_TY._HIT_BIT) > 0:
 			pass #trade
@@ -194,7 +206,7 @@ static func _check_hit(p1 : PlayerState, p2 : PlayerState):
 	
 	if p1state and not p1state.att_processed:
 		for b in p1.boxes:
-			if b.ty == ST.BOX_TY.HIT || b.ty == ST.BOX_TY.GRAB:
+			if b.ty == ST.BOX_TY.HIT || ST.BOX_TY.HIT_SUPER || b.ty == ST.BOX_TY.GRAB:
 				var b2 = Rect2i(b.get_rect(p1.action_is_p2))
 				b2.position += dp
 				for b3 in hurts:

@@ -1,5 +1,7 @@
 class_name CharaRend extends Node3D
 
+static var insts = [ null, null ]
+
 @export var is_p1 = true
 
 @onready var mdl = get_child(0) as Node3D
@@ -10,6 +12,7 @@ class_name CharaRend extends Node3D
 var summon_objs = {}
 
 var anchors : Array[Node3D]
+var cam_anchor : Node3D
 var effects : EffectRend
 
 var overlay_mat : ShaderMaterial
@@ -27,13 +30,20 @@ func set_overlay_col(c : Color, f : float):
 	overlay_mat.set_shader_parameter("fresnel", f)
 
 func _ready():
+	insts[ 1 if is_p1 else 2 ] = self
 	anchors.push_back(arm)
 	var skel = arm.get_node("Skeleton3D") as Skeleton3D
+	
+	var anc = BoneAttachment3D.new()
+	skel.add_child(anc)
+	anc.bone_name = "_anchor_camera"
+	anchors.push_back(anc)
+	
 	for s in ["_anchor_hip"]:#, "_anchor_hand_L", "_anchor_hand_R", "_anchor_leg_L", "_anchor_leg_R"]:
-		var anc = BoneAttachment3D.new()
+		anc = BoneAttachment3D.new()
 		skel.add_child(anc)
 		anc.bone_name = s
-		anchors.push_back(anc) 
+		anchors.push_back(anc)
 	
 	overlay_mat = ShaderMaterial.new()
 	overlay_mat.shader = _overlay_shader
@@ -43,16 +53,27 @@ func _init_effects(i):
 	effects = EffectRend.new(i, self)
 
 func _process(delta):
-	if not GameMaster.game_state:
+	var gst = GameMaster.game_state
+	if not gst:
 		return
 	
-	var pst = GameMaster.game_state.p1 if is_p1 else GameMaster.game_state.p2
+	var pst = gst.p1 if is_p1 else gst.p2
 	position.x = (pst.pos.x - 5000) * 0.002
 	position.y = pst.pos.y * 0.002
 	
 	arm.rotation.y = -PI / 2 if pst.action_is_p2 else PI / 2
 	
-	anim_ctrl.step(GameMaster.game_state, pst, delta)
+	var cinfo = gst.cinematic_info
+	if cinfo:
+		var is_opp = (gst.cinematic_info.is_p2 == is_p1)
+		if is_opp and not cinfo.show_opp:
+			visible = false
+		else:
+			visible = true
+			anim_ctrl.step_cinematic(cinfo.anim_name_opp if is_opp else cinfo.anim_name, gst.p2 if cinfo.is_p2 else gst.p1, gst.cinematic_t)
+	else:
+		visible = true
+		anim_ctrl.step(gst, pst, delta)
 	
 	for so in summon_objs.values():
 		so[1] = false

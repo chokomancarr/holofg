@@ -7,12 +7,14 @@ var p2: PlayerState
 var freeze_t: int = 0
 var freeze_n: int = 0
 var freeze_canbuffer := 0
+var cinematic_info: ST.CinematicInfo
+var cinematic_t: int = 0
 var countdown: int = -1#99 * 60 + 59
 var wall = Vector2i(0, 10000)
 
 func clone():
 	return ObjUtil.clone(self, new(),
-		[ "state", "freeze_t", "freeze_n", "freeze_canbuffer", "countdown", "wall" ],
+		[ "state", "freeze_t", "freeze_n", "freeze_canbuffer", "cinematic_p2", "countdown", "wall" ],
 		[ "p1", "p2" ]
 	)
 
@@ -44,6 +46,11 @@ func freeze(n, canbuf = 3):
 	freeze_canbuffer = canbuf
 	state = MATCH_STATE.ATT_FREEZE
 
+func cinematic(info):
+	cinematic_info = info
+	cinematic_t = 0
+	state = MATCH_STATE.CINEMATIC
+
 func _get_debug_text():
 	var pr = func (p : PlayerState, i):
 		return "(%s) %s (%s)  P%d" % [p.state.state_t, p.state._STATE_NAME, p.state.anim_name, i]
@@ -68,6 +75,7 @@ func dict4hash():
 		"ft": freeze_t,
 		"fn": freeze_n,
 		"fb": freeze_canbuffer,
+		"cp": cinematic_p2,
 		"cd": countdown,
 		"wl": wall
 	}

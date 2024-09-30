@@ -49,6 +49,7 @@ class CinematicInfo:
 	var show_opp : bool
 	var anim_name : String
 	var anim_name_opp : String
+	var n_frames : int
 
 class _AttInfoBase:
 	var ty := ATTACK_TY.HIGH
@@ -75,6 +76,7 @@ class AttInfo_Grab extends _AttInfoBase:
 	var bounds_offset : DT.OffsetInfo
 
 class AttInfo_Super extends _AttInfoBase:
+	var n_freeze = 0 #always 0
 	var n_cinematic_start : int
 	var n_cinematic_hit : int
 	

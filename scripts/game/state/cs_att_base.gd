@@ -19,7 +19,7 @@ func step(state : PlayerState):
 	att_part = ST.ATTACK_PART.STARTUP
 	for b in move.boxes:
 		var is_grab = b.ty == ST.BOX_TY.GRAB
-		var is_att = b.ty == ST.BOX_TY.HIT || is_grab
+		var is_att = b.ty == ST.BOX_TY.HIT || b.ty == ST.BOX_TY.HIT_SUPER || is_grab
 		if b.frame_start <= state_t && b.frame_end >= state_t:
 			state.boxes.push_back(b as ST.BoxInfo)
 			if is_att and not has_att:

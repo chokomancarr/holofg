@@ -75,7 +75,7 @@ func dict4hash():
 		"ft": freeze_t,
 		"fn": freeze_n,
 		"fb": freeze_canbuffer,
-		"cp": cinematic_p2,
+		"cp": cinematic_info,
 		"cd": countdown,
 		"wl": wall
 	}

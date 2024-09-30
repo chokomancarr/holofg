@@ -72,8 +72,11 @@ static func step(game_state : GameState):
 							cin.is_p2 = opp.is_p2
 							cin.show_opp = true
 							cin.anim_name = "super_2_cinematic"
-							cin.n_frames = opp.move.n_cinematic_hit
+							cin.anim_name_opp = "opp/opp_super_2_cinematic"
+							cin.n_frames = hit.n_cinematic_hit
+							cin.move = hit
 							game_state.cinematic(cin)
+							p.pos = opp.pos + Vector2i(-500 if opp.action_is_p2 else 500, 0)
 						else:
 							var sto = p.state as _CsStunBase
 							p.state = CsStun.new(p, hit as ST.AttInfo_Hit)
@@ -141,6 +144,9 @@ static func _proc_push(game_state : GameState):
 	if p2.pos.y < 0:
 		p2.pos.y = 0
 	
+	var p2b1 = p1.bounded_pos - p1.pos
+	var p2b2 = p2.bounded_pos - p2.pos
+	
 	var dp = (p2.bounded_pos - p1.bounded_pos).abs()
 	var dx = CHARA_DIST - dp.x
 	if dp.y != 0:
@@ -152,9 +158,11 @@ static func _proc_push(game_state : GameState):
 	var push = p1.state.push_wall or p2.state.push_wall
 	if dx > 0:
 		push = true
-		var d = dx * (0.5 if p2.pos > p1.pos else -0.5)
+		var d = dx / (2 if p2.pos > p1.pos else -2)
 		p1.pos.x -= d
+		p1.bounded_pos.x -= d
 		p2.pos.x += d
+		p2.bounded_pos.x += d
 		dp.x = CHARA_DIST
 	
 	var dpw = ww.x - p1.bounded_pos.x
@@ -183,6 +191,9 @@ static func _proc_push(game_state : GameState):
 		if p2.pos.y > 0:
 			p2.pos.x -= 1
 	
+	p1.bounded_pos = p1.pos + p2b1
+	p2.bounded_pos = p2.pos + p2b2
+	
 	var cx = clampi((p1.bounded_pos.x + p2.bounded_pos.x) / 2, WALL_W, 10000 - WALL_W)
 	game_state.wall = Vector2i(cx - WALL_W, cx + WALL_W)
 	
@@ -206,7 +217,7 @@ static func _check_hit(p1 : PlayerState, p2 : PlayerState):
 	
 	if p1state and not p1state.att_processed:
 		for b in p1.boxes:
-			if b.ty == ST.BOX_TY.HIT || ST.BOX_TY.HIT_SUPER || b.ty == ST.BOX_TY.GRAB:
+			if b.ty == ST.BOX_TY.HIT || b.ty == ST.BOX_TY.HIT_SUPER || b.ty == ST.BOX_TY.GRAB:
 				var b2 = Rect2i(b.get_rect(p1.action_is_p2))
 				b2.position += dp
 				for b3 in hurts:

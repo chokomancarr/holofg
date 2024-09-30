@@ -2,8 +2,13 @@ class_name _CsNeutralBase extends _CsBase
 
 func check_actions(state : PlayerState, sliceback, att_only = false):
 	var next = null
-	next = CsSuper1.try_next(state, sliceback)
-	if next: return next
+	
+	if state.can_super:
+		next = CsSuper2.try_next(state, sliceback)
+		if next: return next
+		
+		next = CsSuper1.try_next(state, sliceback)
+		if next: return next
 	
 	next = CsSpecial.try_next(state, sliceback, ST.CancelInfo.from_all())
 	if next: return next

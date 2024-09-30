@@ -23,12 +23,16 @@ func _physics_process(delta):
 	
 	_update_input_history_ui(game_state)
 	
-	if game_state.freeze_n == 0 || game_state.freeze_t == 0:
+	if game_state.state == GameState.MATCH_STATE.GAME:
 		frame_meter.step(game_state.p1, game_state.p2)
 
-	if show_hitbox:
+	if show_hitbox and (game_state.state != GameState.MATCH_STATE.CINEMATIC):
 		_draw_debug_chara(game_state.p1, 0)
 		_draw_debug_chara(game_state.p2, 1)
+	else:
+		for bp in _boxview_elems:
+			for b in bp:
+				b[0].visible = false
 
 @onready var _his_gc = history_ui.get_node("gc")
 

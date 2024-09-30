@@ -46,7 +46,10 @@ bg_color = Color(0.960784, 0.627451, 0, 1)
 script = ExtResource("1_6nb7d")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 3.647)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 7.737)
+fov = 40.0
+near = 0.1
+far = 200.0
 
 [node name="Node" type="Node" parent="Camera3D"]
 script = ExtResource("2_ldlmx")

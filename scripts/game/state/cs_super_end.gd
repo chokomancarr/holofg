@@ -11,16 +11,17 @@ func clone():
 		[]
 	)
 
-func _init(p : PlayerState = null, info: ST.AttInfo_Super, is_opp):
+func _init(p : PlayerState = null, info: ST.AttInfo_Super = null, is_opp = false):
 	if p:
 		self.info = info
 		self.is_opp = is_opp
 		self.n_frames = info.n_end_opp if is_opp else info.n_end
+		use_pos_flip = true
 		anim_name = ("opp/opp_super_2_end" if info.end_opp_use_anim else "knocked") if is_opp else "super_2_end"
 
 func check_next(state : PlayerState):
 	if state_t == n_frames:
-		return CsKnockRecover.new() if is_opp lse CsIdle.new()
+		return CsKnockRecover.new() if is_opp else CsIdle.new()
 
 func step(state : PlayerState):
 	_step()

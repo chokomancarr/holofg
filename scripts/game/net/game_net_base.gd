@@ -34,12 +34,16 @@ func _step_game_state(state : GameState, p1_inputs, p2_inputs):
 		state.state = GameState.MATCH_STATE.GAME
 	elif state.state == GameState.MATCH_STATE.CINEMATIC:
 		if state.cinematic_t == state.cinematic_info.n_frames:
-			var mv = state.cinematic_info.att_info
+			var mv = state.cinematic_info.move
+			var ip2 = state.cinematic_info.is_p2
+			var p = state.p2 if ip2 else state.p1
+			var op = state.p1 if ip2 else state.p2
 			if mv:
-				var ip2 = state.cinematic_info.is_p2
-				var p = state.p2 if ip2 else state.p1
 				state.p1.state = CsSuperEnd.new(p, mv, ip2)
 				state.p2.state = CsSuperEnd.new(p, mv, !ip2)
+				p.pos += state.cinematic_info.move.end_dpos
+				op.pos = p.pos + state.cinematic_info.move.end_dpos_opp
+			state.cinematic_info = null
 			state.state = GameState.MATCH_STATE.GAME
 	
 	match state.state:

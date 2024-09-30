@@ -10,35 +10,27 @@ func clone():
 	)
 
 static func try_next(state : PlayerState, sliceback : int):
-	return _check_inputs(state, sliceback, func (st, n, dd):
-		var move = state._info.moves_su_1
-		if move:
-			if move.cmd.check(st, dd):
-				var res = new()
-				res.move = move
-				res.anim_name = "super_1_startup"
-				res.req_freeze = 60
-				res.req_freeze_exclusive = true
-				
-				st.processed = true
-				return res
-	, true)
+	if state.bar_super > 1000:
+		return _check_inputs(state, sliceback, func (st, n, dd):
+			var move = state._info.moves_su_1
+			if move:
+				if move.cmd.check(st, dd):
+					var res = new()
+					res.move = move
+					res.anim_name = "super_1_startup"
+					res.req_freeze = 60
+					res.req_freeze_exclusive = true
+					state.bar_super -= 1000
+					
+					st.processed = true
+					return res
+		, true)
+	else:
+		return null
 
 func check_next(state : PlayerState):
-	var next = null
 	if state_t == move.n_frames:
 		return CsIdle.new()
-	elif att_processed:
-		var info = query_hit()
-		if info.cancels:
-			next = CsSpecial.try_next(state, 10, ST.CancelInfo.from_all())
-			if next: return next
-			
-			next = CsTargetCombo.try_next(state, 10, info.cancels)
-			if next: return next
-			
-			next = CsNormal.try_next(state, 10, info.cancels)
-			if next: return next
 
 func step(pst: PlayerState):
 	super.step(pst)

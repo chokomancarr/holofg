@@ -30,17 +30,14 @@ func set_overlay_col(c : Color, f : float):
 	overlay_mat.set_shader_parameter("fresnel", f)
 
 func _ready():
-	insts[ 1 if is_p1 else 2 ] = self
+	insts[ 1 - int(is_p1) ] = self
 	anchors.push_back(arm)
 	var skel = arm.get_node("Skeleton3D") as Skeleton3D
 	
-	var anc = BoneAttachment3D.new()
-	skel.add_child(anc)
-	anc.bone_name = "_anchor_camera"
-	anchors.push_back(anc)
+	cam_anchor = skel.get_node("Camera") as BoneAttachment3D
 	
 	for s in ["_anchor_hip"]:#, "_anchor_hand_L", "_anchor_hand_R", "_anchor_leg_L", "_anchor_leg_R"]:
-		anc = BoneAttachment3D.new()
+		var anc = BoneAttachment3D.new()
 		skel.add_child(anc)
 		anc.bone_name = s
 		anchors.push_back(anc)

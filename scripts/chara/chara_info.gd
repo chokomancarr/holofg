@@ -225,16 +225,17 @@ static func _parse_att_info(h : Dictionary, ty : ST.BOX_TY, nm : String):
 				hres.bounds_offset = OffsetInfo.from_json(h.bounds_offset, hres.opp_nf)
 		ST.BOX_TY.HIT_SUPER:
 			hres = ST.AttInfo_Super.new()
+			hres.ty = ST.ATTACK_TY.HIGH_SUPER
 			hres.n_cinematic_start = h.n_cinematic_start
-			hres.n_cinematic_hit : h.n_cinematic_hit
+			hres.n_cinematic_hit = h.n_cinematic_hit
 			
 			hres.end_dpos = Vector2i(h.end_dpos[0], h.end_dpos[1])
 			hres.end_dpos_opp = Vector2i(h.end_dpos_opp[0], h.end_dpos_opp[1])
-			hres.n_end : h.n_end
-			hres.n_end_opp : h.n_end_opp
-			if h.has("end_opp_offset):
-				hres.end_opp_offset : OffsetInfo.from_json(h.end_opp_offset, hres.n_end_opp)
-			hres.end_opp_use_anim : h.end_opp_use_anim
+			hres.n_end = h.n_end
+			hres.n_end_opp = h.n_end_opp
+			if h.has("end_opp_offset"):
+				hres.end_opp_offset = OffsetInfo.from_json(h.end_opp_offset, hres.n_end_opp)
+			hres.end_opp_use_anim = h.end_opp_use_anim
 		_:
 			pass
 	return hres

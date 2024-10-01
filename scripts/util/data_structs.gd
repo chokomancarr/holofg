@@ -70,7 +70,6 @@ class AttInfo_Hit extends _AttInfoBase:
 
 class AttInfo_Grab extends _AttInfoBase:
 	var opp_nf : int
-	var fix_dist := 1000000
 	var end_dpos : int
 	var can_tech : bool
 	var bounds_offset : DT.OffsetInfo
@@ -90,6 +89,7 @@ class AttInfo_Super extends _AttInfoBase:
 class CancelInfo:
 	var everything: bool = false
 	var normal_lmh: int = 3
+	var normal_except: String
 	var all_specials: bool = false
 	var super_1: bool = false
 	var super_2: bool = false
@@ -128,7 +128,7 @@ class CancelInfo:
 	func can_sp(s : String):
 		return everything || all_specials || specials.has(s)
 	func can_nr(s : String):
-		return everything || normals.has(s) || _normal_strengths[normal_lmh].contains(s[-1])
+		return everything || normals.has(s) || (_normal_strengths[normal_lmh].contains(s[-1]) and (s != normal_except))
 	func can_anr(s : String):
 		return everything || _normal_strengths[normal_lmh].contains(s[-1])
 

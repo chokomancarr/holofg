@@ -23,7 +23,6 @@
 			"offsets": [ [ 20, 0 ] ]
 		},
 		"5l": {
-			"rapid": true,
 			"n_frames": 14,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 1000]},
@@ -56,7 +55,6 @@
 			"att_info": [{
 				"stun": [ 8, 12 ],
 				"cancel": {
-					"all_specials": true,
 					"targets": [ "5l.5l" ]
 				},
 				"push": 150,
@@ -263,6 +261,26 @@
 				}
 			]
 		},
+		"4g": {
+			"n_frames": 70,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 7,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 4,"frame_end": 7,"ty": "GRAB","att_info": 0,"rect": [200, 0, 200, 1000]}
+			],
+			"att_info": [{
+				"n_frames": 7,
+				"end_dpos": -1500,
+				"dmg": 1000
+			}],
+			"whiff": {
+				"anim_name": "5g.whiff",
+				"n_frames": 30,
+				"boxes": [
+					{"frame_start": 0,"frame_end": 30,"ty": "HURT","rect": [-200, 0, 500, 1000]},
+					{"frame_start": 4,"frame_end": 7,"ty": "GRAB","rect": [200, 0, 200, 1000]}
+				]
+			}
+		},
 		"5g": {
 			"n_frames": 70,
 			"boxes": [
@@ -271,7 +289,6 @@
 			],
 			"att_info": [{
 				"n_frames": 70,
-				"fix_dist": 500,
 				"end_dpos": 650,
 				"bounds_offset": {
 					"offsets_use_keyframes": true,

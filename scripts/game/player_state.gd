@@ -18,6 +18,7 @@ var dist_to_opp: Vector2i
 var is_p2: bool
 var pos_is_p2: bool
 var action_is_p2: bool
+var flip_next: bool
 
 var can_super: bool #if the other player used super, dont super at the same frame
 
@@ -30,7 +31,8 @@ var state: _CsBase
 
 func clone() -> PlayerState:
 	return ObjUtil.clone(self, new(),
-		[ "_info", "bar_health", "bar_super", "pos", "bounded_pos", "dist_to_opp", "is_p2", "pos_is_p2", "action_is_p2", "summon_uid" ],
+		[ "_info", "bar_health", "bar_super", "pos", "bounded_pos", "dist_to_opp",
+			"is_p2", "pos_is_p2", "action_is_p2", "summon_uid" ],
 		[ "input_history", "state" ],
 		func (a, b):
 			b.summons.assign(a.summons.map(func (s): return s.clone()))
@@ -60,17 +62,15 @@ func prestep():
 	var n = 0
 	state.req_freeze = 0
 	state.req_cinematic = null
+	flip_next = state.use_pos_flip
 	var tar_state = state.check_next(self)
-	if state.use_pos_flip:
-		action_is_p2 = pos_is_p2
 	while tar_state:
 		n += 1
 		assert(n < 7, "transition limit per frame reached! there might be infinite loops?")
 		state.deinit(self)
 		state = tar_state
 		state.init(self)
-		if state.use_pos_flip:
-			action_is_p2 = pos_is_p2
+		flip_next = flip_next or state.use_pos_flip
 		tar_state = state.check_next(self)
 	
 	summons = summons.filter(func (s : SummonState): return not s.last_tick)

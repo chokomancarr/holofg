@@ -9,7 +9,7 @@ func clone():
 
 static func try_next(state : PlayerState, sliceback : int, allow : ST.CancelInfo):
 	return _check_inputs(state, sliceback, func (st, n):
-		for nrm in st.names(true):
+		for nrm in st.names(true, false):
 			var move = state._info.moves_nr.get(nrm)
 			if move:
 				if allow.can_nr(nrm):

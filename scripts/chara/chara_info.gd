@@ -213,8 +213,9 @@ static func _parse_att_info(h : Dictionary, ty : ST.BOX_TY, nm : String, use_lmh
 			if h.has("knock_ty"): hres.knock_ty = ST.KNOCK_TY.get(h.knock_ty)
 			if h.has("cancel"): hres.cancels = ST.CancelInfo.from_json(h.cancel)
 			else: hres.cancels = ST.CancelInfo.new()
-			hres.cancels.normal_lmh = "lmh".find(nm[-1]) + 1
-			hres.cancels.normal_except = nm
+			if use_lmh_cancel:
+				hres.cancels.normal_lmh = "lmh".find(nm[-1])
+				hres.cancels.normal_except = nm
 			if h.has("push"): hres.push_hit = h.push
 			if h.has("minspace"): hres.min_space = h.minspace
 			if h.has("dir"): hres.dir = ST.STUN_DIR.get(h.dir)
@@ -230,6 +231,7 @@ static func _parse_att_info(h : Dictionary, ty : ST.BOX_TY, nm : String, use_lmh
 		ST.BOX_TY.HIT_SUPER:
 			hres = ST.AttInfo_Super.new()
 			hres.ty = ST.ATTACK_TY.HIGH_SUPER
+			hres.stun_block = h.stun_block
 			hres.n_cinematic_start = h.n_cinematic_start
 			hres.n_cinematic_hit = h.n_cinematic_hit
 			

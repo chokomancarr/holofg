@@ -17,13 +17,13 @@ func _begin():
 	GameMaster.new_match(2, 2, _GameNetBase.TY.TRAINING)
 
 func _physics_process(delta):
-	var game_state = GameMaster.game_state
+	var game_state = GameMaster.game_state as GameState
 	if not game_state:
 		return
 	
 	_update_input_history_ui(game_state)
 	
-	if game_state.state == GameState.MATCH_STATE.GAME:
+	if game_state.state == GameState.MATCH_STATE.GAME or game_state.freeze_t == 0:
 		frame_meter.step(game_state.p1, game_state.p2)
 
 	if show_hitbox and (game_state.state != GameState.MATCH_STATE.CINEMATIC):

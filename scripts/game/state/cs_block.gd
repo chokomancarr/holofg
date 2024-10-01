@@ -11,7 +11,7 @@ func clone():
 		[]
 	)
 
-func _init(p : PlayerState = null, info : ST.AttInfo_Hit = null, no_offset = false):
+func _init(p : PlayerState = null, info = null, no_offset = false):
 	if p:
 		state_t = 1
 		anim_name = "block_%s" % [

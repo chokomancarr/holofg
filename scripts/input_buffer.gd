@@ -106,7 +106,7 @@ class InputState:
 		
 		return res
 	
-	func names(n = false):
+	func names(n = false, u5 = true):
 		var btt = []
 		if p(n): btt.push_back("p")
 		if g(n): btt.push_back("g")
@@ -124,7 +124,10 @@ class InputState:
 					res.push_back(str(d) + bt)
 					d = d + 1 if (d == 1 or d == 7) else d - 1
 				res.push_back(str(d) + bt)
-			res.push_back("5" + bt)
+				if u5 or d > 3:
+					res.push_back("5" + bt)
+			else:
+				res.push_back("5" + bt)
 		
 		return res
 	
@@ -261,13 +264,21 @@ class InputCommand:
 				res.command = [
 					4, 1 | DIR_OPT_BIT, 2, 3 | DIR_OPT_BIT, 6
 				] as Array[int]
-			"66":
+			"22":
 				res.command = [
-					6, 5, 6
+					2, 5, 2
 				] as Array[int]
 			"44":
 				res.command = [
 					4, 5, 4
+				] as Array[int]
+			"66":
+				res.command = [
+					6, 5, 6
+				] as Array[int]
+			"88":
+				res.command = [
+					8, 5, 8
 				] as Array[int]
 			_:
 				res.command_str = s

@@ -18,7 +18,7 @@ func _init(p : PlayerState = null, info : ST.AttInfo_Hit = null, no_offset = fal
 			"st", ST.STUN_DIR.find_key(info.dir).to_lower()
 		]
 		n_stun = info.stun_hit
-		
+		use_pos_flip = true
 		push_wall = true
 	
 		if not no_offset and (info.push_hit != 0 || info.min_space > 0):
@@ -33,6 +33,7 @@ func check_next(state : PlayerState):
 
 func step(state : PlayerState):
 	_step()
+	use_pos_flip = false
 	state.boxes = [state._info.idle_box] as Array[ST.BoxInfo]
 	if offsets:
 		next_offset = offsets.eval(state_t - 1)

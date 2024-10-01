@@ -30,6 +30,12 @@ func set_overlay_col(c : Color, f : float):
 	overlay_mat.set_shader_parameter("fresnel", f)
 
 func _ready():
+	#tmp color
+	var coat = ($"2_towa/Armature/Skeleton3D/coat" as MeshInstance3D)
+	var mat = coat.get_surface_override_material(0).duplicate(true) as StandardMaterial3D
+	mat.albedo_color = Color(0.855, 0.412, 0.831) if is_p1 else Color(0.212, 0.675, 0.773)
+	coat.set_surface_override_material(0, mat)
+	
 	insts[ 1 - int(is_p1) ] = self
 	anchors.push_back(arm)
 	var skel = arm.get_node("Skeleton3D") as Skeleton3D

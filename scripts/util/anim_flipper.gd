@@ -95,7 +95,7 @@ static func to_opp(a : Animation):
 		else:
 			continue
 		
-		var pos_scl = Vector3(-1, 1, 1) if (psnm == "Bone.009") else Vector3(1, 1, 1)
+		#var pos_scl = Vector3(-1, 1, 1) if (psnm == "Bone.009") else Vector3(1, 1, 1)
 		
 		var r = lib.add_track(a.track_get_type(t))
 		lib.track_set_path(r, NodePath(path.get_concatenated_names() + ":" + psnm))
@@ -104,7 +104,8 @@ static func to_opp(a : Animation):
 			if ty == Animation.TYPE_POSITION_3D:
 				lib.track_insert_key(r,
 					a.track_get_key_time(t, i),
-					a.track_get_key_value(t, i) * pos_scl,
+					a.track_get_key_value(t, i),
+					#a.track_get_key_value(t, i) * pos_scl,
 					a.track_get_key_transition(t, i)
 				)
 			else:

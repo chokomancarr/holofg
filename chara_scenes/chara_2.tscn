@@ -1,8 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://br43pp38fa1l0"]
+[gd_scene load_steps=5 format=3 uid="uid://br43pp38fa1l0"]
 
 [ext_resource type="PackedScene" uid="uid://gnvcusqgfjh" path="res://models/chara/2/2_towa.blend" id="1_bnxlv"]
 [ext_resource type="Script" path="res://scripts/rend/anim_player.gd" id="2_bjhyg"]
 [ext_resource type="Script" path="res://scripts/rend/chara_rend.gd" id="3_sp0o1"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0m2kk"]
+albedo_color = Color(0.211765, 0.67451, 0.772549, 1)
 
 [node name="chara_2" type="Node3D"]
 script = ExtResource("3_sp0o1")
@@ -69,6 +72,9 @@ visible = false
 
 [node name="Plane_001" parent="2_towa/Armature/Skeleton3D" index="1"]
 visible = false
+
+[node name="coat" parent="2_towa/Armature/Skeleton3D" index="3"]
+surface_material_override/0 = SubResource("StandardMaterial3D_0m2kk")
 
 [node name="anim_player" type="Node" parent="2_towa/AnimationPlayer" index="0"]
 script = ExtResource("2_bjhyg")

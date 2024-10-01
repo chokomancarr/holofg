@@ -54,17 +54,18 @@ static func step(game_state : GameState):
 				match counter_ty:
 					ST.STUN_TY.BLOCK:
 						var block_ty = p.state.block_state
-						var canblock = (hit.ty & ~block_ty) == 0
+						var canblock = ((hit.ty & 0x11) & ~block_ty) == 0
 						if canblock:
-							p.state = CsBlock.new(p, hit as ST.AttInfo_Hit, !push)
+							p.state = CsBlock.new(p, hit, !push)
 							p.state.block_state = block_ty
 							_inc_gauge.call(p, opp, hit.gauge, GAUGE_BLOCK)
 						else:
+							#super can always be blocked
 							p.state = CsStun.new(p, hit as ST.AttInfo_Hit, !push)
 							p.state.eff_pos = eff_pos
 							_inc_gauge.call(p, opp, hit.gauge, GAUGE_HIT)
 					ST.STUN_TY.PARRY:
-						(p.state as CsParry).parried_nf = (hit as ST.AttInfo_Hit).stun_block
+						(p.state as CsParry).parried_nf = hit.stun_block
 						_inc_gauge.call(p, opp, hit.gauge, GAUGE_PARRY)
 					_:
 						if hit.ty == ST.ATTACK_TY.HIGH_SUPER:
@@ -101,11 +102,10 @@ static func step(game_state : GameState):
 					else:
 						p.state = CsGrabOpp.new(opp, hit as ST.AttInfo_Grab)
 						p.bar_health = maxi(p.bar_health - hit.dmg, 0)
-						var fd = (hit as ST.AttInfo_Grab).fix_dist
-						if fd < 100000:
-							if opp.action_is_p2: fd *= -1
-							p.pos = opp.pos + Vector2i(fd, 0)
-							p.state.push_wall = true
+						#var fd = (hit as ST.AttInfo_Grab).fix_dist
+						#if fd < 100000:
+						p.pos = opp.pos + Vector2i(-500 if opp.action_is_p2 else 500, 0)
+						p.state.push_wall = true
 
 	if o.hit1 and o.hit2:
 		if o.hit1.ty == ST.ATTACK_TY.CMD_GRAB:
@@ -156,7 +156,7 @@ static func _proc_push(game_state : GameState):
 		if dy > 0:
 			dx -= (dy * CHARA_DIST) / ht
 	var push = p1.state.push_wall or p2.state.push_wall
-	if dx > 0:
+	if dx > 0 and p1.state.push_opp and p2.state.push_opp:
 		push = true
 		var d = dx / (2 if p2.pos > p1.pos else -2)
 		p1.pos.x -= d

@@ -62,14 +62,18 @@ func _step_game_state(state : GameState, p1_inputs, p2_inputs):
 				if state.countdown == 0:
 					state.state = GameState.MATCH_STATE.OVER
 			
-			var flip_p2 = (p1.pos.x > p2.pos.x)
-			p1.pos_is_p2 = flip_p2
-			p2.pos_is_p2 = !flip_p2
-			
 			p1.can_super = true
 			p1.prestep()
 			p2.can_super = not p1.state.req_cinematic
 			p2.prestep()
+			
+			var flip_p2 = (p1.pos.x > p2.pos.x)
+			p1.pos_is_p2 = flip_p2
+			p2.pos_is_p2 = !flip_p2
+			if p1.flip_next:
+				p1.action_is_p2 = p1.pos_is_p2
+			if p2.flip_next:
+				p2.action_is_p2 = p2.pos_is_p2
 			
 			var freeze = maxi(p1.state.req_freeze, p2.state.req_freeze)
 			if freeze > 0:

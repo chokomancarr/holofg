@@ -10,7 +10,7 @@
 			"214l", "236l"
 		],
 		"normals": [ "4h" ],
-		"targets": [ "5l.5l", "5m.5m" ],
+		"targets": [ "5l.5l", "2l.2l", "5m.5m" ],
 		"jump_normals": [ ],
 		"grabs": [ ]
 	},
@@ -38,7 +38,6 @@
 					},
 					"push": 150,
 					"minspace": 400,
-					"dir": "HEAD",
 					"dmg": 300
 				}
 			]
@@ -48,8 +47,8 @@
 			"n_frames": 18,
 			"boxes": [
 				{"frame_start": -3,"frame_end": -2,"ty": "HIT","att_info": 0,"rect": [0, 0, 0, 0]},
-				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 2,"frame_end": 14,"ty": "HURT","rect": [200, 500, 450, 350]},
+				{"frame_start": 0,"frame_end": 18,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 0,"frame_end": 18,"ty": "HURT","rect": [200, 500, 450, 350]},
 				{"frame_start": 8,"frame_end": 10,"ty": "HIT","att_info": 0,"rect": [150, 550, 450, 250]}
 			],
 			"att_info": [{
@@ -117,7 +116,36 @@
 				{"frame_start": 2,"frame_end": 14,"ty": "HURT","rect": [200, 300, 450, 350]},
 				{"frame_start": 4,"frame_end": 6,"ty": "HIT","att_info": 0,"rect": [150, 300, 450, 250]}
 			],
-			"att_info": [{"stun": [ 12, 14 ], "dir": "BODY", "dmg": 300}]
+			"att_info": [{
+				"stun": [ 12, 14 ],
+				"cancel": {
+					"targets": [ "2l.2l" ]
+				},
+				"push": 150,
+				"minspace": 400,
+				"dir": "BODY",
+				"dmg": 300
+			}]
+		},
+		"2l.2l": {
+			"rapid": true,
+			"n_frames": 20,
+			"boxes": [
+				{"frame_start": -3,"frame_end": -2,"ty": "HIT","att_info": 0,"rect": [0, 0, 0, 0]},
+				{"frame_start": 0,"frame_end": 20,"ty": "HURT","rect": [-200, 0, 400, 800]},
+				{"frame_start": 0,"frame_end": 20,"ty": "HURT","rect": [200, 300, 450, 350]},
+				{"frame_start": 10,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [150, 300, 450, 250]}
+			],
+			"att_info": [{
+				"stun": [ 8, 12 ],
+				"cancel": {
+					"targets": [ "2l.2l" ]
+				},
+				"push": 150,
+				"minspace": 400,
+				"dir": "HEAD",
+				"dmg": 300
+			}]
 		},
 		"2m": {
 			"n_frames": 20,
@@ -227,6 +255,7 @@
 			"att_info": [
 				{
 					"stun": [ 11, 16 ],
+					"ty": "MID",
 					"dmg": 300
 				}
 			]
@@ -242,6 +271,7 @@
 			"att_info": [
 				{
 					"stun": [ 15, 19 ],
+					"ty": "MID",
 					"dmg": 500
 				}
 			]
@@ -257,6 +287,7 @@
 			"att_info": [
 				{
 					"stun": [ 18, 21 ],
+					"ty": "MID",
 					"dmg": 800
 				}
 			]
@@ -268,8 +299,12 @@
 				{"frame_start": 4,"frame_end": 7,"ty": "GRAB","att_info": 0,"rect": [200, 0, 200, 1000]}
 			],
 			"att_info": [{
-				"n_frames": 7,
-				"end_dpos": -1500,
+				"n_frames": 70,
+				"end_dpos": -1000,
+				"bounds_offset": {
+					"offsets_use_keyframes": true,
+					"offsets": [ [0, [ 0, 0 ]], [38, [ -200, 0 ]], [45, [ -100, 0 ]], [46, [ 0, 0 ]] ]
+				},
 				"dmg": 1000
 			}],
 			"whiff": {
@@ -289,7 +324,7 @@
 			],
 			"att_info": [{
 				"n_frames": 70,
-				"end_dpos": 650,
+				"end_dpos": 1150,
 				"bounds_offset": {
 					"offsets_use_keyframes": true,
 					"offsets": [ [0, [ 0, 0 ]], [40, [ 108, 0 ]], [47, [ 0, 0 ]] ]
@@ -334,6 +369,7 @@
 			"att_info": [
 				{
 					"dmg": 4000,
+					"stun_block": 40,
 					"n_cinematic_start": 100,
 					"n_cinematic_hit": 160,
 					"fix_dist": 500,

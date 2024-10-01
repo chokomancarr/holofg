@@ -11,6 +11,7 @@ var block_state : ST.BLOCK_TY
 var attack_ty : ST.ATTACK_TY
 
 var push_wall : bool
+var push_opp := true
 
 var req_freeze : int = 0
 var req_freeze_exclusive = false
@@ -21,7 +22,8 @@ var bounds_off : Vector2i
 
 func _clone(res):
 	return ObjUtil.clone(self, res,
-		[ "state_t", "next_offset", "anim_name", "use_pos_flip", "airborne", "block_state", "attack_ty", "push_wall", "req_freeze", "bounds_off" ],
+		[ "state_t", "next_offset", "anim_name", "use_pos_flip", "airborne", "block_state", "attack_ty",
+			"push_wall", "push_opp", "req_freeze", "bounds_off" ],
 		[]
 	)
 
@@ -91,6 +93,7 @@ func _dict4hash():
 		block_state,
 		attack_ty,
 		push_wall,
+		push_opp,
 		req_freeze,
 		bounds_off,
 		dict4hash()

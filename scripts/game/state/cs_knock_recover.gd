@@ -13,6 +13,7 @@ func clone():
 func _init():
 	self.n_recovery = 20
 	anim_name = "rise_5"
+	use_pos_flip = true
 
 func check_next(state : PlayerState):
 	if state_t == n_recovery:
@@ -20,6 +21,7 @@ func check_next(state : PlayerState):
 
 func step(state : PlayerState):
 	_step()
+	use_pos_flip = false
 	state.boxes = []
 	#state.boxes = [state._info.idle_box] as Array[ST.BoxInfo]
 

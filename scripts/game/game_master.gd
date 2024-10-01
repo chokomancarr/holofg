@@ -46,7 +46,7 @@ func new_match(p1 : int, p2 : int, ty : _GameNetBase.TY):
 	par.add_child(ps1)
 	ps1._init_effects(p1)
 	var ps2 = load("res://chara_scenes/chara_%d.tscn" % [ p2 ]).instantiate() as CharaRend
-	ps1.is_p1 = false
+	ps2.is_p1 = false
 	par.add_child(ps2)
 	ps2._init_effects(p2)
 	

@@ -11,14 +11,15 @@ const TP_BEHIND_FROM = 500
 const _STATE_NAME = "teleport"
 const COST = 500
 
-const TP_HEIGHT = 170 * 9  #sum (0 + 10 + 20 + ... + 170)
+static var TP_HEIGHT = 0
 static var _tp9_offset = (func ():
 	var _jumpcurve = []
 	var _v = 0
-	const _g = 10
-	for i in range(18):
+	const _g = 3
+	for i in range(NF_UP - NF_TP - 4):
 		_jumpcurve.push_back([0, -_v])
-		_v += _g
+		CsTeleport.TP_HEIGHT += _v
+		_v += _g if i > 5 else 1
 	_jumpcurve.append_array([ [0, 0], [0, 0], [0, 0] ])
 	return DT.OffsetInfo.from_vals(_jumpcurve, 21)
 ).call()
@@ -92,7 +93,8 @@ func step(state : PlayerState):
 			next_offset.y = TP_HEIGHT
 		anim_name = "tp_6" if fwd else "tp_9"
 	elif state_t > NF_TP + 1:
-		next_offset = _tp9_offset.eval(state_t - NF_TP - 2)
+		if not fwd:
+			next_offset = _tp9_offset.eval(state_t - NF_TP - 2)
 	state.boxes = [state._info.idle_box] as Array[ST.BoxInfo]
 
 func get_anim_frame(df):

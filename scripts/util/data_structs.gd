@@ -76,6 +76,9 @@ class AttInfo_Grab extends _AttInfoBase:
 
 class AttInfo_Super extends _AttInfoBase:
 	var n_freeze = 0 #always 0
+	var stun_block : int
+	var push_hit : int
+	var min_space : int
 	var n_cinematic_start : int
 	var n_cinematic_hit : int
 	

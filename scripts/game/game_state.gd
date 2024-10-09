@@ -31,8 +31,8 @@ func start_intro():
 	countdown = 1
 
 func start_game_inf():
-	state = MATCH_STATE.GAME
-	countdown = -1
+	state = MATCH_STATE.PREGAME
+	countdown = 1
 
 static func from_info(info_p1 : DT.CharaInfo, info_p2 : DT.CharaInfo):
 	return from_players(

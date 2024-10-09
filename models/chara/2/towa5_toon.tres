@@ -1,0 +1,31 @@
+[gd_resource type="ShaderMaterial" load_steps=8 format=3 uid="uid://uafarg0i5nwe"]
+
+[ext_resource type="Shader" uid="uid://fq70fpk5i8tu" path="res://toon.tres" id="1_bqirj"]
+[ext_resource type="Shader" uid="uid://2ewvdtasv6e8" path="res://toon_hl.tres" id="1_rnjkg"]
+[ext_resource type="Texture2D" uid="uid://cpdx13sbdfdyv" path="res://models/chara/2/textures/towa_diffuse.tga" id="2_yprw8"]
+[ext_resource type="Texture2D" uid="uid://82l55mv50umh" path="res://models/chara/2/textures/towa_cmask.tga" id="3_px0gl"]
+[ext_resource type="Texture2D" uid="uid://ctrjr04vvg4a" path="res://models/chara/2/textures/towa_metrough.tga" id="4_w2d8b"]
+[ext_resource type="Texture2D" uid="uid://b1l3g4qjjxuhw" path="res://models/chara/2/textures/towa_toonset.tga" id="6_ujqat"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lx3vq"]
+render_priority = 0
+shader = ExtResource("1_rnjkg")
+shader_parameter/thickness = 0.2
+shader_parameter/color = Color(0, 0, 0, 1)
+shader_parameter/thickness_map = ExtResource("6_ujqat")
+
+[resource]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_lx3vq")
+shader = ExtResource("1_bqirj")
+shader_parameter/palette1 = Color(0.694118, 0.411765, 1, 1)
+shader_parameter/palette2 = Color(0.878431, 0.878431, 0.878431, 1)
+shader_parameter/palette3 = Color(0.164706, 0.160784, 0.223529, 1)
+shader_parameter/palette4 = Color(0.984314, 0.756863, 0.886275, 1)
+shader_parameter/palette5 = Color(1, 0.568627, 0.984314, 1)
+shader_parameter/palette6 = Color(0.635294, 1, 0.482353, 1)
+shader_parameter/tint = Color(1, 1, 1, 1)
+shader_parameter/cmask = ExtResource("3_px0gl")
+shader_parameter/albedo = ExtResource("2_yprw8")
+shader_parameter/metrough = ExtResource("4_w2d8b")
+shader_parameter/toonset = ExtResource("6_ujqat")

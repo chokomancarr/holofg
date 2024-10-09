@@ -1,5 +1,7 @@
 class_name PlayerState
 
+const START_SEP = 800
+
 var _info: DT.CharaInfo
 
 var input_history : IN.InputHistory
@@ -44,7 +46,7 @@ static func create(info : DT.CharaInfo, is_p1 : bool) -> PlayerState:
 	res._info = info
 	res.bar_health = info.max_health
 	res.input_history = IN.InputHistory.new()
-	res.pos = Vector2i(4000 if is_p1 else 6000, 0)
+	res.pos = Vector2i(5000 + (-START_SEP if is_p1 else START_SEP), 0)
 	res.pos_is_p2 = !is_p1
 	res.action_is_p2 = !is_p1
 	res.state = CsIdle.new()

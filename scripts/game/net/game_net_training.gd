@@ -14,7 +14,10 @@ var block_cd := 0
 func _ready():
 	p1_inputs = InputMan.get_player_input(0)
 	p2_inputs = InputMan.DummyInput.new()
+	#GameMaster.game_state.start_game_inf()
 	GameMaster.game_state.start_intro()
+	GameMaster.game_state.p1.bar_super = 3000
+	GameMaster.game_state.p2.bar_super = 3000
 
 func init():
 	pass

@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://fmtrwbbihk2q"]
+
+[ext_resource type="Texture2D" uid="uid://bgw0se88wym8x" path="res://models/stage/0/stage_0_albd.tga" id="1_535mb"]
+[ext_resource type="Texture2D" uid="uid://b3cbba6x0v6nd" path="res://models/stage/0/stage_0_nrrh.tga" id="2_hj31t"]
+
+[resource]
+albedo_color = Color(0.646057, 0.591481, 0.536416, 1)
+albedo_texture = ExtResource("1_535mb")
+metallic = 1.0
+metallic_texture = ExtResource("2_hj31t")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_hj31t")
+roughness_texture_channel = 1

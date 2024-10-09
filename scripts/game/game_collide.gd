@@ -3,7 +3,7 @@ class_name GameCollider
 const CHARA_DIST = 300
 const CHARA_HALF_HEIGHT = 500
 const CHARA_HALF_HEIGHT_CR = 300
-const WALL_W = 2000
+const WALL_W = 1500
 
 const GAUGE_BLOCK = [5, 3]
 const GAUGE_HIT = [10, 7]

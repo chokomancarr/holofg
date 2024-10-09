@@ -46,8 +46,8 @@ func _process(dt):
 		match gst.state:
 			GameState.MATCH_STATE.INTRO:
 				$"top_cc".visible = false
+				$"fader".visible = true
 			GameState.MATCH_STATE.PREGAME:
-				$"top_cc".visible = true
 				ann_ovl[0].visible = gst.countdown >= 60
 				ann_ovl[1].visible = gst.countdown < 60
 				
@@ -61,11 +61,12 @@ func _process(dt):
 					spbars_p2[i].value = gst.p2.bar_super - i * 1000
 			
 			GameState.MATCH_STATE.GAME, GameState.MATCH_STATE.ATT_FREEZE, GameState.MATCH_STATE.CINEMATIC:
-				if gst.countdown < 5:
-					for n in ann_ovl:
-						n.visible = false
+				$"top_cc".visible = true
+				$"fader".visible = false
+				for n in ann_ovl:
+					n.visible = false
 				if gst.countdown > -1:
-					time.text = str(gst.countdown / 60).pad_zeros(2)
+					time.text = str((gst.countdown + 59) / 60).pad_zeros(2)
 				else:
 					time.text = "∞"
 				hpbar_p1.value = gst.p1.bar_health
@@ -76,8 +77,9 @@ func _process(dt):
 				for i in range(3):
 					spbars_p1[i].value = gst.p1.bar_super - i * 1000
 					spbars_p2[i].value = gst.p2.bar_super - i * 1000
-			GameState.MATCH_STATE.POST_GAME:
+			GameState.MATCH_STATE.OVER:
 				ann_ovl[2].visible = true
+				$"fader".visible = true
 	
 	var upd_hit_stat = func (p : _CsBase, i, j):
 		if p is _CsStunBase:

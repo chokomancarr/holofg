@@ -31,10 +31,22 @@ func set_overlay_col(c : Color, f : float):
 
 func _ready():
 	#tmp color
-	var coat = ($"2_towa/Armature/Skeleton3D/coat" as MeshInstance3D)
-	var mat = coat.get_surface_override_material(0).duplicate(true) as StandardMaterial3D
-	mat.albedo_color = Color(0.855, 0.412, 0.831) if is_p1 else Color(0.212, 0.675, 0.773)
-	coat.set_surface_override_material(0, mat)
+	var m = ($"towa_8/Armature/Skeleton3D/clothes_a" as MeshInstance3D)
+	var mat = m.material_override.duplicate(true) as ShaderMaterial
+	
+	mat.set_shader_parameter("palette2", Color("#e5e5e5") if is_p1 else Color.SKY_BLUE)
+	mat.set_shader_parameter("palette3", Color("#222") if is_p1 else Color.WHITE_SMOKE)
+	mat.set_shader_parameter("palette5", Color.HOT_PINK if is_p1 else Color.DARK_SLATE_BLUE)
+	mat.set_shader_parameter("palette6", Color.GREEN_YELLOW if is_p1 else Color.DARK_SALMON)
+	
+	m.material_override = mat
+	m = ($"towa_8/Armature/Skeleton3D/clothes_b" as MeshInstance3D)
+	m.material_override = mat
+	m = ($"towa_8/Armature/Skeleton3D/hat" as MeshInstance3D)
+	m.material_override = mat
+	m = ($"towa_8/Armature/Skeleton3D/hair" as MeshInstance3D)
+	m.material_override = mat
+	
 	
 	insts[ 1 - int(is_p1) ] = self
 	anchors.push_back(arm)
@@ -64,7 +76,7 @@ func _process(delta):
 	position.x = (pst.pos.x - 5000) * 0.002
 	position.y = pst.pos.y * 0.002
 	
-	arm.rotation.y = -PI / 2 if pst.action_is_p2 else PI / 2
+	#arm.rotation.y = -PI / 2 if pst.action_is_p2 else PI / 2
 	
 	var cinfo = gst.cinematic_info
 	if cinfo:

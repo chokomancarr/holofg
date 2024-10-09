@@ -5,7 +5,7 @@ extends Node
 @onready var frame_meter : FrameMeter = $"/root/main/frame_meter"
 
 var ui_cam_off = 0.15
-var ui_cam_scl = 2.0
+var ui_cam_scl = 2.5
 
 @export var show_hitbox = true
 
@@ -40,25 +40,43 @@ const _dir_unicode = [
 	"-", "↙", "↓", "↘", "←", "", "→", "↖", "↑", "↗"
 ]
 
+var _last_input = ["?", ""]
+
 func _update_input_history_ui(game_state : GameState):
-	for c in _his_gc.get_children():
-		c.queue_free()
+	#for c in _his_gc.get_children():
+	#	c.queue_free()
+	var i = game_state.p1.input_history.his[0]
+	#var s1 = str(mini(i.nf, 99)) + "  "
+	var s2 = _dir_unicode[i.dir()]
+	var s3 = ""
+	if i.l(): s3 += "L "
+	if i.m(): s3 += "M "
+	if i.h(): s3 += "H "
+	if i.s(): s3 += "S "
+	if i.g(): s3 += "✋ "
+	if i.p(): s3 += "▲ "
 	
-	for i in game_state.p1.input_history.his:
+	if _last_input[0] == s2 and _last_input[1] == s3:
+		_his_gc.get_child(0).text = str(mini(i.nf, 99)) + "  "
+	else:
+		_last_input[0] = s2
+		_last_input[1] = s3
+		
 		var d = Label.new()
 		d.text = str(mini(i.nf, 99)) + "  "
 		_his_gc.add_child(d)
+		_his_gc.move_child(d, 0)
 		d = Label.new()
-		d.text = _dir_unicode[i.dir()]
+		d.text = s2
 		_his_gc.add_child(d)
+		_his_gc.move_child(d, 1)
 		d = Label.new()
-		if i.l(): d.text += "L "
-		if i.m(): d.text += "M "
-		if i.h(): d.text += "H "
-		if i.s(): d.text += "S "
-		if i.g(): d.text += "✋ "
-		if i.p(): d.text += "▲ "
+		d.text = s3
 		_his_gc.add_child(d)
+		_his_gc.move_child(d, 2)
+		
+		while _his_gc.get_child_count() > 60:
+			_his_gc.get_child(60).free()
 
 var _boxview_elems = [
 	[], []

@@ -1,12 +1,14 @@
-[gd_scene load_steps=16 format=3 uid="uid://biy7ct076k6ly"]
+[gd_scene load_steps=20 format=3 uid="uid://biy7ct076k6ly"]
 
 [ext_resource type="Script" path="res://scripts/debug_chara.gd" id="1_6nb7d"]
 [ext_resource type="Script" path="res://scripts/rend/cam_follow.gd" id="2_ldlmx"]
+[ext_resource type="PackedScene" uid="uid://b667jjodtjlra" path="res://models/stage/0/stage_0.blend" id="3_kleex"]
 [ext_resource type="Script" path="res://scripts/frame_meter.gd" id="3_xmqwa"]
+[ext_resource type="Material" uid="uid://fmtrwbbihk2q" path="res://models/stage/0/stage_0_mat.tres" id="4_jfn41"]
 [ext_resource type="Script" path="res://scripts/rend/game_ui.gd" id="4_pqnyw"]
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_whvl6"]
-size = Vector2(30, 5)
+[ext_resource type="Texture2D" uid="uid://birld58esv7yy" path="res://ui/round 1.png" id="7_0stas"]
+[ext_resource type="Texture2D" uid="uid://bb67woornhhhg" path="res://ui/fight.png" id="8_mcw86"]
+[ext_resource type="Texture2D" uid="uid://cbeb1stjbmu5m" path="res://ui/ko.png" id="9_eu44h"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_e2wec"]
 size = Vector2(50, 0.1)
@@ -46,7 +48,7 @@ bg_color = Color(0.960784, 0.627451, 0, 1)
 script = ExtResource("1_6nb7d")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 7.737)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.59832, 6.23232)
 fov = 40.0
 near = 0.1
 far = 200.0
@@ -54,49 +56,63 @@ far = 200.0
 [node name="Node" type="Node" parent="Camera3D"]
 script = ExtResource("2_ldlmx")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("PlaneMesh_whvl6")
+[node name="stage_0" parent="." instance=ExtResource("3_kleex")]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
 
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D"]
+[node name="LOD_1_Group_0_Sub_1__lambert1" parent="stage_0" index="0"]
+material_override = ExtResource("4_jfn41")
+
+[node name="lines" type="Node" parent="."]
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="lines"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00775468, 0)
 mesh = SubResource("PlaneMesh_e2wec")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
 
-[node name="MeshInstance3D3" type="MeshInstance3D" parent="MeshInstance3D"]
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="lines"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00775468, 0)
 mesh = SubResource("PlaneMesh_ux4ky")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
 
-[node name="MeshInstance3D4" type="MeshInstance3D" parent="MeshInstance3D"]
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="lines"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.008, 0)
 mesh = SubResource("PlaneMesh_5nysy")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
 
-[node name="MeshInstance3D6" type="MeshInstance3D" parent="MeshInstance3D"]
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="lines"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.008, 0)
 mesh = SubResource("PlaneMesh_5nysy")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
 
-[node name="MeshInstance3D5" type="MeshInstance3D" parent="MeshInstance3D"]
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="lines"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.008, 0)
 mesh = SubResource("PlaneMesh_5nysy")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
 
-[node name="MeshInstance3D7" type="MeshInstance3D" parent="MeshInstance3D"]
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="lines"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.008, 0)
 mesh = SubResource("PlaneMesh_5nysy")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.291387, 0.956605, 0, -0.956605, 0.291387, 0, 4.97138, 1.51125)
+transform = Transform3D(1, 0, 0, 0, 0.627528, 0.778593, 0, -0.778593, 0.627528, 0, 2.50589, 4.62159)
+layers = 31745
+light_cull_mask = 4293950465
 shadow_enabled = true
 shadow_opacity = 0.5
+
+[node name="DirectionalLight3D2" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 6.95048, -3.03815e-07)
+light_size = 0.1
+light_cull_mask = 4293918721
+shadow_opacity = 0.5
+omni_range = 20.2216
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_o2aou")
@@ -171,6 +187,15 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("4_pqnyw")
+
+[node name="fader" type="ColorRect" parent="ui"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.352941)
 
 [node name="top_cc" type="CenterContainer" parent="ui"]
 visible = false
@@ -415,23 +440,28 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ready" type="Label" parent="ui/ann_cc"]
+[node name="ready" type="TextureRect" parent="ui/ann_cc"]
 visible = false
+custom_minimum_size = Vector2(512, 256)
 layout_mode = 2
-theme_override_font_sizes/font_size = 91
-text = "READY"
+texture = ExtResource("7_0stas")
+expand_mode = 1
 
-[node name="fight" type="Label" parent="ui/ann_cc"]
+[node name="fight" type="TextureRect" parent="ui/ann_cc"]
 visible = false
+custom_minimum_size = Vector2(512, 256)
 layout_mode = 2
-theme_override_font_sizes/font_size = 91
-text = "FIGHT!"
+texture = ExtResource("8_mcw86")
+expand_mode = 1
 
-[node name="ko" type="Label" parent="ui/ann_cc"]
+[node name="ko" type="TextureRect" parent="ui/ann_cc"]
 visible = false
+custom_minimum_size = Vector2(512, 256)
 layout_mode = 2
-theme_override_font_sizes/font_size = 91
-text = "KO"
+texture = ExtResource("9_eu44h")
+expand_mode = 1
 
 [node name="ppl_spawn" type="Node" parent="."]
 unique_name_in_owner = true
+
+[editable path="stage_0"]

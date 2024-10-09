@@ -28,6 +28,13 @@ static func reg_lib(chara_id, par : AnimationPlayer):
 	var ori = par.get_animation_library("")
 	var res = AnimLib.new()
 	
+	var path = "res://models/chara/%d/anims" % chara_id
+	var dir := DirAccess.open(path)
+	for fl in dir.get_files():
+		var clp = load(path + "/" + fl)
+		if clp is Animation:
+			ori.add_animation(fl.rstrip(".res"), clp)
+	
 	for anm in ori.get_animation_list():
 		var src := ori.get_animation(anm)
 		if anm.begins_with("opp_"):
@@ -90,22 +97,15 @@ static func to_opp(a : Animation):
 		var ty = a.track_get_type(t)
 		var path = a.track_get_path(t)
 		var psnm = path.get_concatenated_subnames()
-		if psnm.ends_with("_2"):
-			psnm = psnm.trim_suffix("_2")
-		else:
-			continue
-		
-		#var pos_scl = Vector3(-1, 1, 1) if (psnm == "Bone.009") else Vector3(1, 1, 1)
 		
 		var r = lib.add_track(a.track_get_type(t))
-		lib.track_set_path(r, NodePath(path.get_concatenated_names() + ":" + psnm))
+		lib.track_set_path(r, NodePath(path.get_concatenated_names().trim_prefix("opp_") + ":" + psnm))
 		lib.length = a.length
 		for i in range(a.track_get_key_count(t)):
 			if ty == Animation.TYPE_POSITION_3D:
 				lib.track_insert_key(r,
 					a.track_get_key_time(t, i),
 					a.track_get_key_value(t, i),
-					#a.track_get_key_value(t, i) * pos_scl,
 					a.track_get_key_transition(t, i)
 				)
 			else:

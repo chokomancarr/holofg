@@ -4,6 +4,8 @@ const V = "v"
 const NF = "nf"
 const NP = "np"
 
+const MAX_HIS = 30
+
 class InputHistory:
 	var his : Array[InputState]
 	var dirs : Array
@@ -33,14 +35,14 @@ class InputHistory:
 			st.new_bt = st.val_new > 0
 			his.push_front(st)
 			#bts.push_front({ V: b, NF: 1, "used": false, NP: (b & (~bts[0].v)) > 0, "_id": _id })
-			if his.size() > 30:
+			if his.size() > MAX_HIS:
 				his.pop_back()
 		
 		if d == dirs[0].v:
 			dirs[0].nf += 1
 		else:
 			dirs.push_front({ V: d, NF: 1 })
-			if dirs.size() > 30:
+			if dirs.size() > MAX_HIS:
 				dirs.pop_back()
 	
 	func last_bts():

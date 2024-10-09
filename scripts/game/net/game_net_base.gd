@@ -56,6 +56,7 @@ func _step_game_state(state : GameState, p1_inputs, p2_inputs):
 			state.countdown -= 1
 			if state.countdown == 0:
 				state.state = GameState.MATCH_STATE.GAME
+				state.countdown = 99 * 60
 		GameState.MATCH_STATE.GAME:
 			if state.countdown > 0:
 				state.countdown -= 1

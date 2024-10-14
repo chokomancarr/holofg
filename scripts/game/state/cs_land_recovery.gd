@@ -11,7 +11,7 @@ func clone():
 	)
 
 func _init(n):
-	self.n_recovery = n
+	self.n_recovery = n + 1
 	anim_name = "8_recovery"
 
 func check_next(state : PlayerState):

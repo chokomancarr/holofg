@@ -66,6 +66,11 @@ func _physics_process(delta) -> void:
 
 	# See https://godotengine.org/qa/7631/armature-differences-between-bones-custom_pose-Transform3D
 
+	if not skeleton:
+		skeleton = get_parent()
+		bone_id = skeleton.find_bone(bone_name)
+		bone_id_parent = skeleton.get_bone_parent(bone_id)
+
 	var bone_transf_obj: Transform3D = skeleton.get_bone_global_pose(bone_id) # Object space bone pose
 	var bone_transf_world: Transform3D = skeleton.global_transform * bone_transf_obj
 

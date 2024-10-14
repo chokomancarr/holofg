@@ -15,7 +15,7 @@ static var move_fwd : DT.MoveInfo = (func ():
 	var dash = DT.MoveInfo.new()
 	dash.name = "66"
 	dash.cmd = IN.InputCommand.from_string("66")
-	dash.cmd.t_dirs = 10
+	dash.cmd.t_dirs = 15
 	dash.n_frames = 20
 	dash.offsets = DT.OffsetInfo.from_keys([ [0, Vector2i(50, 0)], [10, Vector2i(30, 0)] ], 20)
 	return dash
@@ -25,20 +25,29 @@ static var move_rev : DT.MoveInfo = (func ():
 	var dash = DT.MoveInfo.new()
 	dash.name = "44"
 	dash.cmd = IN.InputCommand.from_string("44")
-	dash.cmd.t_dirs = 10
+	dash.cmd.t_dirs = 15
 	dash.n_frames = 20
 	dash.offsets = DT.OffsetInfo.from_keys([ [0, Vector2i(-40, 0)], [10, Vector2i(-20, 0)] ], 20)
 	return dash
 ).call()
 
-static func try_next(state : PlayerState):
-	if state.input_history.his[0].nf > 1:
-		return null
-	
-	if move_fwd.cmd.check(state.input_history.his[0], state.input_history.dirs):
-		return new(true)
-	elif move_rev.cmd.check(state.input_history.his[0], state.input_history.dirs):
-		return new(false)
+static var _bt = IN.InputState.new()
+static func try_next(state : PlayerState, sliceback = 1):
+	var dirs = state.input_history.dirs.duplicate(true) as Array
+	var n = 0
+	var nn = sliceback
+	while true:
+		if move_fwd.cmd.check(_bt, dirs):
+			return new(true)
+		elif move_rev.cmd.check(_bt, dirs):
+			return new(false)
+		
+		var lst = dirs.pop_front()
+		var f = lst.nf
+		if f <= nn:
+			nn -= f
+		else:
+			return null
 
 func _init(fwd, skip = false):
 	if not skip:

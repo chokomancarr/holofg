@@ -28,7 +28,7 @@ static func from_players(p1, p2):
 
 func start_intro():
 	state = MATCH_STATE.INTRO
-	countdown = 1
+	countdown = 200
 
 func start_game_inf():
 	state = MATCH_STATE.PREGAME
@@ -60,12 +60,12 @@ func _get_debug_text():
 func get_anim_timescale():
 	return (1.0 / (freeze_n - 1)) if freeze_n > 0 else 1.0
 
-func get_anim_framediff(pi):
+func get_anim_framediff(pi, df = 0.0):
 	if state == MATCH_STATE.ATT_FREEZE:
 		var excl = (freeze_canbuffer & pi) > 0
-		return (freeze_t * 1.0 / freeze_n) if excl else 1.0
+		return ((freeze_t + df) / freeze_n) if excl else 1.0
 	else:
-		return 0
+		return df
 
 func dict4hash():
 	return {

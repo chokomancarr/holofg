@@ -51,7 +51,11 @@ func _step_game_state(state : GameState, p1_inputs, p2_inputs):
 			state.countdown -= 1
 			if state.countdown == 0:
 				state.state = GameState.MATCH_STATE.PREGAME
-				state.countdown = 150
+				state.countdown = 200
+			#tmp
+			if Input.is_key_pressed(KEY_P):
+				state.state = GameState.MATCH_STATE.GAME
+				state.countdown = -1
 		GameState.MATCH_STATE.PREGAME:
 			state.countdown -= 1
 			if state.countdown == 0:

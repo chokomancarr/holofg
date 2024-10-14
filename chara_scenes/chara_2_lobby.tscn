@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3 uid="uid://c02xhjdb0ftod"]
+
+[ext_resource type="PackedScene" uid="uid://br43pp38fa1l0" path="res://chara_scenes/chara_2_base.tscn" id="1_1ndch"]
+[ext_resource type="Script" path="res://scripts/lobby/lobby_chara_rend.gd" id="2_mu8t1"]
+
+[node name="chara_2" instance=ExtResource("1_1ndch")]
+script = ExtResource("2_mu8t1")
+
+[node name="Camera" parent="towa_8/Armature/Skeleton3D" index="7"]
+transform = Transform3D(1, 5.52627e-06, -2.03863e-05, -1.11158e-05, 0.95839, -0.285461, 1.79605e-05, 0.285461, 0.95839, -2.00739e-12, 1.13627, -4.76837e-07)
+
+[node name="Jigglebone5" parent="towa_8/Armature/Skeleton3D" index="8"]
+transform = Transform3D(0.707107, 0.707106, 5.48605e-07, 0.707106, -0.707107, -1.87318e-07, 2.55469e-07, 5.20376e-07, -1, 0.082186, 0.129871, 0.11909)
+
+[node name="Jigglebone" parent="towa_8/Armature/Skeleton3D" index="9"]
+transform = Transform3D(0.92388, 0.382683, 1.60593e-06, 0.382683, -0.92388, 5.08771e-07, 1.67838e-06, 1.44519e-07, -1, 0.144996, 0.0670607, 0.11909)
+
+[node name="Jigglebone2" parent="towa_8/Armature/Skeleton3D" index="10"]
+transform = Transform3D(0.980785, 0.195091, 3.17484e-06, 0.195091, -0.980785, 3.74865e-07, 3.18697e-06, 2.51723e-07, -1, 0.178311, -0.013368, 0.11909)
+
+[node name="Jigglebone3" parent="towa_8/Armature/Skeleton3D" index="11"]
+transform = Transform3D(0.995185, 0.0980163, -2.43075e-06, 0.0980164, -0.995184, -9.43916e-08, -2.4283e-06, -1.44316e-07, -1, 0.195295, -0.0987507, 0.11909)
+
+[node name="Jigglebone4" parent="towa_8/Armature/Skeleton3D" index="12"]
+transform = Transform3D(0.998795, 0.0490672, 4.20163e-07, 0.0490672, -0.998795, 1.3657e-07, 4.26359e-07, -1.15789e-07, -1, 0.203887, -0.185994, 0.11909)
+
+[node name="Jigglebone6" parent="towa_8/Armature/Skeleton3D" index="13"]
+transform = Transform3D(1, 3.33612e-08, 4.12352e-07, 2.2568e-07, -0.879361, -0.476155, 3.46721e-07, 0.476155, -0.879361, -5.34276e-10, 0.431665, 0.139192)
+
+[editable path="towa_8"]

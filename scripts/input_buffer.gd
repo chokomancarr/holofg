@@ -155,7 +155,8 @@ enum BT {
 	s = 1 << 20,
 	g = 1 << 24,
 	p = 1 << 28,
-	ANY = 1
+	ANY = 1,
+	NONE = 0
 }
 
 const DIR_ANY_2 = 12
@@ -175,7 +176,7 @@ const _DIR_ALLOWED = {
 class InputCommand:
 	var command : Array[int]
 	var command_str : String
-	var bt : BT
+	var bt := BT.NONE
 	
 	var t_dir2bt = 20 #max frames between direction input and button
 	#var t_dir2dir = 6 #max frames between directions
@@ -188,8 +189,6 @@ class InputCommand:
 			return _DIR_ALLOWED[cmd].has(dir)
 
 	func check(st : IN.InputState, dirs : Array):
-		if st.bts() > 0:
-			pass
 		if bt != BT.ANY and st.bts() != bt: return false
 		var ff = 0
 		var ci = 0

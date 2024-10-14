@@ -23,7 +23,8 @@ func _physics_process(delta):
 	
 	_update_input_history_ui(game_state)
 	
-	if game_state.state == GameState.MATCH_STATE.GAME or game_state.freeze_t == 0:
+	if game_state.state == GameState.MATCH_STATE.GAME or \
+		(game_state.state == GameState.MATCH_STATE.ATT_FREEZE and game_state.freeze_t == 0):
 		frame_meter.step(game_state.p1, game_state.p2)
 
 	if show_hitbox and (game_state.state != GameState.MATCH_STATE.CINEMATIC):
@@ -54,7 +55,7 @@ func _update_input_history_ui(game_state : GameState):
 	if i.h(): s3 += "H "
 	if i.s(): s3 += "S "
 	if i.g(): s3 += "✋ "
-	if i.p(): s3 += "▲ "
+	if i.p(): s3 += "◎ "
 	
 	if _last_input[0] == s2 and _last_input[1] == s3:
 		_his_gc.get_child(0).text = str(mini(i.nf, 99)) + "  "

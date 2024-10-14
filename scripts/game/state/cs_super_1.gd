@@ -3,14 +3,15 @@ class_name CsSuper1 extends _CsAttBase
 const _STATE_NAME = "super_1"
 
 var in_superfreeze = true
+var att_connected = false
 
 func clone():
 	return ObjUtil.clone(self, _clone(new()),
-		[], []
+		[ in_superfreeze, att_connected ], []
 	)
 
 static func try_next(state : PlayerState, sliceback : int):
-	if state.bar_super > 1000:
+	if state.bar_super >= 1000:
 		return _check_inputs(state, sliceback, func (st, n, dd):
 			var move = state._info.moves_su_1
 			if move:
@@ -33,6 +34,9 @@ func check_next(state : PlayerState):
 		return CsIdle.new()
 
 func step(pst: PlayerState):
+	if att_part == ST.ATTACK_PART.RECOVERY and not att_connected and move.blocked:
+		move = move.blocked
+		anim_name += "_blocked"
 	super.step(pst)
 	if in_superfreeze:
 		in_superfreeze = false
@@ -40,7 +44,8 @@ func step(pst: PlayerState):
 
 func dict4hash():
 	return [ _STATE_NAME,
-		
+		in_superfreeze,
+		att_connected
 	]
 
 func get_anim_frame(df):

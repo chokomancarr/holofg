@@ -1,0 +1,30 @@
+[gd_resource type="SpriteFrames" load_steps=6 format=3 uid="uid://d2yqnykhh8yyj"]
+
+[ext_resource type="Texture2D" uid="uid://c028xmga5pfrm" path="res://effects/chara/2/chara_doodle_1.png" id="1_ecxyv"]
+[ext_resource type="Texture2D" uid="uid://7qbutst15hf3" path="res://effects/chara/2/chara_doodle_2.png" id="2_ahdaf"]
+[ext_resource type="Texture2D" uid="uid://burq3e52j0uvr" path="res://effects/chara/2/chara_doodle_3.png" id="3_cwbvj"]
+[ext_resource type="Texture2D" uid="uid://djyaymefkrh3i" path="res://effects/chara/2/chara_doodle_4.png" id="4_rvqhu"]
+[ext_resource type="Texture2D" uid="uid://boosol6lg0owa" path="res://effects/chara/2/chara_doodle_5.png" id="5_ip1fl"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_ecxyv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_ahdaf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_cwbvj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_rvqhu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_ip1fl")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}]

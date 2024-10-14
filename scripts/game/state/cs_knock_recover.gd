@@ -11,7 +11,7 @@ func clone():
 	)
 
 func _init():
-	self.n_recovery = 20
+	self.n_recovery = 30
 	anim_name = "rise_5"
 	use_pos_flip = true
 

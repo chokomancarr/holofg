@@ -8,7 +8,7 @@ func clone():
 	)
 
 static func try_next(state : PlayerState, sliceback : int):
-	if state.bar_super > 2000:
+	if state.bar_super >= 2000:
 		return _check_inputs(state, sliceback, func (st, n, dd):
 			var move = state._info.moves_su_2
 			if move:

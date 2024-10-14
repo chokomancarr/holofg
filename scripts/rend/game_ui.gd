@@ -14,7 +14,7 @@ extends Control
 	$"ann_cc/ready",
 	$"ann_cc/fight",
 	$"ann_cc/ko"
-] as Array[Control]
+] as Array[BigText]
 
 @onready var netinfo : Control = $"/root/main/ui/top_cc/vb/hb0"
 @onready var debug_info = %"game_ui_debug_info" as Label
@@ -46,10 +46,18 @@ func _process(dt):
 		match gst.state:
 			GameState.MATCH_STATE.INTRO:
 				$"top_cc".visible = false
-				$"fader".visible = true
 			GameState.MATCH_STATE.PREGAME:
-				ann_ovl[0].visible = gst.countdown >= 60
+				$"top_cc".visible = false
+				ann_ovl[0].visible = gst.countdown >= 60 and gst.countdown < 150
 				ann_ovl[1].visible = gst.countdown < 60
+				if gst.countdown >= 60:
+					ann_ovl[0].set_anim_t(cos(
+						clampf(inverse_lerp(180.0, 100.0, gst.countdown), 0, 1) * PI
+					))
+				else:
+					ann_ovl[1].set_anim_t(pow(
+						clampf(inverse_lerp(0.0, 60.0, gst.countdown), 0, 1)
+					, 3.0))
 				
 				hpbar_p1.value = 100
 				hpbar_p1.max_value = 100
@@ -62,7 +70,6 @@ func _process(dt):
 			
 			GameState.MATCH_STATE.GAME, GameState.MATCH_STATE.ATT_FREEZE, GameState.MATCH_STATE.CINEMATIC:
 				$"top_cc".visible = true
-				$"fader".visible = false
 				for n in ann_ovl:
 					n.visible = false
 				if gst.countdown > -1:
@@ -79,7 +86,7 @@ func _process(dt):
 					spbars_p2[i].value = gst.p2.bar_super - i * 1000
 			GameState.MATCH_STATE.OVER:
 				ann_ovl[2].visible = true
-				$"fader".visible = true
+				#$"fader".visible = true
 	
 	var upd_hit_stat = func (p : _CsBase, i, j):
 		if p is _CsStunBase:

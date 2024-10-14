@@ -4,7 +4,7 @@ extends Node
 @onready var current = get_node_or_null("/root/main")
 
 @onready var MAIN_MENU = load("res://scenes/main_menu.tscn")
-#var ONLINE_LOBBY = preload("res://scenes/main_menu.tscn")
+@onready var LOBBY = load("res://scenes/lobby.tscn")
 @onready var GAME = load("res://scenes/game.tscn")
 
 func load_scene(scn):

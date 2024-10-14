@@ -12,7 +12,7 @@ static func cmag2world(c: Vector2i, sz : Vector2):
 	)
 
 class BoxInfo:
-	var ty: BOX_TY
+	var ty := BOX_TY.HURT
 	var rect: Rect2i
 	var rect_flip: Rect2i
 	
@@ -51,11 +51,19 @@ class CinematicInfo:
 	var anim_name_opp : String
 	var n_frames : int
 
+class AttInfoOpp:
+	var opp_anim : String
+	var opp_nf : int
+	var end_dpos : int
+	var bounds_offset : DT.OffsetInfo
+
 class _AttInfoBase:
 	var ty := ATTACK_TY.HIGH
 	var dmg := 1000
 	var gauge := 100
 	var detached := false
+	
+	var opp_info : AttInfoOpp
 
 class AttInfo_Hit extends _AttInfoBase:
 	var n_freeze: int
@@ -69,10 +77,7 @@ class AttInfo_Hit extends _AttInfoBase:
 	var cancels := CancelInfo.new()
 
 class AttInfo_Grab extends _AttInfoBase:
-	var opp_nf : int
-	var end_dpos : int
 	var can_tech : bool
-	var bounds_offset : DT.OffsetInfo
 
 class AttInfo_Super extends _AttInfoBase:
 	var n_freeze = 0 #always 0

@@ -79,12 +79,30 @@ static func step(game_state : GameState):
 							game_state.cinematic(cin)
 							p.pos = opp.pos + Vector2i(-500 if opp.action_is_p2 else 500, 0)
 						else:
+							if opp.state is CsSuper1:
+								opp.state.att_connected = true
+							
 							var sto = p.state as _CsStunBase
-							p.state = CsStun.new(p, hit as ST.AttInfo_Hit)
-							p.state.eff_pos = eff_pos
-							var dmg = (p.state as _CsStunBase).apply_scaling(sto, hit as ST.AttInfo_Hit)
-							p.bar_health = maxi(p.bar_health - dmg, 0)
-							_inc_gauge.call(p, opp, hit.gauge, GAUGE_HIT)
+							var hh = hit as ST.AttInfo_Hit
+							
+							if hh.opp_info:
+								p.state = CsOppAnim.new(opp, hit.opp_info)
+								p.bar_health = maxi(p.bar_health - hit.dmg, 0)
+								#var fd = (hit as ST.AttInfo_Grab).fix_dist
+								#if fd < 100000:
+								p.pos = opp.pos + Vector2i(-500 if opp.action_is_p2 else 500, 0)
+								p.state.push_wall = true
+							else:
+								match hh.knock_ty:
+									ST.KNOCK_TY.KNOCKDOWN, ST.KNOCK_TY.HARD_KNOCKDOWN:
+										p.state = CsKnock.new(p, hh)
+									_:
+										p.state = CsStun.new(p, hh)
+								p.state.eff_pos = eff_pos
+							
+								var dmg = (p.state as _CsStunBase).apply_scaling(sto, hh)
+								p.bar_health = maxi(p.bar_health - dmg, 0)
+								_inc_gauge.call(p, opp, hit.gauge, GAUGE_HIT)
 			
 			o.freeze = maxi(o.freeze, hit.n_freeze)
 		elif hit.ty == ST.ATTACK_TY.GRAB:
@@ -100,7 +118,7 @@ static func step(game_state : GameState):
 					if p.state is CsStun:
 						opp.state.att_processed = false
 					else:
-						p.state = CsGrabOpp.new(opp, hit as ST.AttInfo_Grab)
+						p.state = CsOppAnim.new(opp, hit.opp_info)
 						p.bar_health = maxi(p.bar_health - hit.dmg, 0)
 						#var fd = (hit as ST.AttInfo_Grab).fix_dist
 						#if fd < 100000:

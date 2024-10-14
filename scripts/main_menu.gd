@@ -21,7 +21,7 @@ func _ready():
 	GameMaster.reset_net_master()
 	
 func _on_training_mode():
-	SceneMan.load_scene(SceneMan.GAME)
+	SceneMan.load_scene(SceneMan.LOBBY)
 
 func _on_connect_mm():
 	logg("connecting to mm server...", 0)

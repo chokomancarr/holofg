@@ -2,7 +2,7 @@
 	"chara_name": "Tokoyami Towa",
 	"max_health": "10000",
 	"params": {
-		"walk": [20, 20],
+		"walk": [18, 15],
 		"dash": [20, 20]
 	},
 	"moves": {
@@ -63,7 +63,7 @@
 			}]
 		},
 		"5m": {
-			"n_frames": 19,
+			"n_frames": 25,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 19,"ty": "HURT","rect": [-200, 0, 400, 1000]},
 				{"frame_start": 2,"frame_end": 14,"ty": "HURT","att_info": 0,"rect": [100, 200, 650, 400]},
@@ -94,7 +94,7 @@
 			}]
 		},
 		"5h": {
-			"n_frames": 24,
+			"n_frames": 34,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 24,"ty": "HURT","rect": [-200, 0, 400, 1000]},
 				{"frame_start": 2,"frame_end": 20,"ty": "HURT","rect": [200, 0, 200, 400]},
@@ -148,7 +148,7 @@
 			}]
 		},
 		"2m": {
-			"n_frames": 20,
+			"n_frames": 28,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 20,"ty": "HURT","rect": [-200, 0, 400, 800]},
 				{"frame_start": 4,"frame_end": 18,"ty": "HURT","rect": [200, 0, 600, 300]},
@@ -164,7 +164,7 @@
 			}]
 		},
 		"2h": {
-			"n_frames": 30,
+			"n_frames": 40,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 4,"ty": "HURT","rect": [-200, 0, 400, 800]},
 				{"frame_start": 4,"frame_end": 26,"ty": "HURT","rect": [0, 0, 400, 800]},
@@ -173,7 +173,9 @@
 				{"frame_start": 9,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [200, 0, 700, 200]}
 			],
 			"att_info": [{
+				"knock_ty": "KNOCKDOWN",
 				"stun": [ 12, 25 ],
+				"cancel": "none",
 				"push": 150,
 				"minspace": 500,
 				"ty": "LOW",
@@ -182,12 +184,12 @@
 			}]
 		},
 		"4h": {
-			"n_frames": 24,
+			"n_frames": 32,
 			"boxes": [
-				{"frame_start": 0,"frame_end": 24,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 0,"frame_end": 32,"ty": "HURT","rect": [-200, 0, 400, 1000]},
 				{"frame_start": 6,"frame_end": 16,"ty": "HURT","rect": [100, 500, 400, 500]},
-				{"frame_start": 8,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [200, 500, 200, 300]},
-				{"frame_start": 8,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [300, 800, 200, 300]}
+				{"frame_start": 9,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [200, 500, 200, 300]},
+				{"frame_start": 9,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [300, 800, 200, 300]}
 			],
 			"att_info": [{
 				"stun": [ 15, 20 ],
@@ -250,11 +252,11 @@
 			"land_recovery": 3,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 50,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 4,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [-150, -50, 400, 200]}
+				{"frame_start": 4,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [-150, 100, 400, 200]}
 			],
 			"att_info": [
 				{
-					"stun": [ 11, 16 ],
+					"stun": [ 15, 18 ],
 					"ty": "MID",
 					"dmg": 300
 				}
@@ -286,7 +288,7 @@
 			],
 			"att_info": [
 				{
-					"stun": [ 18, 21 ],
+					"stun": [ 18, 23 ],
 					"ty": "MID",
 					"dmg": 800
 				}
@@ -323,11 +325,13 @@
 				{"frame_start": 4,"frame_end": 7,"ty": "GRAB","att_info": 0,"rect": [200, 0, 200, 1000]}
 			],
 			"att_info": [{
-				"n_frames": 70,
-				"end_dpos": 1150,
-				"bounds_offset": {
-					"offsets_use_keyframes": true,
-					"offsets": [ [0, [ 0, 0 ]], [40, [ 108, 0 ]], [47, [ 0, 0 ]] ]
+				"opp_info": {
+					"n_frames": 70,
+					"end_dpos": 1150,
+					"bounds_offset": {
+						"offsets_use_keyframes": true,
+						"offsets": [ [0, [ 0, 0 ]], [40, [ 108, 0 ]], [47, [ 0, 0 ]] ]
+					}
 				},
 				"dmg": 1000
 			}],
@@ -341,20 +345,27 @@
 			}
 		},
 		"214s": {
-			"n_frames": 60,
+			"n_frames": 200,
 			"boxes": [
-				{"frame_start": 9,"frame_end": 13,"ty": "HIT","att_info": 0,"rect": [100, 200, 500, 500]}
+				{"frame_start": 9,"frame_end": 13,"ty": "HIT","att_info": 0,"rect": [0, 500, 1000, 500]}
 			],
-			"offsets": {
-				"offsets_use_keyframes": true,
-				"offsets": [ [0, [ 30, 0 ]], [20, [ 15, 0 ]], [30, [ 0, 0 ]] ]
-			},
 			"att_info": [
 				{
 					"stun": [ 30, 70 ],
-					"dmg": 2000
+					"dmg": 2000,
+					"opp_info": {
+						"n_frames": 200,
+						"end_dpos": 2000
+					}
 				}
-			]
+			],
+			"blocked": {
+				"n_frames": 60,
+				"boxes": [
+					{"frame_start": 0,"frame_end": 200,"ty": "HURT","rect": [-200, 0, 500, 1000]},
+					{"frame_start": 9,"frame_end": 13,"ty": "HIT","att_info": 0,"rect": [0, 500, 1000, 500]}
+				]
+			}
 		},
 		"236s": {
 			"n_frames": 120,
@@ -384,6 +395,11 @@
 					"end_opp_use_anim": false
 				}
 			]
+		}
+	},
+	"accessories": {
+		"super_1": {
+			"chara_2_gun": "free"
 		}
 	}
 }

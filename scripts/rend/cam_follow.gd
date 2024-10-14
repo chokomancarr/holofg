@@ -7,14 +7,19 @@ extends Node
 func _physics_process(_dt):
 	var gst = GameMaster.game_state
 	if gst:
-		if gst.state == GameState.MATCH_STATE.CINEMATIC:
-			var inst = CharaRend.insts
-			var anchor = CharaRend.insts[int(gst.cinematic_info.is_p2)].cam_anchor
-			#par.position = anchor.global_position
-			#par.basis = anchor.global_basis
-		else:
-			var w = gst.wall
-			par.position = pos0 + Vector3.RIGHT * ((w.x + w.y) * 0.5 - 5000) * 0.002
-			par.basis = basis0
+		match gst.state:
+			GameState.MATCH_STATE.INTRO:
+				var anchor = CharaRend.insts[0 if (gst.countdown > 100) else 1].cam_anchor
+				par.position = anchor.global_position
+				par.basis = anchor.global_basis
+			GameState.MATCH_STATE.CINEMATIC:
+				var inst = CharaRend.insts
+				var anchor = CharaRend.insts[int(gst.cinematic_info.is_p2)].cam_anchor
+				#par.position = anchor.global_position
+				#par.basis = anchor.global_basis
+			_:
+				var w = gst.wall
+				par.position = pos0 + Vector3.RIGHT * ((w.x + w.y) * 0.5 - 5000) * 0.002
+				par.basis = basis0
 	else:
 		par.position.x = 0.0

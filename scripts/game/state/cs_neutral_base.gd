@@ -23,7 +23,7 @@ func check_actions(state : PlayerState, sliceback, att_only = false):
 		next = CsParry.try_next(state)
 		if next: return next
 		
-		next = CsDash.try_next(state)
+		next = CsDash.try_next(state, sliceback)
 		if next: return next
 		
 		next = CsJump.try_next(state)

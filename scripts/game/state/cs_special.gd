@@ -8,9 +8,10 @@ func clone():
 	)
 
 static func try_next(state : PlayerState, sliceback : int, allow : ST.CancelInfo):
+	var sps = state._info.moves_sp.filter(func (m): return allow.can_sp(m.name))
 	return _check_inputs(state, sliceback, func (st, n, dd):
 		var alias = st.names()
-		for move in state._info.moves_sp:
+		for move in sps:
 			if alias.has(move.alias_name) or move.cmd.check(st, dd):
 				var res = new()
 				res.move = move

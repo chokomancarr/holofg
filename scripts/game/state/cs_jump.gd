@@ -16,7 +16,7 @@ func clone():
 static var _jump_offsets = (func ():
 	var _jumpcurve = []
 	var _v = 1
-	const _g = 10
+	const _g = 7
 	for i in range(18):
 		_jumpcurve.push_back([0, _v])
 		_v += _g

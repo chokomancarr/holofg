@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://biy7ct076k6ly"]
+[gd_scene load_steps=19 format=3 uid="uid://biy7ct076k6ly"]
 
 [ext_resource type="Script" path="res://scripts/debug_chara.gd" id="1_6nb7d"]
 [ext_resource type="Script" path="res://scripts/rend/cam_follow.gd" id="2_ldlmx"]
@@ -6,9 +6,8 @@
 [ext_resource type="Script" path="res://scripts/frame_meter.gd" id="3_xmqwa"]
 [ext_resource type="Material" uid="uid://fmtrwbbihk2q" path="res://models/stage/0/stage_0_mat.tres" id="4_jfn41"]
 [ext_resource type="Script" path="res://scripts/rend/game_ui.gd" id="4_pqnyw"]
-[ext_resource type="Texture2D" uid="uid://birld58esv7yy" path="res://ui/round 1.png" id="7_0stas"]
-[ext_resource type="Texture2D" uid="uid://bb67woornhhhg" path="res://ui/fight.png" id="8_mcw86"]
-[ext_resource type="Texture2D" uid="uid://cbeb1stjbmu5m" path="res://ui/ko.png" id="9_eu44h"]
+[ext_resource type="PackedScene" uid="uid://xgv0j4rp8w24" path="res://scenes/bigtexts.tscn" id="7_iylrd"]
+[ext_resource type="PackedScene" uid="uid://kavw5glh623d" path="res://scenes/fadein.tscn" id="10_btp7p"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_e2wec"]
 size = Vector2(50, 0.1)
@@ -48,8 +47,8 @@ bg_color = Color(0.960784, 0.627451, 0, 1)
 script = ExtResource("1_6nb7d")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.59832, 6.23232)
-fov = 40.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.598, 10)
+fov = 25.0
 near = 0.1
 far = 200.0
 
@@ -101,7 +100,7 @@ skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_lvxpt")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.627528, 0.778593, 0, -0.778593, 0.627528, 0, 2.50589, 4.62159)
+transform = Transform3D(1, 0, 0, 0, 0.724256, 0.68953, 0, -0.68953, 0.724256, 0, 2.50589, 4.62159)
 layers = 31745
 light_cull_mask = 4293950465
 shadow_enabled = true
@@ -174,6 +173,7 @@ theme_override_constants/h_separation = 5
 columns = 3
 
 [node name="box_view" type="Control" parent="."]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
@@ -187,15 +187,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("4_pqnyw")
-
-[node name="fader" type="ColorRect" parent="ui"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 0.352941)
 
 [node name="top_cc" type="CenterContainer" parent="ui"]
 visible = false
@@ -378,6 +369,7 @@ text = "game_speed: 1.0"
 horizontal_alignment = 2
 
 [node name="cen_cc" type="CenterContainer" parent="ui"]
+visible = false
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -440,28 +432,29 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ready" type="TextureRect" parent="ui/ann_cc"]
+[node name="ready" parent="ui/ann_cc" instance=ExtResource("7_iylrd")]
 visible = false
-custom_minimum_size = Vector2(512, 256)
 layout_mode = 2
-texture = ExtResource("7_0stas")
-expand_mode = 1
+base_width = 1.0
+tar_width = 1.5
+text = "READY"
 
-[node name="fight" type="TextureRect" parent="ui/ann_cc"]
+[node name="fight" parent="ui/ann_cc" instance=ExtResource("7_iylrd")]
 visible = false
-custom_minimum_size = Vector2(512, 256)
 layout_mode = 2
-texture = ExtResource("8_mcw86")
-expand_mode = 1
+base_width = 1.0
+tar_width = 0.0
+text = "FIGHT"
 
-[node name="ko" type="TextureRect" parent="ui/ann_cc"]
+[node name="ko" parent="ui/ann_cc" instance=ExtResource("7_iylrd")]
 visible = false
-custom_minimum_size = Vector2(512, 256)
 layout_mode = 2
-texture = ExtResource("9_eu44h")
-expand_mode = 1
+text = "KO"
 
 [node name="ppl_spawn" type="Node" parent="."]
 unique_name_in_owner = true
+
+[node name="fade_in" parent="." instance=ExtResource("10_btp7p")]
+kill = false
 
 [editable path="stage_0"]

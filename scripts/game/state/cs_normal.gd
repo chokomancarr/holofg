@@ -29,13 +29,14 @@ func check_next(state : PlayerState):
 		var info = query_hit()
 		if info.cancels:
 			if state.can_super:
-				next = CsSuper2.try_next(state, 10)
-				if next: return next
-				
-				next = CsSuper1.try_next(state, 10)
-				if next: return next
+				if info.cancels.super_2:
+					next = CsSuper2.try_next(state, 10)
+					if next: return next
+				if info.cancels.super_1:
+					next = CsSuper1.try_next(state, 10)
+					if next: return next
 			
-			next = CsSpecial.try_next(state, 10, ST.CancelInfo.from_all())
+			next = CsSpecial.try_next(state, 10, info.cancels)
 			if next: return next
 			
 			next = CsTargetCombo.try_next(state, 10, info.cancels)

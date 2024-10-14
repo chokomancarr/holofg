@@ -34,6 +34,8 @@ class PlayerInfo:
 	var mp_id : int = -1
 	var nm : String
 	var rdy : bool
+	var chara_id : int = 2
+	var input_ty : String = "pad"
 	var input_source : InputMan.PlayerInput
 	func _init(id, nm):
 		self.mm_id = id
@@ -124,9 +126,13 @@ static func _post(url : String, body : Dictionary):
 		response.append_array(chunk)
 	
 	var sres = response.get_string_from_utf8()
-	var json = JSON.parse_string(sres)
-	
-	print_debug("post success (", code, "): ", sres)
+	var json = null
+	if sres.begins_with("<!DOCTYPE html>"):
+		print_debug("html returned (code %d), probably an ngrok error!" % code)
+		sres = ""
+	else:
+		json = JSON.parse_string(sres)
+		print_debug("post success (", code, "): ", sres)
 	
 	busy = false
 	signals.request_done.emit()

@@ -46,6 +46,9 @@ func step(state : PlayerState):
 	if move.offsets:
 		next_offset = move.offsets.eval(state_t - 1)
 
+func get_anim_frame(df):
+	return state_t + df
+
 func query_hit():
 	return move.att_info[current_att]
 

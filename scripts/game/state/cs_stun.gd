@@ -42,7 +42,7 @@ func get_anim_frame(df):
 	if state_t == 1:
 		return df
 	else:
-		return 1.0 + ((state_t - 1.0 + df) * 59.0) / n_stun
+		return ((state_t - 1.0 + df) * 59.0) / n_stun
 
 func get_frame_meter_color():
 	return Color.YELLOW

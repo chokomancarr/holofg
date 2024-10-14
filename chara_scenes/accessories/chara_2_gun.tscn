@@ -1,0 +1,61 @@
+[gd_scene load_steps=5 format=3 uid="uid://fl0qup05rvrg"]
+
+[ext_resource type="PackedScene" uid="uid://dx20nkudnvmth" path="res://models/chara/2/access_gun.blend" id="1_klvyl"]
+[ext_resource type="Script" path="res://addons/jigglebones/jigglebone.gd" id="2_i1nd2"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gp1ky"]
+albedo_color = Color(0.0728426, 0.0728426, 0.0728426, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2eta6"]
+diffuse_mode = 3
+albedo_color = Color(0.654232, 0.654232, 0.654232, 1)
+metallic = 0.56
+roughness = 0.37
+
+[node name="chara_2_gun" type="Node3D"]
+
+[node name="access_gun" parent="." instance=ExtResource("1_klvyl")]
+
+[node name="bibi" parent="access_gun/Armature/Skeleton3D" index="0"]
+material_override = SubResource("StandardMaterial3D_gp1ky")
+
+[node name="gun" parent="access_gun/Armature/Skeleton3D" index="1"]
+material_override = SubResource("StandardMaterial3D_2eta6")
+
+[node name="Jigglebone" type="Node3D" parent="access_gun/Armature/Skeleton3D" index="2"]
+transform = Transform3D(1.78814e-07, -1.62981e-08, -1, 0.00468506, -0.999989, 1.69966e-08, -0.999989, -0.00468506, -1.19209e-07, -1.42109e-14, -1.1332, -0.094243)
+top_level = true
+script = ExtResource("2_i1nd2")
+bone_name = "bibi1"
+stiffness = 0.5
+use_gravity = true
+forward_axis = 1
+
+[node name="Jigglebone2" type="Node3D" parent="access_gun/Armature/Skeleton3D" index="3"]
+transform = Transform3D(4.17232e-07, -9.08039e-09, -1, 0.00707861, -0.999975, 1.14087e-08, -0.999975, -0.00707861, -2.38419e-07, -6.55487e-10, -1.17104, -0.0944925)
+top_level = true
+script = ExtResource("2_i1nd2")
+bone_name = "bibi2"
+stiffness = 0.5
+use_gravity = true
+forward_axis = 1
+
+[node name="Jigglebone3" type="Node3D" parent="access_gun/Armature/Skeleton3D" index="4"]
+transform = Transform3D(4.17232e-07, -4.88944e-09, -1, 0.00744855, -0.999972, 8.14907e-09, -0.999972, -0.00744855, -4.76837e-07, -1.09175e-09, -1.21876, -0.0930108)
+top_level = true
+script = ExtResource("2_i1nd2")
+bone_name = "bibi3"
+stiffness = 0.5
+use_gravity = true
+forward_axis = 1
+
+[node name="Jigglebone4" type="Node3D" parent="access_gun/Armature/Skeleton3D" index="5"]
+transform = Transform3D(2.38419e-07, -2.09548e-09, -1, 0.00386306, -0.999993, 3.49246e-09, -0.999992, -0.00386307, -3.57628e-07, -1.24218e-09, -1.25454, -0.0906884)
+top_level = true
+script = ExtResource("2_i1nd2")
+bone_name = "bibi4"
+stiffness = 0.5
+use_gravity = true
+forward_axis = 1
+
+[editable path="access_gun"]

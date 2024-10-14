@@ -17,6 +17,7 @@ class CharaInfo:
 	var moves_j_nr: Dictionary
 	var grabs: Dictionary
 	var summons: Dictionary
+	var accessories : Dictionary
 	
 	var _summon_data : Dictionary
 
@@ -35,6 +36,7 @@ class MoveInfo:
 	var override_offsets : bool = true
 	var land_recovery : int = 0
 	var whiff: MoveInfo
+	var blocked: MoveInfo
 
 class SummonFrameInfo:
 	var frame: int
@@ -96,6 +98,14 @@ class OffsetInfo:
 	func hashed():
 		return _hash
 
+class AccessInfo:
+	var scene : String
+	var anchor : String
+	func _init(s, a):
+		scene = s
+		anchor = a
+
+
 static func load_chara(chara_id):
 	var res = CharaInfo.new()
 	res._id = chara_id
@@ -148,6 +158,9 @@ static func load_chara(chara_id):
 	for gb in data.moves.grabs:
 		res.grabs[gb] = _parse_move(gb, data.frames, res)
 	
+	if data.has("accessories"):
+		res.accessories = _parse_access(data.accessories)
+	
 	return res
 
 static var _move_uid = 0
@@ -198,11 +211,13 @@ static func _parse_move(nm : String, frames : Dictionary, cinfo : CharaInfo, use
 	
 	if src.has("whiff"):
 		move.whiff = _parse_move("whiff", src, cinfo)
+	if src.has("blocked"):
+		move.blocked = _parse_move("blocked", src, cinfo)
 	
 	return move
 
 static func _parse_att_info(h : Dictionary, ty : ST.BOX_TY, nm : String, use_lmh_cancel = false):
-	var hres
+	var hres : ST._AttInfoBase
 	match ty:
 		ST.BOX_TY.HIT:
 			hres = ST.AttInfo_Hit.new()
@@ -211,11 +226,19 @@ static func _parse_att_info(h : Dictionary, ty : ST.BOX_TY, nm : String, use_lmh
 			hres.stun_hit = h.stun[1]
 			if h.has("ty"): hres.ty = ST.ATTACK_TY.get(h.ty)
 			if h.has("knock_ty"): hres.knock_ty = ST.KNOCK_TY.get(h.knock_ty)
-			if h.has("cancel"): hres.cancels = ST.CancelInfo.from_json(h.cancel)
+			if h.has("cancel"):
+				if not h.cancel is String:
+					hres.cancels = ST.CancelInfo.from_json(h.cancel)
+				else:
+					hres.cancels = ST.CancelInfo.new()
+					use_lmh_cancel = false
 			else: hres.cancels = ST.CancelInfo.new()
 			if use_lmh_cancel:
 				hres.cancels.normal_lmh = "lmh".find(nm[-1])
 				hres.cancels.normal_except = nm
+				hres.cancels.all_specials = true
+				hres.cancels.super_1 = true
+				hres.cancels.super_2 = true
 			if h.has("push"): hres.push_hit = h.push
 			if h.has("minspace"): hres.min_space = h.minspace
 			if h.has("dir"): hres.dir = ST.STUN_DIR.get(h.dir)
@@ -223,11 +246,6 @@ static func _parse_att_info(h : Dictionary, ty : ST.BOX_TY, nm : String, use_lmh
 		ST.BOX_TY.GRAB:
 			hres = ST.AttInfo_Grab.new()
 			hres.ty = h.ty if h.has("ty") else ST.ATTACK_TY.GRAB
-			hres.opp_nf = h.n_frames
-			#hres.fix_dist = h.fix_dist if h.has("fix_dist") else 10000000
-			hres.end_dpos = h.end_dpos
-			if h.has("bounds_offset"):
-				hres.bounds_offset = OffsetInfo.from_json(h.bounds_offset, hres.opp_nf)
 		ST.BOX_TY.HIT_SUPER:
 			hres = ST.AttInfo_Super.new()
 			hres.ty = ST.ATTACK_TY.HIGH_SUPER
@@ -244,6 +262,14 @@ static func _parse_att_info(h : Dictionary, ty : ST.BOX_TY, nm : String, use_lmh
 			hres.end_opp_use_anim = h.end_opp_use_anim
 		_:
 			pass
+	if h.has("opp_info"):
+		var h2 = h.opp_info
+		var opp = ST.AttInfoOpp.new()
+		opp.opp_nf = h2.n_frames
+		opp.end_dpos = h2.end_dpos
+		if h2.has("bounds_offset"):
+			opp.bounds_offset = OffsetInfo.from_json(h2.bounds_offset, opp.opp_nf)
+		hres.opp_info = opp
 	return hres
 
 static var _summon_uid = 0
@@ -268,6 +294,15 @@ static func _get_summon(cinfo : CharaInfo, nm : String):
 			res.boxes.push_back(parse_box(b))
 	
 	cinfo.summons[nm] = res
+	return res
+
+static func _parse_access(src):
+	var res = {}
+	for k in src:
+		var spwns = src[k] as Dictionary
+		res[k] = spwns.keys().map(func (k2):
+			return AccessInfo.new(k2, spwns[k2])
+		)
 	return res
 
 static func parse_box(d):

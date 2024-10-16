@@ -15,138 +15,30 @@ static func step(game_state : GameState):
 	
 	var dist = _proc_push(game_state)
 
-	var _h1 = _check_hit(p1, p2)
-	var _h2 = _check_hit(p2, p1)
 	var o = {
-		"hit1" : _h1[0] as ST._AttInfoBase if _h1 else null,
-		"hit2" : _h2[0] as ST._AttInfoBase if _h2 else null,
-		"push1" : _h1[1] if _h1 else null,
-		"push2" : _h2[1] if _h2 else null,
-		"pos1" : _h1[2] if _h1 else null,
-		"pos2" : _h2[2] if _h2 else null,
+		"hits": [
+			_check_hit(p1, p2),
+			_check_hit(p2, p1)
+		],
 		"freeze" : 0
 	}
-	#if hit1 or hit2:
-		#if hit1:
-			#if game_state.p1.state.query_stun() != ST.STUN_TY.PUNISH_COUNTER\
-			#and game_state.p1.state.query_stun() != ST.STUN_TY.PUNISH_COUNTER:
-				#game_state.p1.state = CsGrabTech.new()
-				#game_state.p2.state = CsGrabTech.new()
-				#return
+	var ty1 = o.hits[0].hit.ty if o.hits[0] else 0
+	var ty2 = o.hits[1].hit.ty if o.hits[1] else 0
 
-	var _inc_gauge = func (p : PlayerState, opp : PlayerState, inc : int, ratio : Array):
-		opp.bar_super += (inc * ratio[0]) / 10
-		p.bar_super += (inc * ratio[1]) / 10
-
-	var apply_hit = func (p : PlayerState, opp : PlayerState, hit : ST._AttInfoBase, push : bool, eff_pos : Vector2i):
-		var counter_ty = p.state.query_stun()
-		if (hit.ty & ST.ATTACK_TY._HIT_BIT) > 0:
-			if p.state.airborne:
-				var sto = p.state as _CsStunBase
-				var jug = (counter_ty != ST.STUN_TY.NORMAL) or (sto is CsStunAir and sto.ty == ST.STUN_AIR_TY.JUGGLE)
-				p.state = CsStunAir.new(p, ST.STUN_AIR_TY.JUGGLE if jug else ST.STUN_AIR_TY.RESET)
-				var dmg = (p.state as _CsStunBase).apply_scaling(sto, hit as ST.AttInfo_Hit)
-				p.bar_health = maxi(p.bar_health - dmg, 0)
-				p.state.eff_pos = eff_pos
-
-				_inc_gauge.call(p, opp, hit.gauge, GAUGE_HIT)
-			else:
-				match counter_ty:
-					ST.STUN_TY.BLOCK:
-						var block_ty = p.state.block_state
-						var canblock = ((hit.ty & 0x11) & ~block_ty) == 0
-						if canblock:
-							p.state = CsBlock.new(p, hit, !push)
-							p.state.block_state = block_ty
-							_inc_gauge.call(p, opp, hit.gauge, GAUGE_BLOCK)
-						else:
-							#super can always be blocked
-							p.state = CsStun.new(p, hit as ST.AttInfo_Hit, !push)
-							p.state.eff_pos = eff_pos
-							_inc_gauge.call(p, opp, hit.gauge, GAUGE_HIT)
-					ST.STUN_TY.PARRY:
-						(p.state as CsParry).parried_nf = hit.stun_block
-						_inc_gauge.call(p, opp, hit.gauge, GAUGE_PARRY)
-					_:
-						if hit.ty == ST.ATTACK_TY.HIGH_SUPER:
-							var cin = ST.CinematicInfo.new()
-							cin.is_p2 = opp.is_p2
-							cin.show_opp = true
-							cin.anim_name = "super_2_cinematic"
-							cin.anim_name_opp = "opp/opp_super_2_cinematic"
-							cin.n_frames = hit.n_cinematic_hit
-							cin.move = hit
-							game_state.cinematic(cin)
-							p.pos = opp.pos + Vector2i(-500 if opp.action_is_p2 else 500, 0)
-						else:
-							if opp.state is CsSuper1:
-								opp.state.att_connected = true
-							
-							var sto = p.state as _CsStunBase
-							var hh = hit as ST.AttInfo_Hit
-							
-							if hh.opp_info:
-								p.state = CsOppAnim.new(opp, hit.opp_info)
-								p.bar_health = maxi(p.bar_health - hit.dmg, 0)
-								#var fd = (hit as ST.AttInfo_Grab).fix_dist
-								#if fd < 100000:
-								p.pos = opp.pos + Vector2i(-500 if opp.action_is_p2 else 500, 0)
-								p.state.push_wall = true
-							else:
-								match hh.knock_ty:
-									ST.KNOCK_TY.KNOCKDOWN, ST.KNOCK_TY.HARD_KNOCKDOWN:
-										p.state = CsKnock.new(p, hh)
-									_:
-										p.state = CsStun.new(p, hh)
-								p.state.eff_pos = eff_pos
-							
-								var dmg = (p.state as _CsStunBase).apply_scaling(sto, hh)
-								p.bar_health = maxi(p.bar_health - dmg, 0)
-								_inc_gauge.call(p, opp, hit.gauge, GAUGE_HIT)
-			
-			o.freeze = maxi(o.freeze, hit.n_freeze)
-		elif hit.ty == ST.ATTACK_TY.GRAB:
-			if p.state.airborne:
-				opp.state.att_processed = false
-			else:
-				if p.state.attack_ty == ST.ATTACK_TY.GRAB and counter_ty != ST.STUN_TY.PUNISH_COUNTER:
-						p.state = CsGrabTech.new()
-						opp.state = CsGrabTech.new()
-						o.hit1 = null
-						o.hit2 = null
-				else:
-					if p.state is CsStun:
-						opp.state.att_processed = false
-					else:
-						p.state = CsOppAnim.new(opp, hit.opp_info)
-						p.bar_health = maxi(p.bar_health - hit.dmg, 0)
-						#var fd = (hit as ST.AttInfo_Grab).fix_dist
-						#if fd < 100000:
-						p.pos = opp.pos + Vector2i(-500 if opp.action_is_p2 else 500, 0)
-						p.state.push_wall = true
-
-	if o.hit1 and o.hit2:
-		if o.hit1.ty == ST.ATTACK_TY.CMD_GRAB:
-			o.hit2 = null #cmd grab always win
-		elif o.hit2.ty == ST.ATTACK_TY.CMD_GRAB:
-			o.hit1 = null
-		if o.hit1.ty == ST.ATTACK_TY.HIGH_SUPER:
-			o.hit2 = null #super wins next
-		elif o.hit2.ty == ST.ATTACK_TY.HIGH_SUPER:
-			o.hit1 = null
-		elif (o.hit1.ty & ST.ATTACK_TY._HIT_BIT) > 0 and (o.hit1.ty & ST.ATTACK_TY._HIT_BIT) > 0:
-			pass #trade
-		elif o.hit1.ty != o.hit2.ty:
-			#hit wins over grab
-			if (o.hit1.ty & ST.ATTACK_TY._GRAB_BIT) > 0:
-				o.hit1 = null
-			else:
-				o.hit2 = null
-
-	if o.hit1:
-		apply_hit.call(p2, p1, o.hit1, o.push1, o.pos1)
-	if o.hit2:
-		apply_hit.call(p1, p2, o.hit2, o.push2, o.pos2)
+	if ty1 and ty2:
+		var prio1 = AttInfo.TY_PRIO[ty1]
+		var prio2 = AttInfo.TY_PRIO[ty2]
+		if prio1 > prio2:
+			o.hits[1] = null
+		elif prio1 < prio2:
+			o.hits[0] = null
+		else:
+			if (ty1 & AttInfo.TY._GRAB_BIT) > 0 or ty1 >= AttInfo.TY._SUPER_1_BIT: #only normal hits can trade
+				o.hits[roundi(randf())] = null #we dont know which one hits first, so gacha
+	if o.hits[0]:
+		apply_hit.call(game_state, p2, p1, o, 0)
+	if o.hits[1]:
+		apply_hit.call(game_state, p1, p2, o, 1)
 	
 	if o.freeze > 0:
 		game_state.freeze(o.freeze)
@@ -227,21 +119,22 @@ static func _check_hit(p1 : PlayerState, p2 : PlayerState):
 	if not p1state and p1.summons.is_empty():
 		return null
 	
-	var hurts : Array[Rect2i] = []
+	var hurts = []
 	for b in p2.boxes:
 		if b.ty == ST.BOX_TY.HURT:
-			hurts.push_back(b.get_rect(p2.action_is_p2))
+			hurts.push_back([b.get_rect(p2.action_is_p2), b.flags])
 	var dp = p1.pos - p2.pos
 	
 	if p1state and not p1state.att_processed:
 		for b in p1.boxes:
-			if b.ty == ST.BOX_TY.HIT || b.ty == ST.BOX_TY.HIT_SUPER || b.ty == ST.BOX_TY.GRAB:
+			if b.ty == ST.BOX_TY.HIT || b.ty == ST.BOX_TY.GRAB:
 				var b2 = Rect2i(b.get_rect(p1.action_is_p2))
 				b2.position += dp
 				for b3 in hurts:
-					if b2.intersects(b3):
-						p1state.att_processed = true
-						return [p1state.query_hit(), true, p2.pos + b2.intersection(b3).get_center()]
+					if (b.flags & b3[1]) > 0:
+						if b2.intersects(b3[0]):
+							p1state.att_processed = true
+							return [p1state.query_hit(), true, p2.pos + b2.intersection(b3).get_center()]
 	
 	for sm in p1.summons:
 		if sm.hit_cd > 0:
@@ -254,6 +147,102 @@ static func _check_hit(p1 : PlayerState, p2 : PlayerState):
 				for b3 in hurts:
 					if b2.intersects(b3):
 						sm.on_hit()
-						return [sm._info.att_info, sm.state_t < 3, p2.pos + b2.intersection(b3).get_center()]
+						return {
+							"hit": sm._info.att_info,
+							"push": sm.state_t < 3,
+							"pos": p2.pos + b2.intersection(b3).get_center()
+						}
 	
 	return null
+
+static func apply_hit(gst : GameState, p : PlayerState, opp : PlayerState, o, j):
+	var oj = o.hits[j]
+	var hit : AttInfo = oj.hit
+	var push : bool = oj.push
+	var eff_pos : Vector2i = oj.pos
+	
+	var _inc_gauge = func (p : PlayerState, opp : PlayerState, inc : int, ratio : Array):
+			opp.bar_super += (inc * ratio[0]) / 10
+			p.bar_super += (inc * ratio[1]) / 10
+	
+	var counter_ty = p.state.query_stun()
+	if hit.box_ty == ST.BOX_TY.HIT:
+		match counter_ty:
+			ST.STUN_TY.BLOCK:
+				var block_ty = p.state.block_state
+				var canblock = ((hit.ty & 0x11) & ~block_ty) == 0
+				if canblock:
+					p.state = CsBlock.new(p, hit, !push)
+					p.state.block_state = block_ty
+					_inc_gauge.call(p, opp, hit.gauge, GAUGE_BLOCK)
+				else:
+					#super can always be blocked
+					p.state = CsStun.new(p, hit as AttInfo.Hit, !push)
+					p.state.eff_pos = eff_pos
+					_inc_gauge.call(p, opp, hit.gauge, GAUGE_HIT)
+			ST.STUN_TY.PARRY:
+				(p.state as CsParry).parried_nf = hit.stun_block
+				_inc_gauge.call(p, opp, hit.gauge, GAUGE_PARRY)
+			_:
+				if opp.state is CsSuper1:
+					opp.state.att_connected = true
+				
+				if hit.cine_info:
+					p.state = CsOppAnim.new(opp, hit.cine_info)
+					
+				else:
+					if p.state.airborne:
+						var sto = p.state as _CsStunBase
+						var jug = (counter_ty != ST.STUN_TY.NORMAL) or (sto is CsStunAir and sto.ty == ST.STUN_AIR_TY.JUGGLE)
+						p.state = CsStunAir.new(p, ST.STUN_AIR_TY.JUGGLE if jug else ST.STUN_AIR_TY.RESET)
+						var dmg = (p.state as _CsStunBase).apply_scaling(sto, hit as AttInfo.Hit)
+						p.bar_health = maxi(p.bar_health - dmg, 0)
+						p.state.eff_pos = eff_pos
+
+						_inc_gauge.call(p, opp, hit.gauge, GAUGE_HIT)
+					else:
+				if hit.ty == ST.ATTACK_TY.HIGH_SUPER:
+					var cin = ST.CinematicInfo.new()
+					cin.is_p2 = opp.is_p2
+					cin.show_opp = true
+					cin.anim_name = "super_2_cinematic"
+					cin.anim_name_opp = "opp/opp_super_2_cinematic"
+					cin.n_frames = hit.n_cinematic_hit
+					cin.move = hit
+					gst.cinematic(cin)
+					p.pos = opp.pos + Vector2i(-500 if opp.action_is_p2 else 500, 0)
+				else:
+					
+					var sto = p.state as _CsStunBase
+					var hh = hit as ST.AttInfo_Hit
+					
+					if hh.opp_info:
+						p.state = CsOppAnim.new(opp, hit.opp_info)
+						p.bar_health = maxi(p.bar_health - hit.dmg, 0)
+						#var fd = (hit as ST.AttInfo_Grab).fix_dist
+						#if fd < 100000:
+						p.pos = opp.pos + Vector2i(-500 if opp.action_is_p2 else 500, 0)
+						p.state.push_wall = true
+					else:
+						match hh.knock_ty:
+							ST.KNOCK_TY.KNOCKDOWN, ST.KNOCK_TY.HARD_KNOCKDOWN:
+								p.state = CsKnock.new(p, hh)
+							_:
+								p.state = CsStun.new(p, hh)
+						p.state.eff_pos = eff_pos
+					
+						var dmg = (p.state as _CsStunBase).apply_scaling(sto, hh)
+						p.bar_health = maxi(p.bar_health - dmg, 0)
+						_inc_gauge.call(p, opp, hit.gauge, GAUGE_HIT)
+		
+		o.freeze = maxi(o.freeze, hit.n_freeze)
+	else: #is grab
+		if p.state.attack_ty == AttInfo.TY.GRAB and counter_ty != ST.STUN_TY.PUNISH_COUNTER:
+				p.state = CsGrabTech.new()
+				opp.state = CsGrabTech.new()
+				o.hits = [ null, null ]
+		else:
+			p.state = CsOppAnim.new(opp, hit.cine_info)
+			p.bar_health = maxi(p.bar_health - hit.dmg, 0)
+			p.pos = opp.pos + Vector2i(-500 if opp.action_is_p2 else 500, 0)
+			p.state.push_wall = true

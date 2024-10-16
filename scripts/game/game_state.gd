@@ -7,7 +7,7 @@ var p2: PlayerState
 var freeze_t: int = 0
 var freeze_n: int = 0
 var freeze_canbuffer := 0
-var cinematic_info: ST.CinematicInfo
+var cinematic_info: AttInfo.Cinema
 var cinematic_t: int = 0
 var countdown: int = -1#99 * 60 + 59
 var wall = Vector2i(0, 10000)

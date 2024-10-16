@@ -8,7 +8,7 @@ var airborne : bool
 
 var block_state : ST.BLOCK_TY
 
-var attack_ty : ST.ATTACK_TY
+var attack_ty : AttInfo.TY
 
 var push_wall : bool
 var push_opp := true
@@ -16,7 +16,7 @@ var push_opp := true
 var req_freeze : int = 0
 var req_freeze_exclusive = false
 
-var req_cinematic : ST.CinematicInfo
+var req_cinematic : AttInfo.Cinema
 
 var bounds_off : Vector2i
 
@@ -69,7 +69,7 @@ func step(state : PlayerState):
 func _step():
 	state_t += 1
 	next_offset = Vector2i.ZERO
-	attack_ty = ST.ATTACK_TY.NONE
+	attack_ty = AttInfo.TY.NONE
 
 func get_anim_frame(df):
 	return state_t

@@ -371,7 +371,7 @@
 			"n_frames": 120,
 			"boxes": [
 				{"frame_start": 13,"frame_end": 120,"ty": "HURT","rect": [-200, 0, 500, 1000]},
-				{"frame_start": 9,"frame_end": 17,"ty": "HIT_SUPER","att_info": 0,"rect": [100, 200, 500, 500]}
+				{"frame_start": 9,"frame_end": 17,"ty": "HIT","att_info": 0,"rect": [100, 200, 500, 500]}
 			],
 			"offsets": {
 				"offsets_use_keyframes": true,
@@ -381,18 +381,20 @@
 				{
 					"dmg": 4000,
 					"stun_block": 40,
-					"n_cinematic_start": 100,
-					"n_cinematic_hit": 160,
 					"fix_dist": 500,
-					"end_dpos": [ 0, 0 ],
-					"end_dpos_opp": [ -1000, 0 ],
-					"n_end": 40,
-					"n_end_opp": 30,
-					"end_opp_offset": {
-						"offsets_use_keyframes": true,
-						"offsets": [ [0, [ 0, 0 ]] ]
-					},
-					"end_opp_use_anim": false
+					"cinematic": {
+						"n_cinematic_start": 100,
+						"n_cinematic_hit": 160,
+						"end_dpos": [ 0, 0 ],
+						"end_dpos_opp": [ -1000, 0 ],
+						"n_end": 40,
+						"n_end_opp": 30,
+						"end_opp_offset": {
+							"offsets_use_keyframes": true,
+							"offsets": [ [0, [ 0, 0 ]] ]
+						},
+						"end_opp_use_anim": false
+					}
 				}
 			]
 		}

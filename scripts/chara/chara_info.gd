@@ -29,8 +29,8 @@ class MoveInfo:
 	var n_frames: int
 	var boxes: Array[ST.BoxInfoFrame]
 	var end_dpos : int
-	var bounds_offset : DT.OffsetInfo
-	var att_info: Array[ST._AttInfoBase]
+	var bounds_offset : OffsetInfo
+	var att_info: Array[AttInfo]
 	var summons: Array[SummonFrameInfo]
 	var offsets : OffsetInfo
 	var override_offsets : bool = true
@@ -51,7 +51,7 @@ class SummonInfo:
 	var velocity : Vector2i = Vector2i(0, 0)
 	var lifetime : int = 1000
 	var offsets : DT.OffsetInfo = null
-	var att_info : ST.AttInfo_Hit
+	var att_info : AttInfo
 	var boxes : Array[ST.BoxInfo]
 
 class OffsetInfo:
@@ -121,8 +121,8 @@ static func load_chara(chara_id):
 	
 	res.max_health = data.max_health
 	
-	res.idle_box = parse_box(data.frames.idle)
-	res.crouch_box = parse_box(data.frames.crouch)
+	res.idle_box = ST.BoxInfo.from_info(data.frames.idle, ST.BOX_FLAGS.ALL)
+	res.crouch_box = ST.BoxInfo.from_info(data.frames.crouch, ST.BOX_FLAGS.ALL)
 	
 	res.walk_sp_fwd = data.params.walk[0]
 	res.walk_sp_rev = data.params.walk[1]
@@ -133,30 +133,30 @@ static func load_chara(chara_id):
 		res.dash_off_fwd = OffsetInfo.from_json(dash, res.dash_nf_fwd)
 	
 	if data.frames.has("214s"):
-		res.moves_su_1 = _parse_move("214s", data.frames, res)
+		res.moves_su_1 = _parse_move("214s", data.frames, res, ST.BOX_FLAGS.HIT)
 	
 	if data.frames.has("236s"):
-		res.moves_su_2 = _parse_move("236s", data.frames, res)
+		res.moves_su_2 = _parse_move("236s", data.frames, res, ST.BOX_FLAGS.HIT)
 	
 	for sp in data.moves.specials:
-		res.moves_sp.push_back(_parse_move(sp, data.frames, res))
+		res.moves_sp.push_back(_parse_move(sp, data.frames, res, ST.BOX_FLAGS.HIT))
 	
 	for nr in data.moves.normals:
-		res.moves_nr[nr] = _parse_move(nr, data.frames, res, true)
+		res.moves_nr[nr] = _parse_move(nr, data.frames, res, ST.BOX_FLAGS.HIT, true)
 	
 	for ta in data.moves.targets:
-		var move = _parse_move(ta, data.frames, res)
+		var move = _parse_move(ta, data.frames, res, ST.BOX_FLAGS.HIT)
 		#move.name = move.name.rsplit(".")[-1]
 		res.moves_tr[ta] = move
 	
 	for jn in data.moves.jump_normals:
-		var move = _parse_move(jn, data.frames, res)
+		var move = _parse_move(jn, data.frames, res, ST.BOX_FLAGS.AIR_HIT)
 		move.override_offsets = false
 		move.land_recovery = data.frames[jn].land_recovery
 		res.moves_j_nr[jn] = move
 	
 	for gb in data.moves.grabs:
-		res.grabs[gb] = _parse_move(gb, data.frames, res)
+		res.grabs[gb] = _parse_move(gb, data.frames, res, ST.BOX_FLAGS.THROW)
 	
 	if data.has("accessories"):
 		res.accessories = _parse_access(data.accessories)
@@ -164,7 +164,7 @@ static func load_chara(chara_id):
 	return res
 
 static var _move_uid = 0
-static func _parse_move(nm : String, frames : Dictionary, cinfo : CharaInfo, use_lmh_cancel = false):
+static func _parse_move(nm : String, frames : Dictionary, cinfo : CharaInfo, bflags, use_lmh_cancel = false):
 	if not frames.has(nm):
 		assert(false, "missing frame data for " + nm + "!")
 	var move = MoveInfo.new()
@@ -187,10 +187,13 @@ static func _parse_move(nm : String, frames : Dictionary, cinfo : CharaInfo, use
 	if src.has("boxes"):
 		for d in src.boxes:
 			var bres = ST.BoxInfoFrame.new(
-				parse_box(d),
+				ST.BoxInfo.from_info(d),
 				d.frame_start,
 				d.frame_end
 			)
+			if bres.flags == ST.BOX_FLAGS.ALL:
+				if bres.ty == ST.BOX_TY.HIT or bres.ty == ST.BOX_TY.GRAB:
+					bres.flags = bflags
 			att_info_ty = bres.ty
 			if d.has("att_info"):
 				bres.hit_i = d.att_info
@@ -201,7 +204,7 @@ static func _parse_move(nm : String, frames : Dictionary, cinfo : CharaInfo, use
 		move.offsets = OffsetInfo.from_json(src.offsets, move.n_frames)
 	if att_info_ty and src.has("att_info"):
 		for h in src.att_info:
-			move.att_info.push_back(_parse_att_info(h, att_info_ty, nm, use_lmh_cancel))
+			move.att_info.push_back(AttInfo.parse(h, att_info_ty, nm, use_lmh_cancel))
 	if src.has("summons"):
 		for s in src.summons:
 			var sres = SummonFrameInfo.new()
@@ -210,67 +213,11 @@ static func _parse_move(nm : String, frames : Dictionary, cinfo : CharaInfo, use
 			move.summons.push_back(sres)
 	
 	if src.has("whiff"):
-		move.whiff = _parse_move("whiff", src, cinfo)
+		move.whiff = _parse_move("whiff", src, cinfo, ST.BOX_FLAGS.HIT)
 	if src.has("blocked"):
-		move.blocked = _parse_move("blocked", src, cinfo)
+		move.blocked = _parse_move("blocked", src, cinfo, ST.BOX_FLAGS.HIT)
 	
 	return move
-
-static func _parse_att_info(h : Dictionary, ty : ST.BOX_TY, nm : String, use_lmh_cancel = false):
-	var hres : ST._AttInfoBase
-	match ty:
-		ST.BOX_TY.HIT:
-			hres = ST.AttInfo_Hit.new()
-			hres.n_freeze = h.n_freeze if h.has("n_freeze") else 10
-			hres.stun_block = h.stun[0]
-			hres.stun_hit = h.stun[1]
-			if h.has("ty"): hres.ty = ST.ATTACK_TY.get(h.ty)
-			if h.has("knock_ty"): hres.knock_ty = ST.KNOCK_TY.get(h.knock_ty)
-			if h.has("cancel"):
-				if not h.cancel is String:
-					hres.cancels = ST.CancelInfo.from_json(h.cancel)
-				else:
-					hres.cancels = ST.CancelInfo.new()
-					use_lmh_cancel = false
-			else: hres.cancels = ST.CancelInfo.new()
-			if use_lmh_cancel:
-				hres.cancels.normal_lmh = "lmh".find(nm[-1])
-				hres.cancels.normal_except = nm
-				hres.cancels.all_specials = true
-				hres.cancels.super_1 = true
-				hres.cancels.super_2 = true
-			if h.has("push"): hres.push_hit = h.push
-			if h.has("minspace"): hres.min_space = h.minspace
-			if h.has("dir"): hres.dir = ST.STUN_DIR.get(h.dir)
-			if h.has("dmg"): hres.dmg = h.dmg
-		ST.BOX_TY.GRAB:
-			hres = ST.AttInfo_Grab.new()
-			hres.ty = h.ty if h.has("ty") else ST.ATTACK_TY.GRAB
-		ST.BOX_TY.HIT_SUPER:
-			hres = ST.AttInfo_Super.new()
-			hres.ty = ST.ATTACK_TY.HIGH_SUPER
-			hres.stun_block = h.stun_block
-			hres.n_cinematic_start = h.n_cinematic_start
-			hres.n_cinematic_hit = h.n_cinematic_hit
-			
-			hres.end_dpos = Vector2i(h.end_dpos[0], h.end_dpos[1])
-			hres.end_dpos_opp = Vector2i(h.end_dpos_opp[0], h.end_dpos_opp[1])
-			hres.n_end = h.n_end
-			hres.n_end_opp = h.n_end_opp
-			if h.has("end_opp_offset"):
-				hres.end_opp_offset = OffsetInfo.from_json(h.end_opp_offset, hres.n_end_opp)
-			hres.end_opp_use_anim = h.end_opp_use_anim
-		_:
-			pass
-	if h.has("opp_info"):
-		var h2 = h.opp_info
-		var opp = ST.AttInfoOpp.new()
-		opp.opp_nf = h2.n_frames
-		opp.end_dpos = h2.end_dpos
-		if h2.has("bounds_offset"):
-			opp.bounds_offset = OffsetInfo.from_json(h2.bounds_offset, opp.opp_nf)
-		hres.opp_info = opp
-	return hres
 
 static var _summon_uid = 0
 static func _get_summon(cinfo : CharaInfo, nm : String):
@@ -287,11 +234,11 @@ static func _get_summon(cinfo : CharaInfo, nm : String):
 	if o.has("offsets"): res.offsets = OffsetInfo.from_json(o.offsets, res.lifetime)
 	if o.has("n_hits"): res.n_hits = o.n_hits
 	if o.has("hit_rate"): res.hit_rate = o.hit_rate
-	res.att_info = _parse_att_info(o.att_info, ST.BOX_TY.HIT, "0h")
+	res.att_info = AttInfo.parse(o.att_info, ST.BOX_TY.HIT, "0h")
 	res.att_info.detached = true
 	if o.has("boxes"):
 		for b in o.boxes:
-			res.boxes.push_back(parse_box(b))
+			res.boxes.push_back(ST.BoxInfo.from_info(b))
 	
 	cinfo.summons[nm] = res
 	return res
@@ -304,6 +251,3 @@ static func _parse_access(src):
 			return AccessInfo.new(k2, spwns[k2])
 		)
 	return res
-
-static func parse_box(d):
-	return ST.BoxInfo.new(ST.BOX_TY.get(d.ty), Rect2i(d.rect[0],d.rect[1],d.rect[2],d.rect[3]))

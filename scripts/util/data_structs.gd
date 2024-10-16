@@ -12,20 +12,24 @@ static func cmag2world(c: Vector2i, sz : Vector2):
 	)
 
 class BoxInfo:
-	var ty := BOX_TY.HURT
+	var ty : BOX_TY
 	var rect: Rect2i
 	var rect_flip: Rect2i
+	var flags : BOX_FLAGS
 	
 	var hit_i: int = 0
 	
 	func get_rect(p2):
 		return rect_flip if p2 else rect
 	
-	func _init(ty, rect):
-		self.ty = ty
-		self.rect = rect
-		self.rect_flip = Rect2i(rect)
-		self.rect_flip.position.x = -self.rect_flip.position.x - self.rect_flip.size.x
+	static func from_info(d, flg = BOX_FLAGS.ALL):
+		var res = new()
+		res.ty = ST.BOX_TY.get(d.ty)
+		res.rect = Rect2i(d.rect[0],d.rect[1],d.rect[2],d.rect[3])
+		res.rect_flip = Rect2i(res.rect)
+		res.rect_flip.position.x = -res.rect_flip.position.x - res.rect_flip.size.x
+		res.flags = BOX_FLAGS.get(d.flags) if d.has("flags") else flg
+		return res
 	
 	func hashed():
 		return [
@@ -42,57 +46,6 @@ class BoxInfoFrame extends BoxInfo:
 		self.rect_flip = box.rect_flip
 		self.frame_start = st
 		self.frame_end = ed
-
-class CinematicInfo:
-	var move : AttInfo_Super
-	var is_p2 : bool
-	var show_opp : bool
-	var anim_name : String
-	var anim_name_opp : String
-	var n_frames : int
-
-class AttInfoOpp:
-	var opp_anim : String
-	var opp_nf : int
-	var end_dpos : int
-	var bounds_offset : DT.OffsetInfo
-
-class _AttInfoBase:
-	var ty := ATTACK_TY.HIGH
-	var dmg := 1000
-	var gauge := 100
-	var detached := false
-	
-	var opp_info : AttInfoOpp
-
-class AttInfo_Hit extends _AttInfoBase:
-	var n_freeze: int
-	var stun_block : int
-	var stun_hit : int
-	var push_hit : int
-	var min_space : int
-	var knock_ty := KNOCK_TY.NONE
-	var punish_knock_ty := KNOCK_TY.NONE
-	var dir := STUN_DIR.HEAD
-	var cancels := CancelInfo.new()
-
-class AttInfo_Grab extends _AttInfoBase:
-	var can_tech : bool
-
-class AttInfo_Super extends _AttInfoBase:
-	var n_freeze = 0 #always 0
-	var stun_block : int
-	var push_hit : int
-	var min_space : int
-	var n_cinematic_start : int
-	var n_cinematic_hit : int
-	
-	var end_dpos : Vector2i
-	var end_dpos_opp : Vector2i
-	var n_end : int
-	var n_end_opp : int
-	var end_opp_offset : DT.OffsetInfo
-	var end_opp_use_anim : bool
 
 class CancelInfo:
 	var everything: bool = false
@@ -154,14 +107,25 @@ static var STATE_CROUCH_BIT = 0x0002
 static var STATE_BLOCK_BIT = 0x0100
 
 enum BOX_TY {
-	HIT = 1, HURT = 2, GRAB = 3, PUSH = 4, CLASH = 5,
-	HIT_SUPER = 11
+	NONE = 0, HIT = 1, HURT = 2, GRAB = 3, PUSH = 4, CLASH = 5
+}
+
+enum BOX_FLAGS {
+	NONE = 0,
+	HIT = 1,
+	THROW = 2,
+	AIR_HIT = 4,
+	PROJ_HIT = 8,
+	HIT_INVUL = 0xffff - 1 - 4,
+	THROW_INVUL = 0xffff - 2,
+	AIR_INVUL = 0xffff - 4,
+	PROJ_INVUL = 0xffff - 8,
+	ALL = 0xffff
 }
 
 static func get_box_color(ty : BOX_TY):
 	match ty:
 		BOX_TY.HIT: return Color.DARK_RED
-		BOX_TY.HIT_SUPER: return Color.DARK_RED
 		BOX_TY.HURT: return Color.FOREST_GREEN
 		BOX_TY.GRAB: return Color.DODGER_BLUE
 		BOX_TY.PUSH: return Color(Color.DARK_GRAY, 0.3)
@@ -170,10 +134,6 @@ static func get_box_color(ty : BOX_TY):
 
 enum ATTACK_PART {
 	STARTUP, ACTIVE, RECOVERY, NONE
-}
-enum ATTACK_TY {
-	NONE = 0, HIGH = 0x1000, MID = 0x1001, LOW = 0x1010, AIR = 0x1004, HIGH_SUPER = 0x1100, GRAB = 0x0100, AIR_GRAB = 0x0101, CMD_GRAB = 0x0102,
-	_HIT_BIT = 0x1000, _GRAB_BIT = 0x0100
 }
 enum STUN_TY {
 	BLOCK, PARRY, NORMAL, COUNTER, PUNISH_COUNTER

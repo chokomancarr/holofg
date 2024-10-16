@@ -34,7 +34,7 @@ func step(state : PlayerState):
 			move = move.whiff
 			anim_name = move.name
 	super.step(state)
-	attack_ty = ST.ATTACK_TY.GRAB
+	attack_ty = AttInfo.TY.GRAB
 	if att_processed:
 		state.boxes = []
 

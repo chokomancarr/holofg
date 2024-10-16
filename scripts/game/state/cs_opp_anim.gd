@@ -1,7 +1,7 @@
 class_name CsOppAnim extends _CsBase
 
 const _STATE_NAME = "stun_anim"
-var info : ST.AttInfoOpp
+var info : AttInfo.Cinema
 
 var pos0 : Vector2i
 
@@ -11,7 +11,7 @@ func clone():
 		[]
 	)
 
-func _init(opp : PlayerState = null, info : ST.AttInfoOpp = null):
+func _init(opp : PlayerState = null, info : AttInfo.Cinema = null):
 	if opp:
 		anim_name = "opp/opp_" + opp.state.anim_name
 		self.info = info
@@ -20,17 +20,20 @@ func _init(opp : PlayerState = null, info : ST.AttInfoOpp = null):
 		push_opp = false
 
 func check_next(state : PlayerState):
-	if state_t == info.opp_nf:
+	if state_t == info.n_anim_end_opp:
 		return CsKnockRecover.new()
 
 func step(state : PlayerState):
 	_step()
 	state.boxes = []
-	if info.bounds_offset:
-		bounds_off += info.bounds_offset.eval(state_t - 1)
+	if info.end_bounds_offset_opp:
+		bounds_off += info.end_bounds_offset_opp.eval(state_t - 1)
 
 func deinit(state : PlayerState):
-	state.pos = pos0 + Vector2i(info.end_dpos if state.action_is_p2 else -info.end_dpos, 0)
+	var dp = info.end_dpos
+	if not state.action_is_p2:
+		dp.x *= -1
+	state.pos = pos0 + dp
 
 func get_frame_meter_color():
 	return Color.YELLOW

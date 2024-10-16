@@ -17,7 +17,7 @@ static func try_next(state : PlayerState, sliceback : int):
 					res.move = move
 					res.anim_name = "super_2"
 					
-					var cin = ST.CinematicInfo.new()
+					var cin = AttInfo.Cinema.new()
 					cin.is_p2 = state.is_p2
 					cin.show_opp = false
 					cin.anim_name = "super_2_startup"

@@ -117,30 +117,30 @@ static func load_chara(chara_id):
 		res.dash_off_fwd = OffsetInfo.from_json(dash, res.dash_nf_fwd)
 	
 	if data.frames.has("214s"):
-		res.moves_su_1 = _parse_move("214s", data.frames, res, ST.BOX_FLAGS.HIT)
+		res.moves_su_1 = MoveInfo.parse("214s", data.frames, res, ST.BOX_FLAGS.HIT)
 	
 	if data.frames.has("236s"):
-		res.moves_su_2 = _parse_move("236s", data.frames, res, ST.BOX_FLAGS.HIT)
+		res.moves_su_2 = MoveInfo.parse("236s", data.frames, res, ST.BOX_FLAGS.HIT)
 	
 	for sp in data.moves.specials:
-		res.moves_sp.push_back(_parse_move(sp, data.frames, res, ST.BOX_FLAGS.HIT))
+		res.moves_sp.push_back(MoveInfo.parse(sp, data.frames, res, ST.BOX_FLAGS.HIT))
 	
 	for nr in data.moves.normals:
-		res.moves_nr[nr] = _parse_move(nr, data.frames, res, ST.BOX_FLAGS.HIT, true)
+		res.moves_nr[nr] = MoveInfo.parse(nr, data.frames, res, ST.BOX_FLAGS.HIT, true)
 	
 	for ta in data.moves.targets:
-		var move = _parse_move(ta, data.frames, res, ST.BOX_FLAGS.HIT)
+		var move = MoveInfo.parse(ta, data.frames, res, ST.BOX_FLAGS.HIT)
 		#move.name = move.name.rsplit(".")[-1]
 		res.moves_tr[ta] = move
 	
 	for jn in data.moves.jump_normals:
-		var move = _parse_move(jn, data.frames, res, ST.BOX_FLAGS.AIR_HIT)
+		var move = MoveInfo.parse(jn, data.frames, res, ST.BOX_FLAGS.AIR_HIT)
 		move.override_offsets = false
 		move.land_recovery = data.frames[jn].land_recovery
 		res.moves_j_nr[jn] = move
 	
 	for gb in data.moves.grabs:
-		res.grabs[gb] = _parse_move(gb, data.frames, res, ST.BOX_FLAGS.THROW)
+		res.grabs[gb] = MoveInfo.parse(gb, data.frames, res, ST.BOX_FLAGS.THROW)
 	
 	if data.has("accessories"):
 		res.accessories = _parse_access(data.accessories)

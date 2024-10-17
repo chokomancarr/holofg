@@ -9,7 +9,7 @@ func clone():
 		[], []
 	)
 
-func _init(p : PlayerState = null, info : ST.AttInfo_Hit = null):
+func _init(p : PlayerState = null, info : AttInfo.Hit = null):
 	if p:
 		state_t = 1
 		anim_name = "knock_normal"

@@ -59,7 +59,7 @@ func step(gst : GameState, pst : PlayerState, delta):
 					anim.advance(delta * gst.get_anim_timescale() * Engine.physics_ticks_per_second / 60.0)
 
 func step_cinematic(anim_name : String, pst : PlayerState, t : int):
-	var lib_name = "flipped/" if pst.action_is_p2 else ""
+	var lib_name = "me_flipped/" if pst.action_is_p2 else "me/"
 	var spl = anim_name.split("/")
 	if spl.size() > 1:
 		anim_name = spl[1]

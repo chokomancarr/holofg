@@ -7,7 +7,7 @@ var p2: PlayerState
 var freeze_t: int = 0
 var freeze_n: int = 0
 var freeze_canbuffer := 0
-var cinematic_info: AttInfo.Cinema
+var cinematic_info: MoveInfo.Cinema
 var cinematic_is_p2: bool
 var cinematic_t: int = 0
 var countdown: int = -1#99 * 60 + 59

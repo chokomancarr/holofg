@@ -87,9 +87,9 @@ func _draw_debug_chara(chara : PlayerState, p):
 	var ww = GameMaster.game_state.wall
 	var ctr = (ww.x + ww.y) / 2
 	
-	var boxes = chara.boxes.map(func (b): return [ chara.pos, b.get_rect(chara.action_is_p2), b.ty ])
+	var boxes = chara.boxes.map(func (b): return [ chara.pos, b.get_rect(chara.action_is_p2), b.ty, b.flags ])
 	for sm in chara.summons:
-		boxes.append_array(sm._info.boxes.map(func (b): return [ sm.pos, b.get_rect(sm.is_p2), b.ty ]))
+		boxes.append_array(sm._info.boxes.map(func (b): return [ sm.pos, b.get_rect(sm.is_p2), b.ty, b.flags ]))
 	
 	var n = boxes.size()
 	var bve = _boxview_elems[p]
@@ -100,10 +100,12 @@ func _draw_debug_chara(chara : PlayerState, p):
 		for i in range(n - n2):
 			var panel = Panel.new()
 			var theme = StyleBoxFlat.new()
+			var lbl = Label.new()
 			theme.set_border_width_all(2)
 			panel.set("theme_override_styles/panel", theme)
-			bve.push_back([panel, theme])
+			bve.push_back([panel, theme, lbl])
 			box_ui.add_child(panel)
+			box_ui.add_child(lbl)
 			n2 = n
 	for i in range(n):
 		var bb = boxes[i]
@@ -115,9 +117,13 @@ func _draw_debug_chara(chara : PlayerState, p):
 		pt[0].size = ST.cmag2world(rect.size, sz) * ui_cam_scl
 		pt[1].border_color = ST.get_box_color(bb[2])
 		pt[1].bg_color = Color(pt[1].border_color, 0.3)
+		pt[2].visible = true
+		pt[2].position = pt[0].position
+		pt[2].text = ST.BOX_FLAGS.find_key(bb[3])
 	
 	for i in range(n2 - n):
 		bve[n + i][0].visible = false
+		bve[n + i][2].visible = false
 
 func _tr(vec, sz):
 	vec -= Vector2(sz.x * 0.5, sz.y)

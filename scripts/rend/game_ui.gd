@@ -94,8 +94,8 @@ func _process(dt):
 			get_node("cen_cc/gc/scl%d" % i).text = "%d%%" % (p.combo_scaling / 100)
 			#get_node("cen_cc/gc/ty%d" % i).text = ST.ATTACK_TY.find_key(p.last_att_ty)
 		elif p is _CsAttBase:
-			if p.attack_ty != ST.ATTACK_TY.NONE:
-				get_node("cen_cc/gc/ty%d" % j).text = ST.ATTACK_TY.find_key(p.attack_ty)
+			if p.attack_ty != AttInfo.TY.NONE:
+				get_node("cen_cc/gc/ty%d" % j).text = AttInfo.TY.find_key(p.attack_ty & 0xffff)
 	
 	upd_hit_stat.call(gst.p1.state, 2, 1)
 	upd_hit_stat.call(gst.p2.state, 1, 2)

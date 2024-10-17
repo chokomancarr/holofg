@@ -3,7 +3,7 @@ class_name CsDash extends _CsBase
 const _STATE_NAME = "dash"
 
 var fwd = true
-var move : DT.MoveInfo
+var move : MoveInfo
 
 func clone():
 	return ObjUtil.clone(self, _clone(new(fwd)),
@@ -11,8 +11,8 @@ func clone():
 		[]
 	)
 
-static var move_fwd : DT.MoveInfo = (func ():
-	var dash = DT.MoveInfo.new()
+static var move_fwd : MoveInfo = (func ():
+	var dash = MoveInfo.new()
 	dash.name = "66"
 	dash.cmd = IN.InputCommand.from_string("66")
 	dash.cmd.t_dirs = 15
@@ -21,8 +21,8 @@ static var move_fwd : DT.MoveInfo = (func ():
 	return dash
 ).call()
 
-static var move_rev : DT.MoveInfo = (func ():
-	var dash = DT.MoveInfo.new()
+static var move_rev : MoveInfo = (func ():
+	var dash = MoveInfo.new()
 	dash.name = "44"
 	dash.cmd = IN.InputCommand.from_string("44")
 	dash.cmd.t_dirs = 15

@@ -122,12 +122,12 @@ func _process(delta):
 			
 			var cinfo = gst.cinematic_info
 			if cinfo:
-				var is_opp = (gst.cinematic_info.is_p2 == is_p1)
-				if is_opp and not cinfo.show_opp:
+				var is_opp = (gst.cinematic_is_p2 == is_p1)
+				if is_opp and not cinfo.anim_name_opp:
 					visible = false
 				else:
 					visible = true
-					anim_ctrl.step_cinematic(cinfo.anim_name_opp if is_opp else cinfo.anim_name, gst.p2 if cinfo.is_p2 else gst.p1, gst.cinematic_t)
+					anim_ctrl.step_cinematic(cinfo.anim_name_opp if is_opp else cinfo.anim_name, gst.p2 if gst.cinematic_is_p2 else gst.p1, gst.cinematic_t)
 			else:
 				visible = true
 				anim_ctrl.step(gst, pst, delta)

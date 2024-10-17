@@ -20,14 +20,14 @@ func _init(opp : PlayerState = null, info : MoveInfo.Opp = null):
 		push_opp = false
 
 func check_next(state : PlayerState):
-	if state_t == info.n_anim_end_opp:
+	if state_t == info.n_frames:
 		return CsKnockRecover.new()
 
 func step(state : PlayerState):
 	_step()
 	state.boxes = []
-	if info.end_bounds_offset_opp:
-		bounds_off += info.end_bounds_offset_opp.eval(state_t - 1)
+	if info.bounds_offset:
+		bounds_off += info.bounds_offset.eval(state_t - 1)
 
 func deinit(state : PlayerState):
 	var dp = info.end_dpos

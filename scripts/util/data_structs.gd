@@ -44,6 +44,7 @@ class BoxInfoFrame extends BoxInfo:
 		self.ty = box.ty
 		self.rect = box.rect
 		self.rect_flip = box.rect_flip
+		self.flags = box.flags
 		self.frame_start = st
 		self.frame_end = ed
 

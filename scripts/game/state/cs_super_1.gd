@@ -33,13 +33,16 @@ func check_next(state : PlayerState):
 		return CsIdle.new()
 
 func step(pst: PlayerState):
-	if att_part == ST.ATTACK_PART.RECOVERY and not att_connected and move.blocked:
-		move = move.blocked
-		anim_name += "_blocked"
+	#if att_part == ST.ATTACK_PART.RECOVERY and not att_connected:
+		#move = move.blocked
+		#anim_name += "_blocked"
 	super.step(pst)
 	if in_superfreeze:
 		in_superfreeze = false
 		anim_name = "super_1"
+
+func on_att_connected():
+	pass
 
 func dict4hash():
 	return [ _STATE_NAME,

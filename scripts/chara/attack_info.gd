@@ -69,17 +69,4 @@ static func parse(h : Dictionary, ty : ST.BOX_TY, nm : String, use_lmh_cancel = 
 			hres.ty = h.ty if h.has("ty") else TY.GRAB
 		_:
 			pass
-	if h.has("cine_info"):
-		const cps = [
-			"opp_play_anim", "do_cutscene", "n_cutscene_startup", "n_cutscene_hit",
-			"end_dpos", "end_dpos_opp", "n_anim_end", "n_anim_end_opp"
-		]
-		var h2 = h.cine_info
-		var cin = Cinema.new()
-		for cp in cps:
-			if h2.has(cp):
-				cin[cp] = h2[cp]
-		if h2.has("end_bounds_offset_opp"):
-			cin.end_bounds_offset_opp = DT.OffsetInfo.from_json(h2.end_bounds_offset_opp, cin.n_anim_end_opp)
-		hres.cine_info = cin
 	return hres

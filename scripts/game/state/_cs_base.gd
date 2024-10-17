@@ -16,7 +16,7 @@ var push_opp := true
 var req_freeze : int = 0
 var req_freeze_exclusive = false
 
-var req_cinematic : AttInfo.Cinema
+var req_cinematic : MoveInfo.Cinema
 
 var bounds_off : Vector2i
 
@@ -31,7 +31,7 @@ static func _check_inputs(state : PlayerState, sliceback, callback, d = false):
 	var his = state.input_history
 	var dirs = his.dirs.duplicate(true) as Array if d else null
 	var n = 0
-	var move : DT.MoveInfo
+	var move : MoveInfo
 	for st : IN.InputState in his.his:
 		n += st.nf
 		var m = st.nf

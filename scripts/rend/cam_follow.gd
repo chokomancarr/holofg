@@ -14,7 +14,7 @@ func _physics_process(_dt):
 				par.basis = anchor.global_basis
 			GameState.MATCH_STATE.CINEMATIC:
 				var inst = CharaRend.insts
-				var anchor = CharaRend.insts[int(gst.cinematic_info.is_p2)].cam_anchor
+				var anchor = CharaRend.insts[int(gst.cinematic_is_p2)].cam_anchor
 				#par.position = anchor.global_position
 				#par.basis = anchor.global_basis
 			_:

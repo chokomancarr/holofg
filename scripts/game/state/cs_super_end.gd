@@ -1,7 +1,7 @@
 class_name CsSuperEnd extends _CsBase
 
 const _STATE_NAME = "super_end"
-var move : MoveInfo
+var move : MoveInfo._Base
 var is_opp : bool
 
 func clone():
@@ -10,7 +10,7 @@ func clone():
 		[]
 	)
 
-func _init(p : PlayerState = null, move : MoveInfo = null, is_opp = false):
+func _init(p : PlayerState = null, move : MoveInfo._Base = null, is_opp = false):
 	if p:
 		self.move = move
 		self.is_opp = is_opp
@@ -20,7 +20,7 @@ func _init(p : PlayerState = null, move : MoveInfo = null, is_opp = false):
 func check_next(state : PlayerState):
 	if state_t == move.n_frames:
 		if is_opp:
-			return CsStunAir(ST.STUN_AIR_TY.LIM_JUGGLE) if state.pos.y > 0 else CsKnockRecover.new()
+			return CsStunAir.new(state, ST.STUN_AIR_TY.LIM_JUGGLE) if state.pos.y > 0 else CsKnockRecover.new()
 		else:
 			return CsIdle.new()
 

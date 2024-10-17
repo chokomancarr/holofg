@@ -3,7 +3,6 @@ class_name CsSuper1 extends _CsAttBase
 const _STATE_NAME = "super_1"
 
 var in_superfreeze = true
-var att_connected = false
 
 func clone():
 	return ObjUtil.clone(self, _clone(new()),

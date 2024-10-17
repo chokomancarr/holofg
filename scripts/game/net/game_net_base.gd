@@ -34,15 +34,11 @@ func _step_game_state(state : GameState, p1_inputs, p2_inputs):
 		state.state = GameState.MATCH_STATE.GAME
 	elif state.state == GameState.MATCH_STATE.CINEMATIC:
 		if state.cinematic_t == state.cinematic_info.n_frames:
-			var mv = state.cinematic_info.move
 			var ip2 = state.cinematic_info.is_p2
-			var p = state.p2 if ip2 else state.p1
-			var op = state.p1 if ip2 else state.p2
-			if mv:
-				state.p1.state = CsSuperEnd.new(p, mv, ip2)
-				state.p2.state = CsSuperEnd.new(p, mv, !ip2)
-				p.pos += state.cinematic_info.move.end_dpos
-				op.pos = p.pos + state.cinematic_info.move.end_dpos_opp
+			var p = state.p2 if state.cinematic_is_p2 else state.p1
+			var op = state.p1 if state.cinematic_is_p2 else state.p2
+			p.pos += state.cinematic_info.move.end_dpos
+			op.pos = p.pos + state.cinematic_info.move.end_dpos_opp
 			state.cinematic_info = null
 			state.state = GameState.MATCH_STATE.GAME
 	
@@ -69,7 +65,7 @@ func _step_game_state(state : GameState, p1_inputs, p2_inputs):
 			
 			p1.can_super = true
 			p1.prestep()
-			p2.can_super = not p1.state.req_cinematic
+			p2.can_super = (not p1.state is CsSuper1) and (not p1.state is CsSuper2)
 			p2.prestep()
 			
 			var flip_p2 = (p1.pos.x > p2.pos.x)
@@ -84,13 +80,13 @@ func _step_game_state(state : GameState, p1_inputs, p2_inputs):
 			if freeze > 0:
 				state.freeze(freeze, 1 if p1.state.req_freeze_exclusive else 2 if p2.state.req_freeze_exclusive else 3)
 			elif (p1.state.req_cinematic):
-				state.cinematic(p1.state.req_cinematic)
+				state.cinematic(p1.state.req_cinematic, false)
 			elif (p2.state.req_cinematic):
-				state.cinematic(p2.state.req_cinematic)
+				state.cinematic(p2.state.req_cinematic, true)
 			else:
 				p1.step()
 				p2.step()
-		
+				
 				GameCollider.step(state)
 				
 				if state.p1.bar_health == 0 or state.p2.bar_health == 0:

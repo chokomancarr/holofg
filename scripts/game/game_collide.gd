@@ -160,6 +160,9 @@ static func apply_hit(gst : GameState, p : PlayerState, opp : PlayerState, o, j)
 	var hit : AttInfo = oj.hit
 	var push : bool = oj.push
 	var eff_pos : Vector2i = oj.pos
+	var move = opp.state.move
+	
+	var connd = false
 	
 	var _inc_gauge = func (p : PlayerState, opp : PlayerState, inc : int, ratio : Array):
 			opp.bar_super += (inc * ratio[0]) / 10
@@ -167,82 +170,59 @@ static func apply_hit(gst : GameState, p : PlayerState, opp : PlayerState, o, j)
 	
 	var counter_ty = p.state.query_stun()
 	if hit.box_ty == ST.BOX_TY.HIT:
-		match counter_ty:
-			ST.STUN_TY.BLOCK:
-				var block_ty = p.state.block_state
-				var canblock = ((hit.ty & 0x11) & ~block_ty) == 0
-				if canblock:
-					p.state = CsBlock.new(p, hit, !push)
-					p.state.block_state = block_ty
-					_inc_gauge.call(p, opp, hit.gauge, GAUGE_BLOCK)
-				else:
-					#super can always be blocked
-					p.state = CsStun.new(p, hit as AttInfo.Hit, !push)
-					p.state.eff_pos = eff_pos
-					_inc_gauge.call(p, opp, hit.gauge, GAUGE_HIT)
-			ST.STUN_TY.PARRY:
-				(p.state as CsParry).parried_nf = hit.stun_block
-				_inc_gauge.call(p, opp, hit.gauge, GAUGE_PARRY)
-			_:
-				if opp.state is CsSuper1:
-					opp.state.att_connected = true
-				
-				if hit.cine_info:
-					p.state = CsOppAnim.new(opp, hit.cine_info)
-					
-				else:
-					if p.state.airborne:
-						var sto = p.state as _CsStunBase
-						var jug = (counter_ty != ST.STUN_TY.NORMAL) or (sto is CsStunAir and sto.ty == ST.STUN_AIR_TY.JUGGLE)
-						p.state = CsStunAir.new(p, ST.STUN_AIR_TY.JUGGLE if jug else ST.STUN_AIR_TY.RESET)
-						var dmg = (p.state as _CsStunBase).apply_scaling(sto, hit as AttInfo.Hit)
-						p.bar_health = maxi(p.bar_health - dmg, 0)
-						p.state.eff_pos = eff_pos
-
-						_inc_gauge.call(p, opp, hit.gauge, GAUGE_HIT)
-					else:
-				if hit.ty == ST.ATTACK_TY.HIGH_SUPER:
-					var cin = ST.CinematicInfo.new()
-					cin.is_p2 = opp.is_p2
-					cin.show_opp = true
-					cin.anim_name = "super_2_cinematic"
-					cin.anim_name_opp = "opp/opp_super_2_cinematic"
-					cin.n_frames = hit.n_cinematic_hit
-					cin.move = hit
-					gst.cinematic(cin)
-					p.pos = opp.pos + Vector2i(-500 if opp.action_is_p2 else 500, 0)
-				else:
-					
+		if counter_ty == ST.STUN_TY.PARRY:
+			(p.state as CsParry).parried_nf = hit.stun_block
+			_inc_gauge.call(p, opp, hit.gauge, GAUGE_PARRY)
+		elif counter_ty == ST.STUN_TY.BLOCK and not ((hit.ty & 0x11) & ~p.state.block_state):
+			p.state = CsBlock.new(p, hit, !push)
+			p.state.block_state = block_ty
+			_inc_gauge.call(p, opp, hit.gauge, GAUGE_BLOCK)
+		else:
+			connd = true
+			
+			if opp_move.move_connd_opp: #use custom animation
+				p.state = CsOppAnim.new(opp, opp_move.move_connd_opp)
+			else:
+				var airty = ST.STUN_AIR_TY.NONE
+				if p.state.airborne:
 					var sto = p.state as _CsStunBase
-					var hh = hit as ST.AttInfo_Hit
-					
-					if hh.opp_info:
-						p.state = CsOppAnim.new(opp, hit.opp_info)
-						p.bar_health = maxi(p.bar_health - hit.dmg, 0)
-						#var fd = (hit as ST.AttInfo_Grab).fix_dist
-						#if fd < 100000:
-						p.pos = opp.pos + Vector2i(-500 if opp.action_is_p2 else 500, 0)
-						p.state.push_wall = true
+					if (counter_ty != ST.STUN_TY.NORMAL) or (sto is CsStunAir and sto.ty == ST.STUN_AIR_TY.JUGGLE):
+						airty = ST.STUN_AIR_TY.JUGGLE
 					else:
-						match hh.knock_ty:
-							ST.KNOCK_TY.KNOCKDOWN, ST.KNOCK_TY.HARD_KNOCKDOWN:
-								p.state = CsKnock.new(p, hh)
-							_:
-								p.state = CsStun.new(p, hh)
-						p.state.eff_pos = eff_pos
-					
-						var dmg = (p.state as _CsStunBase).apply_scaling(sto, hh)
-						p.bar_health = maxi(p.bar_health - dmg, 0)
-						_inc_gauge.call(p, opp, hit.gauge, GAUGE_HIT)
+						airty = ST.STUN_AIR_TY.RESET
+			
+			var hh = hit as AttInfo.Hit
+			match hh.knock_ty:
+				ST.KNOCK_TY.KNOCKDOWN, ST.KNOCK_TY.HARD_KNOCKDOWN:
+					p.state = CsKnock.new(p, hh)
+				_:
+					if airty:
+						p.state = CsStunAir.new(airty)
+					else:
+						p.state = CsStun.new(p, hh)
+			
+			p.state.eff_pos = eff_pos
 		
 		o.freeze = maxi(o.freeze, hit.n_freeze)
+	
 	else: #is grab
 		if p.state.attack_ty == AttInfo.TY.GRAB and counter_ty != ST.STUN_TY.PUNISH_COUNTER:
 				p.state = CsGrabTech.new()
 				opp.state = CsGrabTech.new()
 				o.hits = [ null, null ]
 		else:
-			p.state = CsOppAnim.new(opp, hit.cine_info)
+			connd = true
+			p.state = CsOppAnim.new(opp, opp.state.move.move_connd_opp)
 			p.bar_health = maxi(p.bar_health - hit.dmg, 0)
 			p.pos = opp.pos + Vector2i(-500 if opp.action_is_p2 else 500, 0)
 			p.state.push_wall = true
+
+	if connd:
+		opp.state.att_connected = true
+		if move.cine_hit:
+			gst.cinematic(move.cine_hit)
+			opp.state = CsSuperEnd.new(opp, move, false)
+			p.state = CsSuperEnd.new(p, move, true)
+		elif move.move_connd:
+			opp.state.move = move.move_connd
+			opp.state.on_move_connected()

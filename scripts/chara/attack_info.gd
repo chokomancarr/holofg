@@ -5,7 +5,6 @@ var ty := TY.NONE
 var dmg := 1000
 var gauge := 100
 var detached := false
-var cine_info : Cinema
 
 class Hit extends AttInfo:
 	var n_freeze := 10
@@ -17,6 +16,22 @@ class Hit extends AttInfo:
 	var punish_knock_ty := ST.KNOCK_TY.NONE
 	var dir := ST.STUN_DIR.HEAD
 	var cancels := ST.CancelInfo.new()
+
+enum TY {
+	NONE = 0, HIGH = 0x1000, MID = 0x1001, LOW = 0x1010, AIR = 0x1004, GRAB = 0x0100, AIR_GRAB = 0x0101, CMD_GRAB = 0x0102,
+	_HIT_BIT = 0x1000, _GRAB_BIT = 0x0100, _SUPER_1_BIT = 0x100000, _SUPER_2_BIT = 0x200000
+}
+const TY_PRIO = {
+	TY.NONE: 0,
+	TY.GRAB: 1,
+	TY.AIR_GRAB: 1,
+	TY.HIGH: 2,
+	TY.MID: 2,
+	TY.LOW: 2,
+	TY.AIR: 2,
+	TY.CMD_GRAB: 10
+}
+
 
 static func parse(h : Dictionary, ty : ST.BOX_TY, nm : String, use_lmh_cancel = false):
 	var hres = new() if ty == ST.BOX_TY.GRAB else Hit.new()
@@ -68,31 +83,3 @@ static func parse(h : Dictionary, ty : ST.BOX_TY, nm : String, use_lmh_cancel = 
 			cin.end_bounds_offset_opp = DT.OffsetInfo.from_json(h2.end_bounds_offset_opp, cin.n_anim_end_opp)
 		hres.cine_info = cin
 	return hres
-
-class Cinema:
-	var opp_play_anim := false
-	var do_cutscene := false
-	
-	var n_cutscene_startup := -1
-	var n_cutscene_hit := -1
-	
-	var end_dpos := Vector2i.ZERO
-	var end_dpos_opp := Vector2i.ZERO
-	var n_anim_end := -1
-	var n_anim_end_opp := -1
-	var end_bounds_offset_opp : DT.OffsetInfo
-
-enum TY {
-	NONE = 0, HIGH = 0x1000, MID = 0x1001, LOW = 0x1010, AIR = 0x1004, GRAB = 0x0100, AIR_GRAB = 0x0101, CMD_GRAB = 0x0102,
-	_HIT_BIT = 0x1000, _GRAB_BIT = 0x0100, _SUPER_1_BIT = 0x100000, _SUPER_2_BIT = 0x200000
-}
-const TY_PRIO = {
-	TY.NONE: 0,
-	TY.GRAB: 1,
-	TY.AIR_GRAB: 1,
-	TY.HIGH: 2,
-	TY.MID: 2,
-	TY.LOW: 2,
-	TY.AIR: 2,
-	TY.CMD_GRAB: 10
-}

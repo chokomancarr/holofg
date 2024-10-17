@@ -1,7 +1,7 @@
 class_name CsOppAnim extends _CsBase
 
 const _STATE_NAME = "stun_anim"
-var info : AttInfo.Cinema
+var info : MoveInfo.Opp
 
 var pos0 : Vector2i
 
@@ -11,7 +11,7 @@ func clone():
 		[]
 	)
 
-func _init(opp : PlayerState = null, info : AttInfo.Cinema = null):
+func _init(opp : PlayerState = null, info : MoveInfo.Opp = null):
 	if opp:
 		anim_name = "opp/opp_" + opp.state.anim_name
 		self.info = info

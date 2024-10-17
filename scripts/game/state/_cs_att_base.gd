@@ -1,8 +1,9 @@
 class_name _CsAttBase extends _CsBase
 
-var move : DT.MoveInfo
+var move : MoveInfo
 var current_att : int
 var att_processed : bool
+var att_connected : bool
 var att_part : ST.ATTACK_PART
 
 func _clone(res):
@@ -13,6 +14,11 @@ func _clone(res):
 
 func step(state : PlayerState):
 	_step()
+	
+	#if att_connected and move.move_connd:
+	#	move = move.move_connd
+	#	on_move_connected()
+	
 	state.boxes = []
 	var found_att = false
 	var has_att = false
@@ -45,6 +51,9 @@ func step(state : PlayerState):
 	
 	if move.offsets:
 		next_offset = move.offsets.eval(state_t - 1)
+
+func on_move_connected():
+	pass
 
 func get_anim_frame(df):
 	return state_t + df

@@ -29,14 +29,11 @@ func check_next(state : PlayerState):
 		return CsIdle.new()
 
 func step(state : PlayerState):
-	if state_t == 7:
-		if not att_processed:
-			move = move.whiff
-			anim_name = move.name
 	super.step(state)
 	attack_ty = AttInfo.TY.GRAB
-	if att_processed:
-		state.boxes = []
+
+func on_move_connected():
+	anim_name = move.name
 
 func dict4hash2():
 	return [ _STATE_NAME,

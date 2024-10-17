@@ -17,13 +17,7 @@ static func try_next(state : PlayerState, sliceback : int):
 					res.move = move
 					res.anim_name = "super_2"
 					
-					var cin = AttInfo.Cinema.new()
-					cin.is_p2 = state.is_p2
-					cin.show_opp = false
-					cin.anim_name = "super_2_startup"
-					cin.n_frames = move.att_info[0].n_cinematic_start
-					#cin.move = move
-					res.req_cinematic = cin
+					res.req_cinematic = move.cine_startup
 					state.bar_super -= 2000
 					
 					st.processed = true
@@ -31,6 +25,9 @@ static func try_next(state : PlayerState, sliceback : int):
 		, true)
 	else:
 		return null
+
+func on_att_connected():
+	pass
 
 func check_next(state : PlayerState):
 	if state_t == move.n_frames:

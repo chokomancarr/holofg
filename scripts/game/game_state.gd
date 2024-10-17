@@ -8,13 +8,14 @@ var freeze_t: int = 0
 var freeze_n: int = 0
 var freeze_canbuffer := 0
 var cinematic_info: AttInfo.Cinema
+var cinematic_is_p2: bool
 var cinematic_t: int = 0
 var countdown: int = -1#99 * 60 + 59
 var wall = Vector2i(0, 10000)
 
 func clone():
 	return ObjUtil.clone(self, new(),
-		[ "state", "freeze_t", "freeze_n", "freeze_canbuffer", "cinematic_p2", "countdown", "wall" ],
+		[ "state", "freeze_t", "freeze_n", "freeze_canbuffer", "cinematic_is_p2", "cinematic_t", "countdown", "wall" ],
 		[ "p1", "p2" ]
 	)
 
@@ -46,8 +47,9 @@ func freeze(n, canbuf = 3):
 	freeze_canbuffer = canbuf
 	state = MATCH_STATE.ATT_FREEZE
 
-func cinematic(info):
+func cinematic(info, p2):
 	cinematic_info = info
+	cinematic_is_p2 = p2
 	cinematic_t = 0
 	state = MATCH_STATE.CINEMATIC
 

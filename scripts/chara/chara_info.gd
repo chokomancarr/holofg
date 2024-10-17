@@ -21,24 +21,8 @@ class CharaInfo:
 	
 	var _summon_data : Dictionary
 
-class MoveInfo:
-	var uid: int
-	var name: String
-	var alias_name: String
-	var cmd: IN.InputCommand
-	var n_frames: int
-	var boxes: Array[ST.BoxInfoFrame]
-	var end_dpos : int
-	var bounds_offset : OffsetInfo
-	var att_info: Array[AttInfo]
-	var summons: Array[SummonFrameInfo]
-	var offsets : OffsetInfo
-	var override_offsets : bool = true
-	var land_recovery : int = 0
-	var whiff: MoveInfo
-	var blocked: MoveInfo
 
-class SummonFrameInfo:
+class SummonInfoFrame:
 	var frame: int
 	var summon: SummonInfo
 
@@ -163,61 +147,6 @@ static func load_chara(chara_id):
 	
 	return res
 
-static var _move_uid = 0
-static func _parse_move(nm : String, frames : Dictionary, cinfo : CharaInfo, bflags, use_lmh_cancel = false):
-	if not frames.has(nm):
-		assert(false, "missing frame data for " + nm + "!")
-	var move = MoveInfo.new()
-	move.uid = _move_uid
-	_move_uid += 1
-	var src = frames[nm]
-	move.name = (src.anim_name if src.has("anim_name") else nm).replace(".", "_")
-	move.cmd = IN.InputCommand.from_string(nm)
-	move.n_frames = src.n_frames
-	if src.has("alias"):
-		move.alias_name = src.alias
-	if src.has("rapid"):
-		nm = nm.rsplit(".")[-1]
-		use_lmh_cancel = true
-	if src.has("end_dpos"):
-		move.end_dpos = src.end_dpos
-	if src.has("bounds_offset"):
-		move.bounds_offset = OffsetInfo.from_json(src.bounds_offset, move.n_frames)
-	var att_info_ty = null
-	if src.has("boxes"):
-		for d in src.boxes:
-			var bres = ST.BoxInfoFrame.new(
-				ST.BoxInfo.from_info(d),
-				d.frame_start,
-				d.frame_end
-			)
-			if bres.flags == ST.BOX_FLAGS.ALL:
-				if bres.ty == ST.BOX_TY.HIT or bres.ty == ST.BOX_TY.GRAB:
-					bres.flags = bflags
-			att_info_ty = bres.ty
-			if d.has("att_info"):
-				bres.hit_i = d.att_info
-			else:
-				bres.hit_i = 0
-			move.boxes.push_back(bres)
-	if src.has("offsets"):
-		move.offsets = OffsetInfo.from_json(src.offsets, move.n_frames)
-	if att_info_ty and src.has("att_info"):
-		for h in src.att_info:
-			move.att_info.push_back(AttInfo.parse(h, att_info_ty, nm, use_lmh_cancel))
-	if src.has("summons"):
-		for s in src.summons:
-			var sres = SummonFrameInfo.new()
-			sres.frame = s.f
-			sres.summon = _get_summon(cinfo, s.name)
-			move.summons.push_back(sres)
-	
-	if src.has("whiff"):
-		move.whiff = _parse_move("whiff", src, cinfo, ST.BOX_FLAGS.HIT)
-	if src.has("blocked"):
-		move.blocked = _parse_move("blocked", src, cinfo, ST.BOX_FLAGS.HIT)
-	
-	return move
 
 static var _summon_uid = 0
 static func _get_summon(cinfo : CharaInfo, nm : String):

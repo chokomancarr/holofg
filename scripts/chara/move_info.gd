@@ -22,6 +22,10 @@ class Cinema:
 	var end_dpos := Vector2i.ZERO
 	var end_dpos_opp := Vector2i.ZERO
 
+class StreakAnimInfo:
+	var name : String
+	var name_flip : String
+	var frame_range : Vector2i
 
 var alias_name: String				#shortcut input name
 var cmd: IN.InputCommand
@@ -33,6 +37,8 @@ var move_connd_opp: Opp
 
 var cine_startup : Cinema #played before startup
 var cine_hit : Cinema #played on hit
+
+var streaks : Array[StreakAnimInfo]
 
 static var _move_uid = 0
 static func parse(nm : String, frames : Dictionary, cinfo : DT.CharaInfo, bflags, use_lmh_cancel = false, move = new()):
@@ -100,6 +106,8 @@ static func parse(nm : String, frames : Dictionary, cinfo : DT.CharaInfo, bflags
 					cin[cp] = Vector2i(v[0], v[1]) if v is Array else v
 			if h2.has("end_bounds_offset_opp"):
 				cin.end_bounds_offset_opp = DT.OffsetInfo.from_json(h2.end_bounds_offset_opp, cin.n_anim_end_opp)
+			if cin.anim_name_opp:
+				cin.anim_name_opp = "opp/" + cin.anim_name_opp
 			move[cine] = cin
 	
 	if src.has("connd"):
@@ -109,5 +117,20 @@ static func parse(nm : String, frames : Dictionary, cinfo : DT.CharaInfo, bflags
 		var res = Opp.new()
 		parse("connd_opp", src, cinfo, ST.BOX_FLAGS.HIT, false, res)
 		move.move_connd_opp = res
+	
+	if src.has("streaks"):
+		move.streaks.assign(src.streaks.map(func (ss):
+			var str = StreakAnimInfo.new()
+			str.name = ss.name
+			if str.name.ends_with("_L"):
+				str.name_flip = str.name.trim_suffix("L") + "R"
+			elif str.name.ends_with("_R"):
+				str.name_flip = str.name.trim_suffix("R") + "L"
+			else:
+				str.name_flip = str.name
+				
+			str.frame_range = Vector2i(ss.range[0], ss.range[1])
+			return str
+		))
 	
 	return move

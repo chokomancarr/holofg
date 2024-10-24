@@ -21,9 +21,15 @@ var summon_objs = {}
 var anchors : Array[Node3D]
 var cam_anchor : Node3D
 var effects : EffectRend
+var streaks : CharaStreaks
 
 var overlay_mat : ShaderMaterial
 var _overlay_shader = preload("res://chara_highlight.tres")
+
+var _hit_txt_counter = preload("res://scenes/counter.tscn")
+var hit_status_txt : TxtCounter
+
+@onready var palette = %"palette" as CharaPalette
 
 func _set_overlay(oo : Array, mat : Material):
 	for o : Node in oo:
@@ -37,7 +43,7 @@ func set_overlay_col(c : Color, f : float):
 	overlay_mat.set_shader_parameter("fresnel", f)
 
 func _ready():
-	%"palette".apply_palette(0 if is_p1 else 1)
+	palette.apply_palette(0 if is_p1 else 1)
 	
 	insts[ 1 - int(is_p1) ] = self
 	anchors.push_back(arm)
@@ -70,25 +76,51 @@ func _ready2():
 		doodle.position.x *= -1
 		doodle_loop.flip_h = true
 		doodle_loop.position.x *= -1
+	
+		for c in get_children():
+			_set_layer(c)
+
+func _set_layer(c : Node):
+	if c is VisualInstance3D:
+		c.layers = c.layers << 5
+	for c2 in c.get_children():
+		_set_layer(c2)
  
 func _init_effects(i):
 	effects = EffectRend.new(i, self)
+	
+	streaks = CharaStreaks.new(i, self)
+	mdl.add_child(streaks)
 
 func _physics_process(dt):
 	var gst = GameMaster.game_state
 	if not gst:
 		return
 	var pst = gst.p1 if is_p1 else gst.p2
+	var pss = pst.state
 	
-	if pst.state is _CsAttBase:
+	if pss is _CsAttBase:
 		expr.expr = CharaExpress.EXPR.ATTACK 
-	elif pst.state is _CsStunBase:
+	elif pss is _CsStunBase:
 		expr.expr = CharaExpress.EXPR.STUN
 	else:
 		expr.expr = CharaExpress.EXPR.IDLE
 	
+	if pss is _CsStunBase:
+		if pss.counter_ty == ST.STUN_TY.COUNTER:
+			if hit_status_txt != null:
+				if hit_status_txt.uid != pss.counter_uid:
+					hit_status_txt.free()
+			if not hit_status_txt:
+				hit_status_txt = _hit_txt_counter.instantiate() as TxtCounter
+				hit_status_txt.init(pst, self)
+				add_child(hit_status_txt)
+				_set_layer(hit_status_txt)
+	
 	if access:
 		access.step(pst, self)
+	
+	streaks.step(pst, self)
 
 func _process(delta):
 	var gst = GameMaster.game_state
@@ -151,7 +183,7 @@ func _process(delta):
 					sv[0].queue_free()
 					summon_objs.erase(so)
 			
-			effects.process(pst)
+			effects.process(pst, gst.state == GameState.MATCH_STATE.CINEMATIC)
 			
 			if pst.state is CsParry:
 				if pst.state.anim_name == "parry_recovery":
@@ -176,6 +208,7 @@ func _gen_summon_scene(pst : PlayerState, p, sm : SummonState):
 	scn.name = "summon_p%d_%d" % [ int(is_p1), sm.sm_hash ]
 	(scn as SummonRend).state = sm
 	get_parent().add_child(scn)
+	_set_layer(scn)
 	return scn
 
 func attach_to_anchor(nd : Node, anchor : String):
@@ -188,3 +221,8 @@ func attach_to_anchor(nd : Node, anchor : String):
 
 func _hide_doodle():
 	doodle.visible = false
+
+func set_rend_layers(rnd : VisualInstance3D):
+	rnd.layers = 0b111110000000000
+	if not is_p1:
+		rnd.layers = rnd.layers << 5

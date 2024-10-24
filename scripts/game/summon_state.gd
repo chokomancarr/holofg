@@ -48,4 +48,5 @@ func on_hit():
 	if hit_i < _info.n_hits:
 		hit_cd += _info.hit_rate
 	else:
+		hit_cd = 10000000
 		last_tick = true

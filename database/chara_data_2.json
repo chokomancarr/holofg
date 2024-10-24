@@ -2,8 +2,8 @@
 	"chara_name": "Tokoyami Towa",
 	"max_health": "10000",
 	"params": {
-		"walk": [18, 15],
-		"dash": [20, 20]
+		"walk": [20, 17],
+		"dash": [25, 20]
 	},
 	"moves": {
 		"specials": [
@@ -78,7 +78,13 @@
 				"minspace": 500,
 				"dir": "BODY",
 				"dmg": 500
-			}]
+			}],
+			"streaks": [
+				{
+					"name": "tail",
+					"range": [ 2, 9 ]
+				}
+			]
 		},
 		"5m.5m": {
 			"n_frames": 25,
@@ -91,7 +97,13 @@
 				"stun": [ 18 , 21 ],
 				"push": -500,
 				"dmg": 500
-			}]
+			}],
+			"streaks": [
+				{
+					"name": "tail",
+					"range": [ 4, 9 ]
+				}
+			]
 		},
 		"5h": {
 			"n_frames": 34,
@@ -107,7 +119,13 @@
 				"minspace": 700,
 				"dir": "HEAD",
 				"dmg": 800
-			}]
+			}],
+			"streaks": [
+				{
+					"name": "leg_R",
+					"range": [ 6, 10 ]
+				}
+			]
 		},
 		"2l": {
 			"n_frames": 16,
@@ -161,7 +179,13 @@
 				"ty": "LOW",
 				"dir": "LEG",
 				"dmg": 500
-			}]
+			}],
+			"streaks": [
+				{
+					"name": "tail",
+					"range": [ 2, 10 ]
+				}
+			]
 		},
 		"2h": {
 			"n_frames": 40,
@@ -181,20 +205,32 @@
 				"ty": "LOW",
 				"dir": "LEG",
 				"dmg": 800
-			}]
+			}],
+			"streaks": [
+				{
+					"name": "leg_R",
+					"range": [ 4, 9 ]
+				}
+			]
 		},
 		"4h": {
 			"n_frames": 32,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 32,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 6,"frame_end": 16,"ty": "HURT","rect": [100, 500, 400, 500]},
-				{"frame_start": 9,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [200, 500, 200, 300]},
-				{"frame_start": 9,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [300, 800, 200, 300]}
+				{"frame_start": 6,"frame_end": 16,"ty": "HURT","flags":"AIR_INVUL","rect": [-200, 500, 500, 700]},
+				{"frame_start": 9,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [-100, 600, 200, 300]},
+				{"frame_start": 9,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [0, 900, 200, 400]}
 			],
 			"att_info": [{
 				"stun": [ 15, 20 ],
 				"dmg": 500
-			}]
+			}],
+			"streaks": [
+				{
+					"name": "leg_L",
+					"range": [ 6, 11 ]
+				}
+			]
 		},
 		"623l": {
 			"alias": "6s",
@@ -295,7 +331,7 @@
 			]
 		},
 		"4g": {
-			"n_frames": 70,
+			"n_frames": 30,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 7,"ty": "HURT","rect": [-200, 0, 400, 1000]},
 				{"frame_start": 4,"frame_end": 7,"ty": "GRAB","att_info": 0,"rect": [200, 0, 200, 1000]}
@@ -309,13 +345,19 @@
 				},
 				"dmg": 1000
 			}],
-			"whiff": {
-				"anim_name": "5g.whiff",
-				"n_frames": 30,
-				"boxes": [
-					{"frame_start": 0,"frame_end": 30,"ty": "HURT","rect": [-200, 0, 500, 1000]},
-					{"frame_start": 4,"frame_end": 7,"ty": "GRAB","rect": [200, 0, 200, 1000]}
-				]
+			"connd": {
+				"anim_name": "4g_connd",
+				"n_frames": 70,
+				"boxes": []
+			},
+			"connd_opp": {
+				"anim_name": "opp_4g",
+				"n_frames": 70,
+				"end_dpos": -1000,
+				"bounds_offset": {
+					"offsets_use_keyframes": true,
+					"offsets": [ [0, [ 0, 0 ]], [38, [ -200, 0 ]], [45, [ -100, 0 ]], [46, [ 0, 0 ]] ]
+				},
 			}
 		},
 		"5g": {
@@ -328,22 +370,22 @@
 				"dmg": 1000
 			}],
 			"connd": {
-				"anim_name": "5g",
-				"n_frames": 70,
+				"anim_name": "5g_connd",
+				"n_frames": 125,
 				"boxes": []
 			},
 			"connd_opp": {
 				"anim_name": "opp_5g",
-				"n_frames": 70,
-				"end_dpos": 1150,
+				"n_frames": 125,
+				"end_dpos": 1650,
 				"bounds_offset": {
 					"offsets_use_keyframes": true,
-					"offsets": [ [0, [ 0, 0 ]], [40, [ 108, 0 ]], [47, [ 0, 0 ]] ]
+					"offsets": [ [0, [ 0, 0 ]], [90, [ 60, 0 ]], [110, [ 10, 0 ]], [111, [ 0, 0 ]] ]
 				}
 			}
 		},
 		"214s": {
-			"n_frames": 60,
+			"n_frames": 68,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 13,"ty": "HURT", "flags": "PROJ_HIT", "rect": [-200, 0, 500, 1000]},
 				{"frame_start": 13,"frame_end": 200,"ty": "HURT","rect": [-200, 0, 500, 1000]},
@@ -356,7 +398,7 @@
 				}
 			],
 			"connd": {
-				"anim_name": "super_1",
+				"anim_name": "super_1_connd",
 				"n_frames": 200,
 				"boxes": []
 			},
@@ -367,42 +409,29 @@
 			}
 		},
 		"236s": {
-			"n_frames": 120,
+			"n_frames": 80,
 			"boxes": [
 				{"frame_start": 13,"frame_end": 120,"ty": "HURT","rect": [-200, 0, 500, 1000]},
 				{"frame_start": 9,"frame_end": 17,"ty": "HIT","att_info": 0,"rect": [100, 200, 500, 500]}
 			],
 			"offsets": {
 				"offsets_use_keyframes": true,
-				"offsets": [ [0, [ 200, 0 ]], [10, [ 0, 0 ]] ]
+				"offsets": [ [0, [ 100, 0 ]], [20, [ 50, 0 ]], [25, [ 20, 0 ]], [30, [ 0, 0 ]] ]
 			},
 			"att_info": [
 				{
 					"dmg": 4000,
 					"stun": [ 40, 1 ],
-					"fix_dist": 500,
-					"cinematic": {
-						"n_cinematic_start": 100,
-						"n_cinematic_hit": 160,
-						"end_dpos": [ 0, 0 ],
-						"end_dpos_opp": [ -1000, 0 ],
-						"n_end": 40,
-						"n_end_opp": 30,
-						"end_opp_offset": {
-							"offsets_use_keyframes": true,
-							"offsets": [ [0, [ 0, 0 ]] ]
-						},
-						"end_opp_use_anim": false
-					}
+					"fix_dist": 500
 				}
 			],
 			"cine_startup": {
-				"anim_name": "super_2_startup",
+				"anim_name": "super_2_cinematic_start",
 				"n_frames": 100
 			},
 			"cine_hit": {
 				"anim_name": "super_2_cinematic",
-				"anim_name_opp": "super_2_cinematic",
+				"anim_name_opp": "opp_super_2_cinematic",
 				"n_frames": 160,
 				"end_dpos": [0,0],
 				"end_dpos_opp": [-1000,0]

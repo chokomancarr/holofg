@@ -1,5 +1,8 @@
 class_name _CsStunBase extends _CsBase
 
+var counter_ty := ST.STUN_TY.COUNTER
+var counter_uid : int
+
 var combo_scaling := 10000
 var total_dmg := 0
 var last_dmg := 0

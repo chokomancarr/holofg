@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://bw0lme64dh0ws"]
+
+[ext_resource type="Script" path="res://scripts/rend/txt_counter.gd" id="1_cwawx"]
+[ext_resource type="FontFile" uid="uid://13ryh34jv2f0" path="res://KOMIKAX_.ttf" id="1_dvb3f"]
+
+[node name="counter" type="Node3D"]
+script = ExtResource("1_cwawx")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.547442, 1.31798, 0)
+pixel_size = 0.0015
+no_depth_test = true
+render_priority = 5
+text = "C
+  O
+    U
+      N
+        T
+          E
+            R"
+font = ExtResource("1_dvb3f")
+font_size = 103
+outline_size = 4
+line_spacing = -91.51
+text_direction = 1

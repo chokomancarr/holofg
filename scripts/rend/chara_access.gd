@@ -16,4 +16,5 @@ func step(pst : PlayerState, cr : CharaRend):
 			for spwn : DT.AccessInfo in spwns:
 				var nd = load("res://chara_scenes/accessories/%s.tscn" % spwn.scene).instantiate() as Node3D
 				cr.attach_to_anchor(nd, spwn.anchor)
+				cr._set_layer(nd)
 				last_objs.push_back(nd)

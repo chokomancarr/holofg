@@ -52,11 +52,14 @@ func step(gst : GameState, pst : PlayerState, delta):
 						missing_anims.push_back(anim_name)
 						print_debug("missing animation clip for ", anim_name)
 					return
-				anim.play(anim_name)
+				
+				var TIMESCALE = Engine.physics_ticks_per_second / 60.0
+				
+				anim.play(anim_name, pst.state.get_meta("blend_anim", -1) / TIMESCALE)
 				if frame >= 0:
 					anim.seek(frame * FRAME2TIME, true)
 				else:
-					anim.advance(delta * gst.get_anim_timescale() * Engine.physics_ticks_per_second / 60.0)
+					anim.advance(delta * gst.get_anim_timescale() * TIMESCALE)
 
 func step_cinematic(anim_name : String, pst : PlayerState, t : int):
 	var lib_name = "me_flipped/" if pst.action_is_p2 else "me/"

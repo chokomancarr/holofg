@@ -1,4 +1,4 @@
-class_name CsOppAnim extends _CsBase
+class_name CsOppAnim extends _CsStunBase
 
 const _STATE_NAME = "stun_anim"
 var info : MoveInfo.Opp

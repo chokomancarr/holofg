@@ -102,6 +102,7 @@ static func do_flip(a : Animation):
 
 static func to_opp(a : Animation, opp):
 	var lib = Animation.new()
+	lib.loop_mode = a.loop_mode
 	for t in range(a.get_track_count()):
 		var ty = a.track_get_type(t)
 		var path = a.track_get_path(t)

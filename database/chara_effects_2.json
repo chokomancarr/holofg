@@ -1,3 +1,16 @@
 {
-	
+	"super_2_cine": [
+		{
+			"bg_filter": [
+				"3a0948", "d751ce", "7dff5f"
+			]
+		}
+	],
+	"super_2_end_cine": [
+		{
+			"bg_filter": [
+				"3a0948", "d751ce", "7dff5f"
+			]
+		}
+	]
 }

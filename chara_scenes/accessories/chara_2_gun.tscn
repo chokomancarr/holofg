@@ -17,13 +17,15 @@ roughness = 0.37
 [node name="access_gun" parent="." instance=ExtResource("1_klvyl")]
 
 [node name="bibi" parent="access_gun/Armature/Skeleton3D" index="0"]
+layers = 31744
 material_override = SubResource("StandardMaterial3D_gp1ky")
 
 [node name="gun" parent="access_gun/Armature/Skeleton3D" index="1"]
+layers = 31744
 material_override = SubResource("StandardMaterial3D_2eta6")
 
 [node name="Jigglebone" type="Node3D" parent="access_gun/Armature/Skeleton3D" index="2"]
-transform = Transform3D(1.78814e-07, -1.62981e-08, -1, 0.00468506, -0.999989, 1.69966e-08, -0.999989, -0.00468506, -1.19209e-07, -1.42109e-14, -1.1332, -0.094243)
+transform = Transform3D(1.78814e-07, -1.58034e-08, -1, -0.000210507, -1, 1.5767e-08, -1, 0.000210507, -1.19209e-07, -1.42109e-14, -1.13325, -0.0848679)
 top_level = true
 script = ExtResource("2_i1nd2")
 bone_name = "bibi1"
@@ -32,7 +34,7 @@ use_gravity = true
 forward_axis = 1
 
 [node name="Jigglebone2" type="Node3D" parent="access_gun/Armature/Skeleton3D" index="3"]
-transform = Transform3D(4.17232e-07, -9.08039e-09, -1, 0.00707861, -0.999975, 1.14087e-08, -0.999975, -0.00707861, -2.38419e-07, -6.55487e-10, -1.17104, -0.0944925)
+transform = Transform3D(1.19209e-07, -8.22183e-09, -1, 0.000429922, -1, 8.29459e-09, -1, -0.000429922, -1.19209e-07, -6.0338e-10, -1.17109, -0.0848711)
 top_level = true
 script = ExtResource("2_i1nd2")
 bone_name = "bibi2"
@@ -41,7 +43,7 @@ use_gravity = true
 forward_axis = 1
 
 [node name="Jigglebone3" type="Node3D" parent="access_gun/Armature/Skeleton3D" index="4"]
-transform = Transform3D(4.17232e-07, -4.88944e-09, -1, 0.00744855, -0.999972, 8.14907e-09, -0.999972, -0.00744855, -4.76837e-07, -1.09175e-09, -1.21876, -0.0930108)
+transform = Transform3D(4.17232e-07, -4.88944e-09, -1, 0.00744855, -0.999972, 8.14907e-09, -0.999972, -0.00744855, -4.76837e-07, -9.87065e-10, -1.21879, -0.0848681)
 top_level = true
 script = ExtResource("2_i1nd2")
 bone_name = "bibi3"
@@ -50,7 +52,7 @@ use_gravity = true
 forward_axis = 1
 
 [node name="Jigglebone4" type="Node3D" parent="access_gun/Armature/Skeleton3D" index="5"]
-transform = Transform3D(2.38419e-07, -2.09548e-09, -1, 0.00386306, -0.999993, 3.49246e-09, -0.999992, -0.00386307, -3.57628e-07, -1.24218e-09, -1.25454, -0.0906884)
+transform = Transform3D(2.38419e-07, -4.13274e-09, -1, -0.00117565, -0.999999, 3.7835e-09, -0.999999, 0.00117565, -3.57628e-07, -1.28074e-09, -1.25456, -0.0848483)
 top_level = true
 script = ExtResource("2_i1nd2")
 bone_name = "bibi4"

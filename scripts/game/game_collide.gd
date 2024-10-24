@@ -15,6 +15,9 @@ static func step(game_state : GameState):
 	
 	var dist = _proc_push(game_state)
 
+	_check_clash(p1, p2)
+	_check_clash(p2, p1)
+
 	var o = {
 		"hits": [
 			_check_hit(p1, p2),
@@ -35,10 +38,12 @@ static func step(game_state : GameState):
 		else:
 			if (ty1 & AttInfo.TY._GRAB_BIT) > 0 or ty1 >= AttInfo.TY._SUPER_1_BIT: #only normal hits can trade
 				o.hits[roundi(randf())] = null #we dont know which one hits first, so gacha
+	
+	var move2 = p2.state.move if (o.hits[1] and not o.hits[1].isproj) else null
 	if o.hits[0]:
-		apply_hit.call(game_state, p2, p1, o, 0)
+		apply_hit.call(game_state, p2, p1, null if o.hits[0].isproj else p1.state.move, o, 0)
 	if o.hits[1]:
-		apply_hit.call(game_state, p1, p2, o, 1)
+		apply_hit.call(game_state, p1, p2, move2, o, 1)
 	
 	if o.freeze > 0:
 		game_state.freeze(o.freeze)
@@ -113,6 +118,43 @@ static func _proc_push(game_state : GameState):
 	
 	return dp.x
 
+static func _check_clash(p1 : PlayerState, p2 : PlayerState):
+	if p1.summons.is_empty() or p2.summons.is_empty():
+		return
+	
+	var htb1 = p1.summons.map(func (sm):
+		if sm.hit_cd == 0:
+			return sm._info.boxes.filter(func (b):
+				return b.ty != ST.BOX_TY.CLASH
+			).map(func (b):
+				return Rect2i(b.get_rect(sm.is_p2))
+			)
+		else:
+			return []
+	)
+	var clb2 = p2.summons.map(func (sm):
+		return sm._info.boxes.filter(func (b):
+			return b.ty == ST.BOX_TY.CLASH
+		).map(func (b):
+			return Rect2i(b.get_rect(sm.is_p2))
+		)
+	)
+	
+	for i in len(htb1):
+		var sm1 = p1.summons[i]
+		for j in len(clb2):
+			var sm2 = p2.summons[j]
+			var dp = sm2.pos - sm1.pos
+			
+			for _hb in htb1[i]:
+				var hb = Rect2i(_hb)
+				hb.position += dp
+				if clb2[j].any(func (cb):
+					return hb.intersects(cb)
+				):
+					sm1.on_hit()
+					sm2.on_hit()
+
 static func _check_hit(p1 : PlayerState, p2 : PlayerState):
 	var p1state = p1.state as _CsAttBase
 	
@@ -135,6 +177,7 @@ static func _check_hit(p1 : PlayerState, p2 : PlayerState):
 						if b2.intersects(b3[0]):
 							p1state.att_processed = true
 							return {
+								"isproj": false,
 								"hit": p1state.query_hit(),
 								"push": true,
 								"pos": p2.pos + b2.intersection(b3[0]).get_center()
@@ -152,6 +195,7 @@ static func _check_hit(p1 : PlayerState, p2 : PlayerState):
 					if b2.intersects(b3[0]):
 						sm.on_hit()
 						return {
+							"isproj": true,
 							"hit": sm._info.att_info,
 							"push": sm.state_t < 3,
 							"pos": p2.pos + b2.intersection(b3[0]).get_center()
@@ -159,12 +203,11 @@ static func _check_hit(p1 : PlayerState, p2 : PlayerState):
 	
 	return null
 
-static func apply_hit(gst : GameState, p : PlayerState, opp : PlayerState, o, j):
+static func apply_hit(gst : GameState, p : PlayerState, opp : PlayerState, move : MoveInfo, o, j):
 	var oj = o.hits[j]
 	var hit : AttInfo = oj.hit
 	var push : bool = oj.push
 	var eff_pos : Vector2i = oj.pos
-	var move = opp.state.move
 	
 	var connd = false
 	
@@ -183,12 +226,14 @@ static func apply_hit(gst : GameState, p : PlayerState, opp : PlayerState, o, j)
 			p.state.block_state = block_ty
 			_inc_gauge.call(p, opp, hit.gauge, GAUGE_BLOCK)
 		else:
+			_inc_gauge.call(p, opp, hit.gauge, GAUGE_HIT)
 			connd = true
 			
 			var airty = ST.STUN_AIR_TY.NONE
 			
-			if move.move_connd_opp: #use custom animation
+			if move and move.move_connd_opp: #use custom animation
 				p.state = CsOppAnim.new(opp, move.move_connd_opp)
+				p.pos.y = 0
 			else:
 				if p.state.airborne:
 					var sto = p.state as _CsStunBase
@@ -203,7 +248,7 @@ static func apply_hit(gst : GameState, p : PlayerState, opp : PlayerState, o, j)
 						p.state = CsKnock.new(p, hh)
 					_:
 						if airty:
-							p.state = CsStunAir.new(airty)
+							p.state = CsStunAir.new(p, airty)
 						else:
 							p.state = CsStun.new(p, hh)
 				
@@ -224,12 +269,19 @@ static func apply_hit(gst : GameState, p : PlayerState, opp : PlayerState, o, j)
 			p.state.push_wall = true
 
 	if connd:
-		opp.state.att_connected = true
-		if move.cine_hit:
-			opp.state = CsSuperEnd.new(opp, move.move_connd, false)
-			p.state = CsSuperEnd.new(p, move.move_connd_opp, true)
-			gst.cinematic(move.cine_hit, j == 1)
-			o.freeze = 0
-		elif move.move_connd:
-			opp.state.move = move.move_connd
-			opp.state.on_move_connected()
+		if opp.state is _CsAttBase:
+			opp.state.att_connected = true
+		if move:
+			if move.cine_hit:
+				opp.state = CsSuperEnd.new(opp, move.move_connd, false)
+				p.state = CsSuperEnd.new(p, move.move_connd_opp, true)
+				gst.cinematic(move.cine_hit, j == 1)
+				o.freeze = 0
+			elif move.move_connd:
+				opp.state.move = move.move_connd
+				opp.state.on_move_connected()
+	
+	if p.state is _CsStunBase:
+		p.state.counter_ty = counter_ty
+		p.state.counter_uid = gst.hit_uid_counter
+		gst.hit_uid_counter += 1

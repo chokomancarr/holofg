@@ -49,6 +49,13 @@ window/stretch/mode="canvas_items"
 
 enabled=PackedStringArray("res://addons/godot-rollback-netcode/plugin.cfg", "res://addons/jigglebones/plugin.cfg")
 
+[importer_defaults]
+
+animation_library={
+"animation/fps": 60.0,
+"animation/remove_immutable_tracks": false
+}
+
 [input]
 
 sync_debug={

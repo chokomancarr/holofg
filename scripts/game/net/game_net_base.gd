@@ -92,9 +92,17 @@ func _step_game_state(state : GameState, p1_inputs, p2_inputs):
 				if state.p1.bar_health == 0 or state.p2.bar_health == 0:
 					state.state = GameState.MATCH_STATE.OVER
 			
+			if p1.state is CsOppAnim or p2.state is CsOppAnim:
+				PplOverlay.sort_order = -1
+			elif p1.state is _CsAttBase:
+				PplOverlay.sort_order = 0
+			elif p2.state is _CsAttBase:
+				PplOverlay.sort_order = 1
+			
 		GameState.MATCH_STATE.ATT_FREEZE:
 			state.freeze_t += 1
 		GameState.MATCH_STATE.CINEMATIC:
+			PplOverlay.sort_order = -1
 			state.cinematic_t += 1
 		GameState.MATCH_STATE.OVER:
 			pass

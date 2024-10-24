@@ -41,8 +41,8 @@ func step(pst: PlayerState):
 		in_superfreeze = false
 		anim_name = "super_1"
 
-func on_att_connected():
-	pass
+func on_move_connected():
+	anim_name = "super_1_connd"
 
 func dict4hash():
 	return [ _STATE_NAME,

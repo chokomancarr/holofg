@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://bi7dq4tovqrnf"]
+
+[ext_resource type="Shader" uid="uid://c6h07dvcopemu" path="res://motion_streaks_shader.tres" id="1_51wn5"]
+[ext_resource type="Texture2D" uid="uid://dm4ja330bhw6x" path="res://effects/motion_streaks.png" id="2_8j6vo"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_51wn5")
+shader_parameter/mask = ExtResource("2_8j6vo")

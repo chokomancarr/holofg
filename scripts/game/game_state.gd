@@ -12,6 +12,7 @@ var cinematic_is_p2: bool
 var cinematic_t: int = 0
 var countdown: int = -1#99 * 60 + 59
 var wall = Vector2i(0, 10000)
+var hit_uid_counter := 0
 
 func clone():
 	return ObjUtil.clone(self, new(),

@@ -17,6 +17,7 @@ func clone():
 func _init():
 	anim_name = "5"
 	use_pos_flip = true
+	set_meta("blend_anim", 0.2)
 
 func check_next(state : PlayerState):
 	var next = null

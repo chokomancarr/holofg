@@ -29,6 +29,14 @@ func check_next(state : PlayerState):
 	elif att_processed:
 		var info = query_hit()
 		if info.cancels:
+			if state.can_super:
+				if info.cancels.super_2:
+					next = CsSuper2.try_next(state, 10)
+					if next: return next
+				if info.cancels.super_1:
+					next = CsSuper1.try_next(state, 10)
+					if next: return next
+			
 			next = CsSpecial.try_next(state, 10, info.cancels)
 			if next: return next
 			

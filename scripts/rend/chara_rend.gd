@@ -82,7 +82,7 @@ func _ready2():
 
 func _set_layer(c : Node):
 	if c is VisualInstance3D:
-		c.layers = c.layers << 5
+		set_rend_layers(c)
 	for c2 in c.get_children():
 		_set_layer(c2)
  
@@ -218,6 +218,8 @@ func attach_to_anchor(nd : Node, anchor : String):
 		var par = ANCHORS.find("_anchor_" + anchor)
 		if par > -1:
 			anchors[par + 1].add_child(nd)
+		else:
+			print_debug("cannot find anchor ", anchor)
 
 func _hide_doodle():
 	doodle.visible = false

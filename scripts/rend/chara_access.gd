@@ -4,7 +4,7 @@ var last_state : String
 var last_objs : Array[Node]
 
 func step(pst : PlayerState, cr : CharaRend):
-	var st = pst.state._STATE_NAME
+	var st = pst.state.anim_name
 	if st != last_state:
 		last_state = st
 		for o in last_objs:

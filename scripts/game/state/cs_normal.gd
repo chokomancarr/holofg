@@ -39,10 +39,10 @@ func check_next(state : PlayerState):
 			next = CsSpecial.try_next(state, 10, info.cancels)
 			if next: return next
 			
-			next = CsTargetCombo.try_next(state, 10, info.cancels)
-			if next: return next
-			
 			next = CsNormal.try_next(state, 10, info.cancels)
+			if next: return next
+
+			next = CsTargetCombo.try_next(state, 10, info.cancels)
 			if next: return next
 
 func dict4hash():

@@ -1,4 +1,20 @@
 {
+	"arm_L": {
+		"bones": [
+			"CC_Base_Upperarm.L", "CC_Base_Forearm.L", "CC_Base_Hand.L", "EF_hand_tip.L"
+		],
+		"gradient": {
+			"0": "f4e2db", "0.3": 2
+		}
+	},
+	"arm_R": {
+		"bones": [
+			"CC_Base_Upperarm.R", "CC_Base_Forearm.R", "CC_Base_Hand.R", "EF_hand_tip.R"
+		],
+		"gradient": {
+			"0": "f4e2db", "0.3": 2
+		}
+	},
 	"leg_L": {
 		"bones": [
 			"CC_Base_Thigh.L", "CC_Base_Calf.L", "CC_Base_Foot.L", "EF_foot_tip.L"

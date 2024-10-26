@@ -11,14 +11,15 @@ func clone():
 		[]
 	)
 
-func _init(p : PlayerState = null, info = null, no_offset = false):
+func _init(p : PlayerState = null, info = null, block_ty = true, no_offset = false):
 	if p:
 		state_t = 1
 		anim_name = "block_%s" % [
-			"st"
+			"cr" if block_ty == ST.BLOCK_TY.LOW else "st"
 		]
 		n_stun = info.stun_block
 		push_wall = true
+		block_state = block_ty
 		
 		if not no_offset and (info.push_hit != 0 || info.min_space > 0):
 			var pushmin = maxi(info.min_space - absi(p.dist_to_opp.x), 0)

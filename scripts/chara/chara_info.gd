@@ -123,7 +123,10 @@ static func load_chara(chara_id):
 		res.moves_su_2 = MoveInfo.parse("236s", data.frames, res, ST.BOX_FLAGS.HIT)
 	
 	for sp in data.moves.specials:
-		res.moves_sp.push_back(MoveInfo.parse(sp, data.frames, res, ST.BOX_FLAGS.HIT))
+		var move = MoveInfo.parse(sp, data.frames, res, ST.BOX_FLAGS.HIT)
+		if data.frames[sp].has("land_recovery"):
+			move.land_recovery = data.frames[sp].land_recovery
+		res.moves_sp.push_back(move)
 	
 	for nr in data.moves.normals:
 		res.moves_nr[nr] = MoveInfo.parse(nr, data.frames, res, ST.BOX_FLAGS.HIT, true)

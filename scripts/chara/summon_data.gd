@@ -11,4 +11,3 @@ var _list : Dictionary
 
 static func reg(s, cls):
 	_get_singleton()._list[s] = cls
-

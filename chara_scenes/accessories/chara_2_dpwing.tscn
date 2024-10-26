@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://b5lrilx8rxmab"]
+
+[ext_resource type="PackedScene" uid="uid://c5wrcfh2u4mh7" path="res://models/chara/2/access_dp_wing.blend" id="1_xegg1"]
+[ext_resource type="Shader" uid="uid://1w0lxfyabuk0" path="res://toon_c.tres" id="2_2awoc"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fjfom"]
+render_priority = 0
+shader = ExtResource("2_2awoc")
+shader_parameter/color = Color(0.184314, 0.164706, 0.211765, 1)
+shader_parameter/metallic = 0.0
+shader_parameter/roughness = 1.0
+shader_parameter/tint = Color(1, 1, 1, 1)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="access_dp_wing" parent="." instance=ExtResource("1_xegg1")]
+
+[node name="Plane" parent="access_dp_wing" index="0"]
+material_override = SubResource("ShaderMaterial_fjfom")
+
+[editable path="access_dp_wing"]

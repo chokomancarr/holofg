@@ -7,16 +7,16 @@
 	},
 	"moves": {
 		"specials": [
-			"214l", "236l"
+			"623l", "214l", "236l"
 		],
-		"normals": [ "4h" ],
+		"normals": [ "6m", "4h" ],
 		"targets": [ "5l.5l", "2l.2l", "5m.5m" ],
 		"jump_normals": [ ],
 		"grabs": [ ]
 	},
 	"frames": {
 		"idle": { "ty": "HURT", "rect": [-200, 0, 400, 1000] },
-		"crouch": { "ty": "HURT", "rect": [-200, 0, 400, 800] },
+		"crouch": { "ty": "HURT", "rect": [-200, 0, 400, 650] },
 		"66": {
 			"n_frames": 20,
 			"offsets_use_keyframes": false,
@@ -26,8 +26,8 @@
 			"n_frames": 14,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 2,"frame_end": 14,"ty": "HURT","rect": [200, 500, 450, 350]},
-				{"frame_start": 4,"frame_end": 6,"ty": "HIT","att_info": 0,"rect": [150, 550, 450, 250]}
+				{"frame_start": 2,"frame_end": 14,"ty": "HURT","rect": [200, 500, 250, 350]},
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","att_info": 0,"rect": [100, 550, 300, 250]}
 			],
 			"att_info": [
 				{
@@ -48,8 +48,8 @@
 			"boxes": [
 				{"frame_start": -3,"frame_end": -2,"ty": "HIT","att_info": 0,"rect": [0, 0, 0, 0]},
 				{"frame_start": 0,"frame_end": 18,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 0,"frame_end": 18,"ty": "HURT","rect": [200, 500, 450, 350]},
-				{"frame_start": 8,"frame_end": 10,"ty": "HIT","att_info": 0,"rect": [150, 550, 450, 250]}
+				{"frame_start": 0,"frame_end": 18,"ty": "HURT","rect": [200, 500, 250, 350]},
+				{"frame_start": 8,"frame_end": 10,"ty": "HIT","att_info": 0,"rect": [100, 550, 300, 250]}
 			],
 			"att_info": [{
 				"stun": [ 8, 12 ],
@@ -66,8 +66,8 @@
 			"n_frames": 25,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 19,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 2,"frame_end": 14,"ty": "HURT","att_info": 0,"rect": [100, 200, 650, 400]},
-				{"frame_start": 7,"frame_end": 9,"ty": "HIT","att_info": 0,"rect": [150, 300, 550, 250]}
+				{"frame_start": 2,"frame_end": 14,"ty": "HURT","att_info": 0,"rect": [100, 200, 550, 400]},
+				{"frame_start": 7,"frame_end": 9,"ty": "HIT","att_info": 0,"rect": [150, 300, 450, 250]}
 			],
 			"att_info": [{
 				"stun": [ 10, 16 ],
@@ -90,11 +90,14 @@
 			"n_frames": 25,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 25,"ty": "HURT","rect": [-200, 0, 400, 1000]},
-				{"frame_start": 2,"frame_end": 14,"ty": "HURT","att_info": 0,"rect": [100, 200, 650, 400]}, 
+				{"frame_start": 2,"frame_end": 14,"ty": "HURT","att_info": 0,"rect": [100, 200, 650, 400]},
 				{"frame_start": 7,"frame_end": 9,"ty": "HIT","att_info": 0,"rect": [150, 300, 450, 250]}
 			],
 			"att_info": [{
 				"stun": [ 18 , 21 ],
+				"cancel": {
+					"all_specials": true
+				},
 				"push": -500,
 				"dmg": 500
 			}],
@@ -110,8 +113,8 @@
 			"boxes": [
 				{"frame_start": 0,"frame_end": 24,"ty": "HURT","rect": [-200, 0, 400, 1000]},
 				{"frame_start": 2,"frame_end": 20,"ty": "HURT","rect": [200, 0, 200, 400]},
-				{"frame_start": 5,"frame_end": 16,"ty": "HURT","rect": [200, 400, 500, 350]},
-				{"frame_start": 10,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [150, 450, 600, 250]}
+				{"frame_start": 5,"frame_end": 16,"ty": "HURT","rect": [200, 400, 550, 350]},
+				{"frame_start": 10,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [150, 450, 650, 250]}
 			],
 			"att_info": [{
 				"stun": [ 14, 18 ],
@@ -131,8 +134,8 @@
 			"n_frames": 16,
 			"boxes": [
 				{"frame_start": 0,"frame_end": 16,"ty": "HURT","rect": [-200, 0, 400, 800]},
-				{"frame_start": 2,"frame_end": 14,"ty": "HURT","rect": [200, 300, 450, 350]},
-				{"frame_start": 4,"frame_end": 6,"ty": "HIT","att_info": 0,"rect": [150, 300, 450, 250]}
+				{"frame_start": 2,"frame_end": 14,"ty": "HURT","rect": [200, 300, 300, 350]},
+				{"frame_start": 4,"frame_end": 6,"ty": "HIT","att_info": 0,"rect": [100, 300, 350, 250]}
 			],
 			"att_info": [{
 				"stun": [ 12, 14 ],
@@ -151,8 +154,8 @@
 			"boxes": [
 				{"frame_start": -3,"frame_end": -2,"ty": "HIT","att_info": 0,"rect": [0, 0, 0, 0]},
 				{"frame_start": 0,"frame_end": 20,"ty": "HURT","rect": [-200, 0, 400, 800]},
-				{"frame_start": 0,"frame_end": 20,"ty": "HURT","rect": [200, 300, 450, 350]},
-				{"frame_start": 10,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [150, 300, 450, 250]}
+				{"frame_start": 0,"frame_end": 20,"ty": "HURT","rect": [200, 300, 300, 350]},
+				{"frame_start": 10,"frame_end": 12,"ty": "HIT","att_info": 0,"rect": [100, 300, 350, 250]}
 			],
 			"att_info": [{
 				"stun": [ 8, 12 ],
@@ -213,6 +216,25 @@
 				}
 			]
 		},
+		"6m": {
+			"n_frames": 43,
+			"boxes": [
+				{"frame_start": 0,"frame_end": 43,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 15,"frame_end": 25,"ty": "HURT","rect": [200, 300, 250, 700]},
+				{"frame_start": 20,"frame_end": 23,"ty": "HIT","att_info": 0,"rect": [100, 400, 300, 500]}
+			],
+			"att_info": [{
+				"stun": [ 15, 20 ],
+				"ty": "MID",
+				"dmg": 500
+			}],
+			"streaks": [
+				{
+					"name": "arm_L",
+					"range": [ 18, 27 ]
+				}
+			]
+		},
 		"4h": {
 			"n_frames": 32,
 			"boxes": [
@@ -235,11 +257,22 @@
 		"623l": {
 			"alias": "6s",
 			"n_frames": 40,
+			"land_recovery": 15,
+			"offsets": {
+				"offsets_use_keyframes": false,
+				"offsets": [ [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [10,65], [10,91], [10,95], [10,96], [10,98], [11,98], [10,98], [10,98], [10,99], [10,82], [10,59], [10,43], [10,29], [10,19], [10,10], [10,0], [10,-7], [10,-15], [9,-22], [10,-28], [10,-35], [10,-41], [10,-47], [10,-53], [9,-58], [10,-65], [10,-70], [9,-75], [10,-81], [9,-86], [10,-91], [9,-97], [9,-102], [0,-107] ]
+			},
 			"boxes": [
-				{"frame_start": 0,"frame_end": 14,"ty": "HURT","rect": [-200, 0, 400, 800]},
-				{"frame_start": 4,"frame_end": 6,"ty": "HIT","att_info": 0,"rect": [100, 350, 150, 100]}
+				{"frame_start": 0,"frame_end": 10,"ty": "HURT","flags":"AIR_INVUL","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 10,"frame_end": 40,"ty": "HURT","rect": [-200, 0, 400, 1000]},
+				{"frame_start": 7,"frame_end": 15,"ty": "HIT","att_info": 0,"rect": [0, 300, 450, 800]}
 			],
-			"att_info": [{"stun": [ 10, 50 ]}]
+			"att_info": [
+				{
+					"stun": [ 10, 50 ],
+					"force_air": "LIM_JUGGLE"
+				}
+			]
 		},
 		"214l": {
 			"alias": "4s",
@@ -447,7 +480,16 @@
 		}
 	},
 	"accessories": {
+		"623l": {
+			"chara_2_dpwing": "hip"
+		},
+		"super_1_startup": {
+			"chara_2_gun": "free"
+		},
 		"super_1": {
+			"chara_2_gun": "free"
+		},
+		"super_1_connd": {
 			"chara_2_gun": "free"
 		}
 	}

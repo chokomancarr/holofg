@@ -222,25 +222,25 @@ static func apply_hit(gst : GameState, p : PlayerState, opp : PlayerState, move 
 			(p.state as CsParry).parried_nf = hit.stun_block
 			_inc_gauge.call(p, opp, hit.gauge, GAUGE_PARRY)
 		elif counter_ty == ST.STUN_TY.BLOCK and not ((hit.ty & 0x11) & ~block_ty):
-			p.state = CsBlock.new(p, hit, !push)
-			p.state.block_state = block_ty
+			p.state = CsBlock.new(p, hit, block_ty, !push)
 			_inc_gauge.call(p, opp, hit.gauge, GAUGE_BLOCK)
 		else:
 			_inc_gauge.call(p, opp, hit.gauge, GAUGE_HIT)
 			connd = true
 			
-			var airty = ST.STUN_AIR_TY.NONE
+			var airty = hit.force_air
 			
 			if move and move.move_connd_opp: #use custom animation
 				p.state = CsOppAnim.new(opp, move.move_connd_opp)
 				p.pos.y = 0
 			else:
-				if p.state.airborne:
-					var sto = p.state as _CsStunBase
-					if (counter_ty != ST.STUN_TY.NORMAL) or (sto is CsStunAir and sto.ty == ST.STUN_AIR_TY.JUGGLE):
-						airty = ST.STUN_AIR_TY.JUGGLE
-					else:
-						airty = ST.STUN_AIR_TY.RESET
+				if not airty:
+					if p.state.airborne:
+						var sto = p.state as _CsStunBase
+						if (counter_ty != ST.STUN_TY.NORMAL) or (sto is CsStunAir and sto.ty == ST.STUN_AIR_TY.JUGGLE):
+							airty = ST.STUN_AIR_TY.JUGGLE
+						else:
+							airty = ST.STUN_AIR_TY.RESET
 			
 				var hh = hit as AttInfo.Hit
 				match hh.knock_ty:
@@ -250,7 +250,8 @@ static func apply_hit(gst : GameState, p : PlayerState, opp : PlayerState, move 
 						if airty:
 							p.state = CsStunAir.new(p, airty)
 						else:
-							p.state = CsStun.new(p, hh)
+							var standing = p.state.standing if (p.state is CsIdle or p.state is CsStun) else true
+							p.state = CsStun.new(p, hh, false, standing)
 				
 				p.state.eff_pos = eff_pos
 		

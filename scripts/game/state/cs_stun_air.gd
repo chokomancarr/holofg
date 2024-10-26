@@ -13,25 +13,30 @@ func clone():
 		[]
 	)
 
-func _init(p : PlayerState = null, ty : ST.STUN_AIR_TY = ST.STUN_AIR_TY.RESET):
+func _init(p : PlayerState = null, ty : ST.STUN_AIR_TY = ST.STUN_AIR_TY.RESET, v = null):
 	if p:
 		state_t = 1 
 		airborne = true
+		if p.pos.y == 0:
+			p.pos.y = 1
 		self.ty = ty
 		match ty:
 			ST.STUN_AIR_TY.RESET:
 				anim_name = "stun_air_reset"
-				vel = Vector2i(-10, 120)
+				vel = v if v else Vector2i(-10, 120)
 			ST.STUN_AIR_TY.JUGGLE:
 				anim_name = "stun_air_juggle"
-				vel = Vector2i(-20, 150)
+				vel = v if v else Vector2i(-20, 150)
+			ST.STUN_AIR_TY.LIM_JUGGLE:
+				anim_name = "stun_air_limjuggle"
+				vel = v if v else Vector2i(-20, 150)
 	
 func check_next(state : PlayerState):
 	if state.pos.y == 0 and vel.y < 0:
 		match ty:
 			ST.STUN_AIR_TY.RESET:
 				return CsIdle.new()
-			ST.STUN_AIR_TY.JUGGLE:
+			_:
 				return CsKnockRecover.new()
 
 func step(state : PlayerState):
@@ -43,6 +48,8 @@ func step(state : PlayerState):
 		ST.STUN_AIR_TY.RESET:
 			state.boxes = []
 		ST.STUN_AIR_TY.JUGGLE:
+			state.boxes = [state._info.idle_box] as Array[ST.BoxInfo]
+		ST.STUN_AIR_TY.LIM_JUGGLE:
 			state.boxes = [state._info.idle_box] as Array[ST.BoxInfo]
 
 func get_anim_frame(df):

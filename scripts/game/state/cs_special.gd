@@ -24,7 +24,10 @@ static func try_next(state : PlayerState, sliceback : int, allow : ST.CancelInfo
 func check_next(state : PlayerState):
 	var next = null
 	if state_t == move.n_frames:
-		return CsIdle.new()
+		if move.land_recovery > 0:
+			return CsLandRecovery.new(move.land_recovery)
+		else:
+			return CsIdle.new()
 
 func dict4hash():
 	return [ _STATE_NAME,

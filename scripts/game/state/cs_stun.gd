@@ -3,19 +3,25 @@ class_name CsStun extends _CsStunBase
 const _STATE_NAME = "stun"
 var n_stun : int
 
+var standing : bool
+
 var offsets : DT.OffsetInfo
 
 func clone():
 	return ObjUtil.clone(self, _clone(new()),
-		[ "n_stun", "offsets" ],
+		[ "n_stun", "standing", "offsets" ],
 		[]
 	)
 
-func _init(p : PlayerState = null, info : AttInfo = null, no_offset = false):
+func _init(p : PlayerState = null, info : AttInfo = null, no_offset = false, stdg = true):
 	if p:
 		state_t = 1
+		standing = stdg
+		var dr = ST.STUN_DIR.find_key(info.dir).to_lower()
+		if not standing and dr == "body":
+			dr = "head"
 		anim_name = "stun_%s_%s" % [
-			"st", ST.STUN_DIR.find_key(info.dir).to_lower()
+			"st" if standing else "cr", dr
 		]
 		n_stun = info.stun_hit
 		use_pos_flip = true
@@ -34,7 +40,7 @@ func check_next(state : PlayerState):
 func step(state : PlayerState):
 	_step()
 	use_pos_flip = false
-	state.boxes = [state._info.idle_box] as Array[ST.BoxInfo]
+	state.boxes = [state._info.idle_box if standing else state._info.crouch_box] as Array[ST.BoxInfo]
 	if offsets:
 		next_offset = offsets.eval(state_t - 1)
 
@@ -49,5 +55,5 @@ func get_frame_meter_color():
 
 func dict4hash():
 	return [ _STATE_NAME,
-		n_stun, offsets.hashed() if offsets else null
+		n_stun, standing, offsets.hashed() if offsets else null
 	]

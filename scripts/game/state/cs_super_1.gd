@@ -6,7 +6,7 @@ var in_superfreeze = true
 
 func clone():
 	return ObjUtil.clone(self, _clone(new()),
-		[ in_superfreeze, att_connected ], []
+		[ in_superfreeze ], []
 	)
 
 static func try_next(state : PlayerState, sliceback : int):
@@ -46,8 +46,7 @@ func on_move_connected():
 
 func dict4hash():
 	return [ _STATE_NAME,
-		in_superfreeze,
-		att_connected
+		in_superfreeze
 	]
 
 func get_anim_frame(df):

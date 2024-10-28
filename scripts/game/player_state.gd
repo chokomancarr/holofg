@@ -34,7 +34,7 @@ var state: _CsBase
 func clone() -> PlayerState:
 	return ObjUtil.clone(self, new(),
 		[ "_info", "bar_health", "bar_super", "pos", "bounded_pos", "dist_to_opp",
-			"is_p2", "pos_is_p2", "action_is_p2", "summon_uid" ],
+			"is_p2", "pos_is_p2", "action_is_p2", "flip_next", "summon_uid" ],
 		[ "input_history", "state" ],
 		func (a, b):
 			b.summons.assign(a.summons.map(func (s): return s.clone()))
@@ -98,6 +98,7 @@ func dict4hash():
 		pos,
 		bounded_pos,
 		dist_to_opp,
+		flip_next,
 		is_p2,
 		pos_is_p2,
 		action_is_p2,

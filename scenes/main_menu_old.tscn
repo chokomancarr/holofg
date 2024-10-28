@@ -1,0 +1,145 @@
+[gd_scene load_steps=2 format=3 uid="uid://csv7sk0mnkfei"]
+
+[ext_resource type="Script" path="res://scripts/main_menu_old.gd" id="1_35ljf"]
+
+[node name="main" type="Node3D"]
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("1_35ljf")
+
+[node name="Control" type="Control" parent="Node"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="Node/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.164706, 0.176471, 0.2, 1)
+
+[node name="dbg" type="Label" parent="Node/Control"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 567.0
+offset_top = 18.0
+offset_right = 976.0
+offset_bottom = 535.0
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(0.694118, 0.694118, 0.694118, 1)
+
+[node name="vb" type="VBoxContainer" parent="Node/Control"]
+layout_mode = 0
+offset_left = 37.0
+offset_top = 32.0
+offset_right = 526.0
+offset_bottom = 541.0
+theme_override_constants/separation = 10
+
+[node name="Label2" type="Label" parent="Node/Control/vb"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.486275, 0.854902, 1, 1)
+theme_override_font_sizes/font_size = 28
+text = "a fighting game (debug)"
+
+[node name="usrnm" type="Label" parent="Node/Control/vb"]
+layout_mode = 2
+text = "user_XXXX"
+
+[node name="train" type="Button" parent="Node/Control/vb"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "training mode"
+
+[node name="Label" type="Label" parent="Node/Control/vb"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.698039, 0.368627, 1)
+text = "Online"
+vertical_alignment = 2
+
+[node name="online" type="Button" parent="Node/Control/vb"]
+layout_mode = 2
+text = "connect to matchmaking server"
+
+[node name="online_bts" type="HBoxContainer" parent="Node/Control/vb"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 150
+
+[node name="srv" type="VBoxContainer" parent="Node/Control/vb/online_bts"]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="Button" type="Button" parent="Node/Control/vb/online_bts/srv"]
+layout_mode = 2
+text = "create lobby"
+
+[node name="clt" type="VBoxContainer" parent="Node/Control/vb/online_bts"]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="code" type="TextEdit" parent="Node/Control/vb/online_bts/clt"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+placeholder_text = "XXXX"
+
+[node name="Button" type="Button" parent="Node/Control/vb/online_bts/clt"]
+layout_mode = 2
+text = "join lobby"
+
+[node name="lobby" type="GridContainer" parent="Node/Control/vb"]
+visible = false
+layout_mode = 2
+theme_override_constants/h_separation = 30
+columns = 2
+
+[node name="code" type="Label" parent="Node/Control/vb/lobby"]
+layout_mode = 2
+text = "lobby code:"
+horizontal_alignment = 2
+
+[node name="lobbycode" type="Label" parent="Node/Control/vb/lobby"]
+layout_mode = 2
+
+[node name="code2" type="Label" parent="Node/Control/vb/lobby"]
+layout_mode = 2
+text = "P1: "
+horizontal_alignment = 2
+
+[node name="p1" type="Label" parent="Node/Control/vb/lobby"]
+layout_mode = 2
+
+[node name="code3" type="Label" parent="Node/Control/vb/lobby"]
+layout_mode = 2
+text = "P2: "
+horizontal_alignment = 2
+
+[node name="p2" type="Label" parent="Node/Control/vb/lobby"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Node/Control/vb/lobby"]
+layout_mode = 2
+disabled = true
+text = "ready"
+
+[node name="chat" type="HBoxContainer" parent="Node/Control/vb"]
+visible = false
+layout_mode = 2
+
+[node name="TextEdit" type="TextEdit" parent="Node/Control/vb/chat"]
+custom_minimum_size = Vector2(0, 36.26)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "say something..."
+
+[node name="CButton" type="Button" parent="Node/Control/vb/chat"]
+custom_minimum_size = Vector2(65.5, 0)
+layout_mode = 2
+text = "chat"

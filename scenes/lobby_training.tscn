@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://bn7g61khii3lb"]
+
+[ext_resource type="PackedScene" uid="uid://bd1x83awyepqe" path="res://scenes/lobby_base.tscn" id="1_mvh36"]
+[ext_resource type="Script" path="res://scripts/lobby/lb_training.gd" id="2_dtcn5"]
+
+[node name="main" instance=ExtResource("1_mvh36")]
+script = ExtResource("2_dtcn5")
+
+[editable path="charaselect"]

@@ -4,12 +4,13 @@ static var palette_all = {}
 static var palette = [ null, null ]
 
 static func load_palette(i):
-	var json = (load("res://database/chara_palette_%d.json" % i) as JSON).data
-	palette_all[i] = {
-		"costume1": json.costume_1.map(func (cc): 
-			return cc.map(func (c): return Color.from_string("#" + c, Color.BLACK))
-			)
-	}
+	if not palette_all.has(i):
+		var json = (load("res://database/chara_palette_%d.json" % i) as JSON).data
+		palette_all[i] = {
+			"costume1": json.costume_1.map(func (cc): 
+				return cc.map(func (c): return Color.from_string("#" + c, Color.BLACK))
+				)
+		}
 
 func apply_palette(p):
 	var m = ($"../towa_8/Armature/Skeleton3D/clothes_a" as MeshInstance3D)

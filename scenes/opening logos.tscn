@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://ca2phett4wo4j"]
 
 [ext_resource type="SpriteFrames" uid="uid://dp086wontkutc" path="res://ui/boot logos/godot/godot.tres" id="1_3cff6"]
-[ext_resource type="Script" path="res://scripts/rend/logo.gd" id="2_08lx5"]
+[ext_resource type="Script" path="res://scripts/opening/logo.gd" id="2_08lx5"]
 
 [node name="main" type="Node2D"]
 

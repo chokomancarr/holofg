@@ -1,0 +1,283 @@
+[gd_scene load_steps=12 format=3 uid="uid://bd1x83awyepqe"]
+
+[ext_resource type="PackedScene" uid="uid://bt7286vryv12u" path="res://models/menu/charaselect.blend" id="1_xmovs"]
+[ext_resource type="Material" uid="uid://fmtrwbbihk2q" path="res://models/stage/0/stage_0_mat.tres" id="2_deir4"]
+[ext_resource type="VoxelGIData" uid="uid://dtowvlt51s76x" path="res://scenes/lobby_voxel.tres" id="3_dls6e"]
+[ext_resource type="Script" path="res://scripts/lobby/game_lobby_rend.gd" id="4_ch8q2"]
+[ext_resource type="Script" path="res://scripts/lobby/lobby_inputsel.gd" id="5_ee33o"]
+[ext_resource type="Script" path="res://scripts/lobby/lobby_charasel.gd" id="6_gqjc1"]
+[ext_resource type="Texture2D" uid="uid://b1a7xp7f2wrus" path="res://ui/chara_icons/chara_icon_2.png" id="7_clchf"]
+[ext_resource type="Texture2D" uid="uid://c3u2r0nu4koym" path="res://ui/chara_sel_frame.png" id="8_rsk7i"]
+[ext_resource type="PackedScene" uid="uid://b322fij4tqyet" path="res://scenes/inputmap.tscn" id="9_3wuqf"]
+[ext_resource type="PackedScene" uid="uid://kavw5glh623d" path="res://scenes/fadein.tscn" id="10_j6vhp"]
+
+[sub_resource type="Environment" id="Environment_68bt4"]
+
+[node name="main" type="Node3D"]
+
+[node name="charaselect" parent="." instance=ExtResource("1_xmovs")]
+
+[node name="LOD_1_Group_0_Sub_1__lambert1" parent="charaselect" index="0"]
+material_override = ExtResource("2_deir4")
+
+[node name="ctrl_pad_p2" parent="charaselect" index="1"]
+visible = false
+
+[node name="ctrl_pad_p1" parent="charaselect" index="4"]
+visible = false
+
+[node name="ctrl_kb_p2" parent="charaselect" index="5"]
+visible = false
+
+[node name="ctrl_kb_p1" parent="charaselect" index="6"]
+visible = false
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.38698, 7.08508, 5.63725)
+light_energy = 5.0
+light_bake_mode = 1
+shadow_enabled = true
+shadow_opacity = 0.55
+omni_range = 29.1319
+
+[node name="VoxelGI" type="VoxelGI" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.24864, 0, 4.48969)
+visible = false
+data = ExtResource("3_dls6e")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.859852, 0.510543, 0, -0.510543, 0.859852, 0, 1.32181, 0.389628)
+fov = 30.0
+
+[node name="cpos_charasel" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.994151, 0.107999, 0, -0.107999, 0.994151, 0, 1.608, 5.057)
+
+[node name="cpos_inputsel" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.859852, 0.510543, 0, -0.510543, 0.859852, 0, 1.62333, 0.897452)
+
+[node name="cpos_start" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.562, -1.545)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_68bt4")
+
+[node name="lobby_rend" type="Node" parent="."]
+script = ExtResource("4_ch8q2")
+
+[node name="inputsel" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 600.0
+grow_vertical = 2
+script = ExtResource("5_ee33o")
+
+[node name="cc1" type="CenterContainer" parent="inputsel"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="inputsel/cc1"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Press Any Button"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="cc2" type="CenterContainer" parent="inputsel"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 294.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="vb" type="VBoxContainer" parent="inputsel/cc2"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="device_name" type="Label" parent="inputsel/cc2/vb"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.560955, 0.560955, 0.560955, 1)
+theme_override_font_sizes/font_size = 17
+text = "device name"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="confirm" type="Label" parent="inputsel/cc2/vb"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "[F]  Confirm"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="cancel" type="Label" parent="inputsel/cc2/vb"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "[Esc]  Cancel"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="charasel" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_gqjc1")
+
+[node name="cc1" type="CenterContainer" parent="charasel"]
+visible = false
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -163.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="vb" type="VBoxContainer" parent="charasel/cc1"]
+layout_mode = 2
+theme_override_constants/separation = 21
+alignment = 1
+
+[node name="Label" type="Label" parent="charasel/cc1/vb"]
+layout_mode = 2
+text = "Select Character"
+horizontal_alignment = 1
+
+[node name="hb" type="HBoxContainer" parent="charasel/cc1/vb"]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="TextureRect" type="ColorRect" parent="charasel/cc1/vb/hb"]
+modulate = Color(1, 1, 1, 0.286275)
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+color = Color(0.903598, 0.903598, 0.903598, 1)
+
+[node name="TextureRect3" type="ColorRect" parent="charasel/cc1/vb/hb"]
+modulate = Color(1, 1, 1, 0.286275)
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+color = Color(0.903598, 0.903598, 0.903598, 1)
+
+[node name="TextureRect4" type="ColorRect" parent="charasel/cc1/vb/hb"]
+modulate = Color(1, 1, 1, 0.286275)
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+color = Color(0.903598, 0.903598, 0.903598, 1)
+
+[node name="Node" type="CenterContainer" parent="charasel/cc1/vb/hb"]
+layout_mode = 2
+
+[node name="TextureRect2" type="TextureRect" parent="charasel/cc1/vb/hb/Node"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("7_clchf")
+expand_mode = 3
+
+[node name="sel_frame" type="TextureRect" parent="charasel/cc1/vb/hb/Node"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("8_rsk7i")
+expand_mode = 3
+
+[node name="TextureRect5" type="ColorRect" parent="charasel/cc1/vb/hb"]
+modulate = Color(1, 1, 1, 0.286275)
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+color = Color(0.903598, 0.903598, 0.903598, 1)
+
+[node name="TextureRect6" type="ColorRect" parent="charasel/cc1/vb/hb"]
+modulate = Color(1, 1, 1, 0.286275)
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+color = Color(0.903598, 0.903598, 0.903598, 1)
+
+[node name="TextureRect7" type="ColorRect" parent="charasel/cc1/vb/hb"]
+modulate = Color(1, 1, 1, 0.286275)
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+color = Color(0.903598, 0.903598, 0.903598, 1)
+
+[node name="cc2" type="CenterContainer" parent="charasel"]
+visible = false
+custom_minimum_size = Vector2(400, 200)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -31.0
+offset_right = 400.0
+grow_vertical = 0
+
+[node name="vb" type="VBoxContainer" parent="charasel/cc2"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="hb" type="HBoxContainer" parent="charasel/cc2/vb"]
+layout_mode = 2
+theme_override_constants/separation = 43
+
+[node name="<" type="Label" parent="charasel/cc2/vb/hb"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "[A] <"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="palette_name" type="Label" parent="charasel/cc2/vb/hb"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Color 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name=">" type="Label" parent="charasel/cc2/vb/hb"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "> [D]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="remap" type="Label" parent="charasel/cc2/vb"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "[V] Update Buttons "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="confirm" type="Label" parent="charasel/cc2/vb"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "[F]  Confirm"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="cancel" type="Label" parent="charasel/cc2/vb"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "[Esc]  Cancel"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="inputmap" parent="charasel" instance=ExtResource("9_3wuqf")]
+visible = false
+layout_mode = 1
+
+[node name="fade_in" parent="." instance=ExtResource("10_j6vhp")]
+visible = false
+
+[editable path="charaselect"]

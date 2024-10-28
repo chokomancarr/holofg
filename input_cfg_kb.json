@@ -1,0 +1,12 @@
+{
+   "move_up": 32,
+   "move_down": 83,
+   "move_left": 65,
+   "move_right": 68,
+   "button_l": 74,
+   "button_m": 75,
+   "button_h": 76,
+   "button_s": 73,
+   "button_grab": 78,
+   "button_parry": 4194325
+}

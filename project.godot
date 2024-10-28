@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="fg"
-run/main_scene="res://scenes/main_menu.tscn"
+run/main_scene="res://scenes/pressanybutton.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 boot_splash/show_image=false
 config/icon="res://icon.svg"
@@ -19,11 +19,12 @@ config/icon="res://icon.svg"
 [autoload]
 
 SyncManager="*res://addons/godot-rollback-netcode/SyncManager.gd"
-NetUtil="*res://scripts/util/net_util.gd"
-SceneMan="*res://scripts/game/scene_man.gd"
-GameMaster="*res://scripts/game/game_master.gd"
-InputMan="*res://scripts/util/input_man.gd"
+NetUtil="*res://scripts/globals/net_util.gd"
+SceneMan="*res://scripts/globals/scene_man.gd"
+GameMaster="*res://scripts/globals/game_master.gd"
+InputMan="*res://scripts/globals/input_man.gd"
 SyncDebugger="*res://addons/godot-rollback-netcode/SyncDebugger.gd"
+AlertMan="*res://scripts/globals/alert_man.gd"
 
 [debug]
 

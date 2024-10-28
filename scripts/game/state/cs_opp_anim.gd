@@ -41,5 +41,5 @@ func get_frame_meter_color():
 
 func dict4hash():
 	return [ _STATE_NAME,
-		pos0
+		info.uid, pos0
 	]

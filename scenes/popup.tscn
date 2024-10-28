@@ -1,0 +1,55 @@
+[gd_scene load_steps=2 format=3 uid="uid://ckb462d2yl287"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f7pff"]
+bg_color = Color(1, 0.702979, 0.214038, 1)
+
+[node name="popup" type="Control"]
+z_index = 4096
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.580392)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(500, 200)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_f7pff")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/Panel"]
+layout_mode = 2
+
+[node name="txt" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 22
+text = "CONTENT TEXT"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="bt" type="Button" parent="CenterContainer/Panel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "OK"

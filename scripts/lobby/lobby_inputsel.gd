@@ -45,11 +45,10 @@ func sel_input(p):
 		
 		if confirm_src == 1:
 			visible = false
-			return {
-				"id": last_device,
-				"ty": last_device_ty,
-				"name": cc2_name.text
-			}
+			var res = InputMan.PlayerInput.new()
+			res.device = InputMan.Device.new(last_device_ty == "pad", last_device, cc2_name.text)
+			res.action_map = InputMan.load_player_input_mapping(res.device.is_gamepad)
+			return res
 
 func show_mesh(p, ty):
 	ctrl_meshes[p][ty].visible = true

@@ -16,7 +16,7 @@ var hit_uid_counter := 0
 
 func clone():
 	return ObjUtil.clone(self, new(),
-		[ "state", "freeze_t", "freeze_n", "freeze_canbuffer", "cinematic_is_p2", "cinematic_t", "countdown", "wall" ],
+		[ "state", "freeze_t", "freeze_n", "freeze_canbuffer", "cinematic_is_p2", "cinematic_t", "countdown", "wall", "hit_uid_counter" ],
 		[ "p1", "p2" ]
 	)
 
@@ -71,17 +71,20 @@ func get_anim_framediff(pi, df = 0.0):
 		return df
 
 func dict4hash():
-	return {
-		"p1": p1.dict4hash(),
-		"p2": p2.dict4hash(),
-		"st": state,
-		"ft": freeze_t,
-		"fn": freeze_n,
-		"fb": freeze_canbuffer,
-		"cp": cinematic_info,
-		"cd": countdown,
-		"wl": wall
-	}
+	return [
+		p1.dict4hash(),
+		p2.dict4hash(),
+		state,
+		freeze_t,
+		freeze_n,
+		freeze_canbuffer,
+		cinematic_info,
+		cinematic_is_p2,
+		cinematic_t,
+		countdown,
+		wall,
+		hit_uid_counter
+	]
 
 
 enum MATCH_STATE {

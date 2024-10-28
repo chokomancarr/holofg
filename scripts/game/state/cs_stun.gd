@@ -53,7 +53,7 @@ func get_anim_frame(df):
 func get_frame_meter_color():
 	return Color.YELLOW
 
-func dict4hash():
+func dict4hash2():
 	return [ _STATE_NAME,
-		n_stun, standing, offsets.hashed() if offsets else null
+		n_stun, standing, offsets.hashed() if offsets else 0
 	]

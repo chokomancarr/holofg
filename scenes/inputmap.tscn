@@ -1,18 +1,34 @@
-[gd_scene format=3 uid="uid://b322fij4tqyet"]
+[gd_scene load_steps=2 format=3 uid="uid://b322fij4tqyet"]
 
-[node name="Inputmap" type="Control"]
+[ext_resource type="Script" path="res://scripts/lobby/lobby_inputmapper.gd" id="1_fl1sn"]
+
+[node name="inputmap" type="Control"]
 layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_right = -600.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_fl1sn")
 
-[node name="VBoxContainer" type="GridContainer" parent="."]
+[node name="vb" type="VBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = 9
 anchor_bottom = 1.0
-grow_horizontal = 2
+offset_left = 29.0
+offset_top = 29.0
+offset_right = 350.0
+offset_bottom = -28.0
 grow_vertical = 2
+
+[node name="gc" type="GridContainer" parent="vb"]
+layout_mode = 2
+size_flags_vertical = 3
 columns = 2
+
+[node name="acts" type="Label" parent="vb"]
+layout_mode = 2
+text = "[F] Set All
+
+[Esc] Back"

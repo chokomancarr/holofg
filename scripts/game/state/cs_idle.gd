@@ -3,7 +3,6 @@ class_name CsIdle extends _CsNeutralBase
 const _STATE_NAME = "idle"
 
 var standing = true
-
 var first = true
 
 static var _override_block_ty := ST.BLOCK_TY.NONE

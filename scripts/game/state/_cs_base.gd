@@ -15,7 +15,6 @@ var push_opp := true
 
 var req_freeze : int = 0
 var req_freeze_exclusive = false
-
 var req_cinematic : MoveInfo.Cinema
 
 var bounds_off : Vector2i
@@ -23,13 +22,15 @@ var bounds_off : Vector2i
 func _clone(res):
 	return ObjUtil.clone(self, res,
 		[ "state_t", "next_offset", "anim_name", "use_pos_flip", "airborne", "block_state", "attack_ty",
-			"push_wall", "push_opp", "req_freeze", "bounds_off" ],
+			"push_wall", "push_opp", "bounds_off" ],
 		[]
 	)
 
 static func _check_inputs(state : PlayerState, sliceback, callback, d = false):
 	var his = state.input_history
-	var dirs = his.dirs.duplicate(true) as Array if d else null
+	var dirs = null
+	if d:
+		dirs = his.dirs.duplicate(true) as Array
 	var n = 0
 	var move : MoveInfo
 	for st : IN.InputState in his.his:
@@ -94,7 +95,6 @@ func _dict4hash():
 		attack_ty,
 		push_wall,
 		push_opp,
-		req_freeze,
 		bounds_off,
 		dict4hash()
 	]

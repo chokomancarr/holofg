@@ -37,5 +37,5 @@ func on_move_connected():
 
 func dict4hash2():
 	return [ _STATE_NAME,
-		
+		base_name
 	]

@@ -28,3 +28,11 @@ func apply_scaling(old : _CsStunBase, hit : AttInfo.Hit):
 	next_scaling = AT.BASE_SCALING
 	
 	return last_dmg
+
+func dict4hash():
+	return [
+		counter_ty, counter_uid, combo_scaling, total_dmg, last_dmg, last_att_ty, next_scaling, eff_pos, dict4hash2()
+	]
+
+func dict4hash2():
+	assert(false, "not implemented!")

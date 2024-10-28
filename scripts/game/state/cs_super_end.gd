@@ -6,7 +6,7 @@ var is_opp : bool
 
 func clone():
 	return ObjUtil.clone(self, _clone(new()),
-		[  ],
+		[ "move", "is_opp" ],
 		[]
 	)
 
@@ -32,5 +32,6 @@ func get_frame_meter_color():
 	return Color.YELLOW if is_opp else Color.NAVY_BLUE
 
 func dict4hash():
-	return [ _STATE_NAME
+	return [ _STATE_NAME,
+		move.uid, is_opp
 	]

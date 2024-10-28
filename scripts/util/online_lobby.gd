@@ -1,5 +1,11 @@
 class_name OnlineLobby extends Node
 
+signal on_p2_init_connect(nm : String)
+signal on_p2_connect_fail
+signal on_chat_msg(msg : String)
+signal on_broadcast(msg : String)
+signal on_lobby_err(msg : String)
+
 static var debug_network = true
 
 enum STATE {
@@ -58,7 +64,6 @@ static func dec_net(s):
 
 
 signal request_done
-#signal unhandled_event(obj : Dictionary)
 
 static var state = STATE.NO_INIT
 static var signals : OnlineLobby
@@ -343,6 +348,8 @@ static func _on_join_req(body : Dictionary):
 	var net_info = dec_net(body["net_info"])
 	var lobby_code = body["lobby_code"]
 	
+	signals.on_p2_init_connect.emit(req_name)
+	
 	var peer := WebRTCPeerConnection.new()
 	assert(!peer.initialize(NetUtil.get_ice_servers()))
 	
@@ -358,6 +365,7 @@ static func _on_join_req(body : Dictionary):
 	var my_net_info = await peer_info.get_info()
 	if not my_net_info:
 		print_debug("could not generate peer sdp / ice!")
+		signals.on_p2_connect_fail.emit()
 		return false
 	
 	assert(!peer.set_local_description("answer", my_net_info[0]))
@@ -369,6 +377,7 @@ static func _on_join_req(body : Dictionary):
 	})
 	if res.code != 200:
 		print_debug("accept join fail: ", res.body_raw)
+		signals.on_p2_connect_fail.emit()
 		return
 	
 	for i in range(11):
@@ -376,6 +385,7 @@ static func _on_join_req(body : Dictionary):
 			break
 		if i == 10:
 			print_debug("connection timeout!")
+			signals.on_p2_connect_fail.emit()
 			return
 		await GameMaster.get_timer(0.5).timeout
 	
@@ -384,6 +394,8 @@ static func _on_join_req(body : Dictionary):
 	})
 	if res.code != 200:
 		print_debug("client joined fail: ", res.body_raw)
+		signals.on_p2_connect_fail.emit()
+		return
 	
 	lobby.p2 = PlayerInfo.new(req_id, req_name)
 	lobby.p2.mp_id = 2
@@ -478,16 +490,12 @@ func _on_game_loaded():
 static func send_chat(msg):
 	signals._recv_chat.rpc(msg)
 
-signal on_chat_msg(msg : String)
-
 @rpc("any_peer")
 func _recv_chat(msg):
 	signals.on_chat_msg.emit(msg)
 
 static func broadcast(msg):
 	signals._broadcasted.rpc(msg)
-
-signal on_broadcast(msg : String)
 
 @rpc("any_peer", "call_local")
 func _broadcasted(msg):

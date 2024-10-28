@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://cpqeskpjt6ish"]
+[gd_scene load_steps=5 format=3 uid="uid://cpqeskpjt6ish"]
 
 [ext_resource type="PackedScene" uid="uid://bd1x83awyepqe" path="res://scenes/lobby_base.tscn" id="1_8v1va"]
 [ext_resource type="Script" path="res://scripts/lobby/lb_online.gd" id="2_fyfae"]
 [ext_resource type="Texture2D" uid="uid://crufqexwqcfdk" path="res://ui/lobby/user_none.png" id="2_l21n8"]
+[ext_resource type="Texture2D" uid="uid://67sbfqh38jep" path="res://ui/lobby/loadring.png" id="4_5eino"]
 
 [node name="main" instance=ExtResource("1_8v1va")]
 script = ExtResource("2_fyfae")
@@ -72,6 +73,68 @@ text = "waiting for player..."
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 texture = ExtResource("2_l21n8")
+expand_mode = 2
+
+[node name="rdyprompt" type="Label" parent="mp" index="2"]
+visible = false
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -180.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 31
+text = "[F] Ready"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="load1" type="CenterContainer" parent="mp" index="3"]
+visible = false
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="mp/load1" index="0"]
+layout_mode = 2
+
+[node name="ring" type="TextureRect" parent="mp/load1/Control" index="0"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+pivot_offset = Vector2(32, 32)
+texture = ExtResource("4_5eino")
+expand_mode = 2
+
+[node name="load2" type="CenterContainer" parent="mp" index="4"]
+visible = false
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="mp/load2" index="0"]
+layout_mode = 2
+
+[node name="ring" type="TextureRect" parent="mp/load2/Control" index="0"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+pivot_offset = Vector2(32, 32)
+texture = ExtResource("4_5eino")
 expand_mode = 2
 
 [node name="lobby_code" type="Label3D" parent="." index="13"]

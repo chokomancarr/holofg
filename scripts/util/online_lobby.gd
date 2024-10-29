@@ -1,10 +1,14 @@
 class_name OnlineLobby extends Node
 
+signal on_broadcast(sig : String, obj : Variant)
+
 signal on_p2_init_connect(nm : String)
 signal on_p2_connect_fail
-signal on_chat_msg(msg : String)
-signal on_broadcast(msg : String)
-signal on_lobby_err(msg : String)
+signal on_p2_connected
+signal on_p2_disconnected
+signal on_lobby_err(msg : String) #push this error to popup and return to main menu
+signal on_ppl_rdy(p2, b)
+signal on_both_ppl_ready
 
 static var debug_network = true
 
@@ -40,20 +44,24 @@ class PlayerInfo:
 	var mp_id : int = -1
 	var nm : String
 	var rdy : bool
-	var chara_id : int = 2
 	var input_ty : String = "pad"
+	var chara_id : int = -1
+	var chara_costume : int = 0
 	var input_source : InputMan.PlayerInput
 	func _init(id, nm):
 		self.mm_id = id
 		self.nm = nm
 
 class LobbyInfo:
-	signal on_p2
-	
 	var code : String
 	var is_p2 : bool
 	var p1 : PlayerInfo
 	var p2 : PlayerInfo
+	
+	func me():
+		return p2 if is_p2 else p1
+	func opp():
+		return p1 if is_p2 else p2
 
 
 static func enc_net(info):
@@ -341,6 +349,9 @@ func _on_peer_dconn(i):
 		if res.code != 200:
 			print_debug("failed to inform disconnect")
 			return
+	else:
+		lobby = null
+		on_lobby_err.emit("opponent disconnected!")
 
 static func _on_join_req(body : Dictionary):
 	var req_id = body["req_id"]
@@ -399,7 +410,11 @@ static func _on_join_req(body : Dictionary):
 	
 	lobby.p2 = PlayerInfo.new(req_id, req_name)
 	lobby.p2.mp_id = 2
-	lobby.on_p2.emit(lobby.p2)
+	
+	broadcast("opp_sel_input_ty", lobby.p1.input_ty)
+	broadcast("opp_sel_chara", [ lobby.p1.chara_id, lobby.p1.chara_costume ])
+	
+	signals.on_p2_connected.emit()
 
 static func start_polling_loop():
 	poll = true
@@ -444,27 +459,24 @@ static func game_loaded():
 		assert(state == STATE.PRE_GAME)
 		signals._on_game_loaded.rpc()
 
-signal on_ppl_rdy(id, b)
 
 @rpc("any_peer", "call_local")
 func _on_ppl_rdy(b):
 	var id = multiplayer.get_remote_sender_id()
 	print_debug("player ", id, " ready: ", b)
-	if id == lobby.p1.mp_id:
-		lobby.p1.rdy = b
-	else:
+	var p2 = id == lobby.p2.mp_id
+	if p2:
 		lobby.p2.rdy = b
+	else:
+		lobby.p1.rdy = b
 	
-	on_ppl_rdy.emit(id, b)
+	on_ppl_rdy.emit(p2, b)
 	
-	if lobby.p1.rdy and lobby.p2.rdy and not lobby.is_p2:
-		broadcast("starting game... 3")
-		await GameMaster.get_timer(1.0).timeout
-		broadcast("starting game... 2")
-		await GameMaster.get_timer(1.0).timeout
-		broadcast("starting game... 1")
-		await GameMaster.get_timer(1.0).timeout
-		_start_game.rpc()
+	if lobby.p1.rdy and lobby.p2.rdy:
+		signals.on_both_ppl_ready.emit()
+
+static func start_game():
+	signals._start_game.rpc()
 
 @rpc("authority", "call_local")
 func _start_game():
@@ -487,16 +499,20 @@ func _on_game_loaded():
 			print_debug("(host) everyone loaded, starting sync")
 			GameMaster.net_master.start()
 
-static func send_chat(msg):
-	signals._recv_chat.rpc(msg)
+static func broadcast(msg, o = null):
+	signals._broadcasted.rpc(msg, o)
 
-@rpc("any_peer")
-func _recv_chat(msg):
-	signals.on_chat_msg.emit(msg)
+@rpc("any_peer", "call_remote")
+func _broadcasted(msg, o):
+	_on_broadcast(msg, o)
+	signals.on_broadcast.emit(msg, o)
 
-static func broadcast(msg):
-	signals._broadcasted.rpc(msg)
-
-@rpc("any_peer", "call_local")
-func _broadcasted(msg):
-	signals.on_broadcast.emit(msg)
+func _on_broadcast(msg : String, o : Variant):
+	match msg:
+		"opp_sel_chara":
+			lobby.opp().chara_id = o[0] as int
+			lobby.opp().chara_costume = o[1] as int
+		"opp_sel_input_ty":
+			lobby.opp().input_ty = o as String
+		_:
+			pass

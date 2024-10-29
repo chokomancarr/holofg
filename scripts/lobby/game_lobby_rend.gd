@@ -1,5 +1,7 @@
 class_name LobbyRend extends Node
 
+signal on_vs_screen_end
+
 @onready var CPOS_INPUTSEL = $"../cpos_inputsel" as Node3D
 @onready var CPOS_CHARASEL = $"../cpos_charasel" as Node3D
 @onready var CPOS_START = $"../cpos_start" as Node3D
@@ -24,7 +26,9 @@ func init():
 		cmesh_par.push_back(nd)
 
 func sel_input_p(p2 : bool):
-	ppl_inputs[int(p2)] = await inputsel.sel_input(int(p2))
+	var res = await inputsel.sel_input(int(p2))
+	ppl_inputs[int(p2)] = res
+	return res
 
 func set_input_p(p2 : bool, ip : InputMan.PlayerInput, showmesh = true):
 	ppl_inputs[int(p2)] = ip
@@ -42,27 +46,27 @@ func sel_chara_p(p2 : bool):
 		
 		var nd = set_chara_p(p2, cid)
 		
-		var res = await charasel.sel_costume(input, cid, p2, nd.get_node("%palette"))
-		if res:
-			break
+		var cic = await charasel.sel_costume(input, cid, p2, nd.get_node("%palette"))
+		if cic > -1:
+			return [cid, cic]
 		else:
 			nd.queue_free()
 
-func set_chara_p(p2 : bool, cid : int):
+func set_chara_p(p2 : bool, cid : int, pal = 0):
+	var par = cmesh_par[int(p2)]
+	if par.has_children():
+		par.get_child(0).queue_free()
 	if cid < 0:
-		return
+		return null
 	var scn = load("res://chara_scenes/chara_%d_lobby.tscn" % cid) as PackedScene
 	var nd = scn.instantiate() as LobbyCharaRend
 	nd.p1 = !p2
 	
-	cmesh_par[int(p2)].add_child(nd)
+	par.add_child(nd)
 	ANIM.register(cid, nd.anim)
 	nd.play()
-	charasel.set_costume(cid, p2, nd.get_node("%palette"), 0)
+	charasel.set_costume(cid, p2, nd.get_node("%palette"), pal)
 	return nd
-
-func unset_chara_p(p2 : bool):
-	cmesh_par[int(p2)].get_child(0).queue_free()
 
 func setcam(tr):
 	camtar = tr.transform
@@ -77,6 +81,7 @@ func _process(dt):
 	else:
 		start_lerp += dt
 		if start_lerp > 1.0:
+			on_vs_screen_end.emit()
 			SceneMan.load_scene(SceneMan.GAME)
 		else:
 			cam.transform = camtar.interpolate_with(CPOS_START.transform, pow(start_lerp, 2))

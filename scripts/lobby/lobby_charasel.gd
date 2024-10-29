@@ -71,10 +71,10 @@ func sel_costume(pinput :InputMan.PlayerInput, cid : int, p2 : bool, plt : Chara
 				cc2.visible = true
 			ACTION.CONFIRM:
 				cc2.visible = false
-				return true
+				return ci
 			ACTION.CANCEL:
 				cc2.visible = false
-				return false
+				return -1
 
 func set_costume(cid : int, p2 : bool, plt : CharaPalette, i : int):
 	CharaPalette.load_palette(cid)

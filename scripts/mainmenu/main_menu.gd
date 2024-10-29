@@ -33,9 +33,12 @@ func _on_make_lobby():
 
 func _on_join_lobby():
 	assert(OnlineLobby.rtc)
-	var lobby = await OnlineLobby.join($"%lobby_code".text)
+	var e = {}
+	var lobby = await OnlineLobby.join($"%lobby_code".text.to_upper(), e)
 	if lobby:
-		SceneMan.load_scene(SceneMan.LOBBY)
+		SceneMan.load_scene(SceneMan.LOBBY_ONLINE)
+	else:
+		AlertMan.show(e.msg)
 
 const NMS = [ "TRAINING", "OFFLINE", "ONLINE", "SETTINGS" ]
 func open_layer2():

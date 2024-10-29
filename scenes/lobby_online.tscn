@@ -1,18 +1,15 @@
-[gd_scene load_steps=5 format=3 uid="uid://cpqeskpjt6ish"]
+[gd_scene load_steps=8 format=3 uid="uid://cpqeskpjt6ish"]
 
 [ext_resource type="PackedScene" uid="uid://bd1x83awyepqe" path="res://scenes/lobby_base.tscn" id="1_8v1va"]
 [ext_resource type="Script" path="res://scripts/lobby/lb_online.gd" id="2_fyfae"]
 [ext_resource type="Texture2D" uid="uid://crufqexwqcfdk" path="res://ui/lobby/user_none.png" id="2_l21n8"]
 [ext_resource type="Texture2D" uid="uid://67sbfqh38jep" path="res://ui/lobby/loadring.png" id="4_5eino"]
+[ext_resource type="Script" path="res://ui/spin.gd" id="5_5atdi"]
+[ext_resource type="Texture2D" uid="uid://bvn84qerceufr" path="res://ui/notready.png" id="6_s7sam"]
+[ext_resource type="Texture2D" uid="uid://bqgnbf1oeruah" path="res://ui/ready.png" id="7_brko5"]
 
 [node name="main" instance=ExtResource("1_8v1va")]
 script = ExtResource("2_fyfae")
-
-[node name="inputsel" parent="." index="9"]
-visible = false
-
-[node name="charasel" parent="." index="10"]
-visible = false
 
 [node name="mp" type="Control" parent="." index="11"]
 layout_mode = 3
@@ -90,18 +87,28 @@ text = "[F] Ready"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="load1" type="CenterContainer" parent="mp" index="3"]
-visible = false
+[node name="snap1" type="Control" parent="mp" index="3"]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
+offset_right = 400.0
 grow_vertical = 2
 
-[node name="Control" type="Control" parent="mp/load1" index="0"]
+[node name="spin" type="CenterContainer" parent="mp/snap1" index="0"]
+visible = false
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="mp/snap1/spin" index="0"]
 layout_mode = 2
 
-[node name="ring" type="TextureRect" parent="mp/load1/Control" index="0"]
+[node name="ring" type="TextureRect" parent="mp/snap1/spin/Control" index="0"]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 offset_left = -32.0
@@ -111,8 +118,40 @@ offset_bottom = 32.0
 pivot_offset = Vector2(32, 32)
 texture = ExtResource("4_5eino")
 expand_mode = 2
+script = ExtResource("5_5atdi")
 
-[node name="load2" type="CenterContainer" parent="mp" index="4"]
+[node name="rdyprompt" type="CenterContainer" parent="mp/snap1" index="1"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -214.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="n" type="TextureRect" parent="mp/snap1/rdyprompt" index="0"]
+visible = false
+layout_mode = 2
+texture = ExtResource("6_s7sam")
+
+[node name="y" type="TextureRect" parent="mp/snap1/rdyprompt" index="1"]
+visible = false
+layout_mode = 2
+texture = ExtResource("7_brko5")
+
+[node name="snap2" type="Control" parent="mp" index="4"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -400.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="spin" type="CenterContainer" parent="mp/snap2" index="0"]
 visible = false
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 1
@@ -120,13 +159,14 @@ anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -400.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="Control" type="Control" parent="mp/load2" index="0"]
+[node name="Control" type="Control" parent="mp/snap2/spin" index="0"]
 layout_mode = 2
 
-[node name="ring" type="TextureRect" parent="mp/load2/Control" index="0"]
+[node name="ring" type="TextureRect" parent="mp/snap2/spin/Control" index="0"]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 offset_left = -32.0
@@ -136,8 +176,29 @@ offset_bottom = 32.0
 pivot_offset = Vector2(32, 32)
 texture = ExtResource("4_5eino")
 expand_mode = 2
+script = ExtResource("5_5atdi")
 
-[node name="lobby_code" type="Label3D" parent="." index="13"]
+[node name="rdyprompt" type="CenterContainer" parent="mp/snap2" index="1"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -214.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="n" type="TextureRect" parent="mp/snap2/rdyprompt" index="0"]
+visible = false
+layout_mode = 2
+texture = ExtResource("6_s7sam")
+
+[node name="y" type="TextureRect" parent="mp/snap2/rdyprompt" index="1"]
+visible = false
+layout_mode = 2
+texture = ExtResource("7_brko5")
+
+[node name="lobby_code" type="Label3D" parent="." index="12"]
 transform = Transform3D(0.239413, 0, -0.016775, 0, 0.24, 0, 0.016775, 0, 0.239413, 0.0769033, 1.61971, -3.38345)
 text = "Lobby Code
 XXXX"

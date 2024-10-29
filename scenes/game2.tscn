@@ -1,18 +1,20 @@
-[gd_scene load_steps=22 format=3 uid="uid://biy7ct076k6ly"]
+[gd_scene load_steps=30 format=3 uid="uid://y2ejg0fh7i83"]
 
-[ext_resource type="Script" path="res://scripts/debug_chara.gd" id="1_6nb7d"]
-[ext_resource type="Script" path="res://scripts/rend/cam_follow.gd" id="2_ldlmx"]
-[ext_resource type="PackedScene" uid="uid://b667jjodtjlra" path="res://models/stage/0/stage_0.blend" id="3_kleex"]
-[ext_resource type="Script" path="res://scripts/frame_meter.gd" id="3_xmqwa"]
-[ext_resource type="Material" uid="uid://fmtrwbbihk2q" path="res://models/stage/0/stage_0_mat.tres" id="4_jfn41"]
-[ext_resource type="Script" path="res://scripts/rend/game_ui.gd" id="4_pqnyw"]
-[ext_resource type="Shader" uid="uid://cpvn6thoprkn2" path="res://super_bg_filter.tres" id="5_kcew6"]
-[ext_resource type="PackedScene" uid="uid://xgv0j4rp8w24" path="res://scenes/bigtexts.tscn" id="7_iylrd"]
-[ext_resource type="PackedScene" uid="uid://kavw5glh623d" path="res://scenes/fadein.tscn" id="10_btp7p"]
+[ext_resource type="Script" path="res://scripts/debug_chara.gd" id="1_ndxnl"]
+[ext_resource type="Script" path="res://scripts/rend/cam_follow.gd" id="2_kavnn"]
+[ext_resource type="Shader" uid="uid://cpvn6thoprkn2" path="res://super_bg_filter.tres" id="3_ehqab"]
+[ext_resource type="PackedScene" uid="uid://b667jjodtjlra" path="res://models/stage/0/stage_0.blend" id="4_rqd3s"]
+[ext_resource type="Material" uid="uid://fmtrwbbihk2q" path="res://models/stage/0/stage_0_mat.tres" id="5_0iojg"]
+[ext_resource type="Script" path="res://scripts/frame_meter.gd" id="6_cf244"]
+[ext_resource type="Script" path="res://scripts/rend/game_ui.gd" id="7_vaugr"]
+[ext_resource type="PackedScene" uid="uid://xgv0j4rp8w24" path="res://scenes/bigtexts.tscn" id="8_d7iye"]
+[ext_resource type="Script" path="res://scripts/rend/player_overlay.gd" id="9_1v8no"]
+[ext_resource type="Shader" uid="uid://bbrmys00qyjcu" path="res://motion_blur_obj.tres" id="10_ymhuk"]
+[ext_resource type="PackedScene" uid="uid://kavw5glh623d" path="res://scenes/fadein.tscn" id="11_qjfdn"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_o0tce"]
 render_priority = 0
-shader = ExtResource("5_kcew6")
+shader = ExtResource("3_ehqab")
 shader_parameter/col_near = Color(0, 0, 0, 1)
 shader_parameter/col_far = Color(1, 0, 0, 1)
 shader_parameter/col_sky = Color(1, 1, 1, 1)
@@ -52,10 +54,34 @@ font_size = 40
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_otrjq"]
 bg_color = Color(0.960784, 0.627451, 0, 1)
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y8fkd"]
+shader = ExtResource("10_ymhuk")
+shader_parameter/velocity = Vector2(0, 0)
+shader_parameter/strength = 0.5
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_jxsnb"]
+viewport_path = NodePath("Camera3D/player1")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hrxld"]
+shader = ExtResource("10_ymhuk")
+shader_parameter/velocity = Vector2(0, 0)
+shader_parameter/strength = 0.5
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_s06pv"]
+viewport_path = NodePath("Camera3D/player2")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mhqkp"]
+shader = ExtResource("10_ymhuk")
+shader_parameter/velocity = Vector2(0, 0)
+shader_parameter/strength = 0.5
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_tvpxa"]
+viewport_path = NodePath("Camera3D/player12")
+
 [node name="main" type="Node3D"]
 
 [node name="debug_chara" type="Node" parent="." groups=["network_sync"]]
-script = ExtResource("1_6nb7d")
+script = ExtResource("1_ndxnl")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.598, 10)
@@ -64,7 +90,43 @@ near = 0.1
 far = 200.0
 
 [node name="follow" type="Node" parent="Camera3D"]
-script = ExtResource("2_ldlmx")
+script = ExtResource("2_kavnn")
+
+[node name="player1" type="SubViewport" parent="Camera3D"]
+transparent_bg = true
+msaa_3d = 2
+canvas_cull_mask = 4294966272
+
+[node name="ppl1cam" type="Camera3D" parent="Camera3D/player1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.598, 10)
+cull_mask = 31744
+fov = 25.0
+near = 0.1
+far = 200.0
+
+[node name="player2" type="SubViewport" parent="Camera3D"]
+transparent_bg = true
+msaa_3d = 2
+canvas_cull_mask = 4294966272
+
+[node name="ppl2cam" type="Camera3D" parent="Camera3D/player2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.598, 10)
+cull_mask = 1015808
+fov = 25.0
+near = 0.1
+far = 200.0
+
+[node name="player12" type="SubViewport" parent="Camera3D"]
+transparent_bg = true
+msaa_3d = 2
+canvas_cull_mask = 4294966272
+
+[node name="ppl12cam" type="Camera3D" parent="Camera3D/player12"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.598, 10)
+cull_mask = 1047552
+fov = 25.0
+near = 0.1
+far = 200.0
 
 [node name="bg_filter1" type="MeshInstance3D" parent="Camera3D"]
 unique_name_in_owner = true
@@ -82,12 +144,12 @@ material_override = SubResource("ShaderMaterial_o0tce")
 mesh = SubResource("QuadMesh_7ea3g")
 skeleton = NodePath("../..")
 
-[node name="stage_0" parent="." instance=ExtResource("3_kleex")]
+[node name="stage_0" parent="." instance=ExtResource("4_rqd3s")]
 transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
 
 [node name="LOD_1_Group_0_Sub_1__lambert1" parent="stage_0" index="0"]
 transform = Transform3D(0.01, 0, 0, 0, -4.37114e-10, -0.01, 0, 0.01, -4.37114e-10, 0, 0, 0)
-material_override = ExtResource("4_jfn41")
+material_override = ExtResource("5_0iojg")
 
 [node name="lines" type="Node" parent="."]
 
@@ -151,7 +213,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("3_xmqwa")
+script = ExtResource("6_cf244")
 
 [node name="p1" type="CenterContainer" parent="frame_meter"]
 layout_mode = 1
@@ -213,7 +275,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("4_pqnyw")
+script = ExtResource("7_vaugr")
 
 [node name="top_cc" type="CenterContainer" parent="ui"]
 visible = false
@@ -459,29 +521,76 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ready" parent="ui/ann_cc" instance=ExtResource("7_iylrd")]
+[node name="ready" parent="ui/ann_cc" instance=ExtResource("8_d7iye")]
 visible = false
 layout_mode = 2
 base_width = 1.0
 tar_width = 1.5
 text = "READY"
 
-[node name="fight" parent="ui/ann_cc" instance=ExtResource("7_iylrd")]
+[node name="fight" parent="ui/ann_cc" instance=ExtResource("8_d7iye")]
 visible = false
 layout_mode = 2
 base_width = 1.0
 tar_width = 0.0
 text = "FIGHT"
 
-[node name="ko" parent="ui/ann_cc" instance=ExtResource("7_iylrd")]
+[node name="ko" parent="ui/ann_cc" instance=ExtResource("8_d7iye")]
 visible = false
 layout_mode = 2
 text = "KO"
 
+[node name="player_overlay" type="Control" parent="." node_paths=PackedStringArray("viewport1", "viewport2", "viewport12")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("9_1v8no")
+viewport1 = NodePath("../Camera3D/player1")
+viewport2 = NodePath("../Camera3D/player2")
+viewport12 = NodePath("../Camera3D/player12")
+
+[node name="ppl1" type="TextureRect" parent="player_overlay"]
+z_index = 2
+material = SubResource("ShaderMaterial_y8fkd")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("ViewportTexture_jxsnb")
+expand_mode = 2
+
+[node name="ppl2" type="TextureRect" parent="player_overlay"]
+z_index = 2
+material = SubResource("ShaderMaterial_hrxld")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("ViewportTexture_s06pv")
+expand_mode = 2
+
+[node name="ppl12" type="TextureRect" parent="player_overlay"]
+material = SubResource("ShaderMaterial_mhqkp")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("ViewportTexture_tvpxa")
+expand_mode = 2
+
 [node name="ppl_spawn" type="Node" parent="."]
 unique_name_in_owner = true
 
-[node name="fade_in" parent="." instance=ExtResource("10_btp7p")]
+[node name="fade_in" parent="." instance=ExtResource("11_qjfdn")]
 visible = false
 z_index = 1000
 kill = false

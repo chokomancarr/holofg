@@ -33,6 +33,7 @@ func new_match(p1 : int, p2 : int, ty : _GameNetBase.TY):
 		PlayerState.create(p2_chara_info, false)
 	)
 	net_master = _GameNetBase.spawn(ty)
+	net_master.name = "_net_master"
 	add_child(net_master)
 	net_master.init()
 	
@@ -41,11 +42,11 @@ func new_match(p1 : int, p2 : int, ty : _GameNetBase.TY):
 	for c in par.get_children():
 		c.queue_free()
 	
-	var ps1 = load("res://chara_scenes/chara_%d.tscn" % [ p1 ]).instantiate() as CharaRend
+	var ps1 = load("res://chara_scenes/chara_%d.tscn" % p1).instantiate() as CharaRend
 	ps1.is_p1 = true
 	par.add_child(ps1)
 	ps1._init_effects(p1)
-	var ps2 = load("res://chara_scenes/chara_%d.tscn" % [ p2 ]).instantiate() as CharaRend
+	var ps2 = load("res://chara_scenes/chara_%d.tscn" % p2).instantiate() as CharaRend
 	ps2.is_p1 = false
 	par.add_child(ps2)
 	ps2._init_effects(p2)

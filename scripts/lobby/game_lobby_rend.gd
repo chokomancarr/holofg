@@ -54,7 +54,7 @@ func sel_chara_p(p2 : bool):
 
 func set_chara_p(p2 : bool, cid : int, pal = 0):
 	var par = cmesh_par[int(p2)]
-	if par.has_children():
+	if par.get_child_count() > 0:
 		par.get_child(0).queue_free()
 	if cid < 0:
 		return null

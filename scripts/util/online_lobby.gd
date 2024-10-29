@@ -230,6 +230,8 @@ static func init(usrnm : String):
 	
 	print_debug(listeners.get("join_request"))
 	
+	print_debug("connected to server")
+	
 	return true
 
 static func create():
@@ -251,12 +253,14 @@ static func create():
 	
 	return lobby
 
-static func join(code):
+static func join(code, e):
 	assert(state == STATE.MENU)
 	
 	var res = await _post("/lobby_has", { "lobby_code": code })
 	if res.code != 200:
 		print_debug("check lobby fail: ", res.body_raw)
+		if e is Dictionary:
+			e.msg = "Lobby does not exist!"
 		return null
 	
 	var host_id = res.body["host_id"]
@@ -279,6 +283,8 @@ static func join(code):
 	var my_net_info = await peer_info.get_info()
 	if not my_net_info:
 		print_debug("could not generate peer sdp / ice!")
+		if e is Dictionary:
+			e.msg = "Internal network error!"
 		return null
 	
 	assert(!peer.set_local_description("offer", my_net_info[0]))
@@ -288,11 +294,15 @@ static func join(code):
 	})
 	if res.code != 200:
 		print_debug("join lobby fail: ", res.body_raw)
+		if e is Dictionary:
+			e.msg = "Failed to join lobby!"
 		return null
 	
 	for i in range(11):
 		if i == 10:
 			print_debug("lobby host did not reply!")
+			if e is Dictionary:
+				e.msg = "No response from lobby host!"
 			return null
 		if unhandled_msgs.has("host_info"):
 			break
@@ -314,6 +324,8 @@ static func join(code):
 			break
 		if i == 10:
 			print_debug("connection timeout!")
+			if e:
+				e.msg = "Host handshake timeout!"
 			return null
 		await GameMaster.get_timer(0.5).timeout
 	
@@ -411,9 +423,6 @@ static func _on_join_req(body : Dictionary):
 	lobby.p2 = PlayerInfo.new(req_id, req_name)
 	lobby.p2.mp_id = 2
 	
-	broadcast("opp_sel_input_ty", lobby.p1.input_ty)
-	broadcast("opp_sel_chara", [ lobby.p1.chara_id, lobby.p1.chara_costume ])
-	
 	signals.on_p2_connected.emit()
 
 static func start_polling_loop():
@@ -483,7 +492,7 @@ func _start_game():
 	state = STATE.PRE_GAME
 	_n_game_loaded = 0
 	SceneMan.load_scene(SceneMan.GAME)
-	GameMaster.new_match(2, 2, _GameNetBase.TY.ONLINE)
+	GameMaster.new_match.call_deferred(2, 2, _GameNetBase.TY.ONLINE)
 
 var _n_game_loaded = 0
 
@@ -509,6 +518,9 @@ func _broadcasted(msg, o):
 
 func _on_broadcast(msg : String, o : Variant):
 	match msg:
+		"p2_lobby_loaded":
+			broadcast("opp_sel_input_ty", lobby.p1.input_ty)
+			broadcast("opp_sel_chara", [ lobby.p1.chara_id, lobby.p1.chara_costume ])
 		"opp_sel_chara":
 			lobby.opp().chara_id = o[0] as int
 			lobby.opp().chara_costume = o[1] as int

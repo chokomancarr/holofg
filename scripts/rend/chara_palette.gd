@@ -16,10 +16,9 @@ func apply_palette(p):
 	var m = ($"../towa_8/Armature/Skeleton3D/clothes_a" as MeshInstance3D)
 	var mat = m.material_override.duplicate(true) as ShaderMaterial
 	
-	if not palette[0]:
+	if not palette[p]:
 		load_palette(2)
-		palette[0] = palette_all[2].costume1[0]
-		palette[1] = palette_all[2].costume1[1]
+		palette[p] = palette_all[2].costume1[0]
 	
 	var pl = palette[p]
 	

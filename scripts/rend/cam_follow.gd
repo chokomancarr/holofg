@@ -10,7 +10,7 @@ extends Node
 
 func _physics_process(_dt):
 	var gst = GameMaster.game_state
-	if gst:
+	if gst and CharaRend.insts[0]:
 		match gst.state:
 			GameState.MATCH_STATE.INTRO:
 				var anchor = CharaRend.insts[0 if (gst.countdown > 100) else 1].cam_anchor
@@ -28,6 +28,7 @@ func _physics_process(_dt):
 	else:
 		par.position.x = 0.0
 
-	ppl1cam.global_transform = par.global_transform
-	ppl2cam.global_transform = par.global_transform
-	ppl12cam.global_transform = par.global_transform
+	if ppl1cam:
+		ppl1cam.global_transform = par.global_transform
+		ppl2cam.global_transform = par.global_transform
+		ppl12cam.global_transform = par.global_transform

@@ -151,6 +151,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 placeholder_text = "XXXX"
+max_length = 4
 context_menu_enabled = false
 
 [node name="serv_join" type="Button" parent="layer2/2/vb"]

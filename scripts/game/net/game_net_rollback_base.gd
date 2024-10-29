@@ -26,6 +26,7 @@ func init():
 	SyncManager.sync_lost.connect(on_sync_lost)
 	SyncManager.sync_regained.connect(on_sync_regained)
 	SyncManager.sync_error.connect(on_sync_error)
+	OnlineLobby.signals.on_lobby_err.connect(on_lobby_err)
 	
 	if lobby.is_p2:
 		SyncManager.add_peer(lobby.p1.mp_id)
@@ -34,7 +35,7 @@ func init():
 	
 	add_to_group("network_sync")
 	
-	GameMaster.game_state.start_game_inf() #TODO: change to actual game
+	GameMaster.game_state.start_intro() #TODO: change to actual game
 
 func start():
 	print_debug("starting rollback manager")
@@ -60,6 +61,13 @@ func on_sync_regained():
 
 func on_sync_error(msg):
 	print_debug("fatal sync error: ", msg)
+	await AlertMan.show("Synchronization lost!")
+	SyncManager.clear_peers()
+	multiplayer.multiplayer_peer.close()
+
+func on_lobby_err():
+	print_debug("lobby error!")
+	await AlertMan.show("Opponent disconnected!")
 	SyncManager.clear_peers()
 	multiplayer.multiplayer_peer.close()
 

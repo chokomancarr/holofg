@@ -17,8 +17,8 @@ class InputHistory:
 		return res
 	
 	func _init():
-		his.push_front(InputState.new())
-		dirs.push_front({ V: 5, NF: 1 })
+		his.push_front(InputState.new(5, 99))
+		dirs.push_front({ V: 5, NF: 99 })
 	
 	func push(v : InputState):
 		#sx = v.name(false)
